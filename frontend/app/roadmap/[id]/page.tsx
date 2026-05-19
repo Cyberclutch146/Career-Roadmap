@@ -64,14 +64,23 @@ export default function RoadmapPage() {
       const roadmapId = params.id as string
 
       try {
-        const { doc, getDoc } = await import('firebase/firestore')
-        const { db } = await import('@/lib/firebase')
-
         let loadedRoadmap: Roadmap | null = null
 
-        // 1. Try owner collection if user is logged in
-        if (user) {
+        // Try local storage first
+        try {
+          const savedRoadmapRaw = window.localStorage.getItem(`roadmap_${roadmapId}`)
+          if (savedRoadmapRaw) {
+            loadedRoadmap = JSON.parse(savedRoadmapRaw) as Roadmap
+          }
+        } catch (e) {
+          console.error("Failed to load local roadmap:", e)
+        }
+
+        // 1. Try owner collection if user is logged in (disabled for offline mode)
+        if (!loadedRoadmap && false && user) {
           try {
+            const { doc, getDoc } = await import('firebase/firestore')
+            const { db } = await import('@/lib/firebase')
             const docRef = doc(db, 'users', user.id, 'roadmaps', roadmapId)
             const docSnap = await getDoc(docRef)
             if (docSnap.exists()) {
@@ -85,6 +94,8 @@ export default function RoadmapPage() {
         // 2. Try public collection
         if (!loadedRoadmap) {
           try {
+            const { doc, getDoc } = await import('firebase/firestore')
+            const { db } = await import('@/lib/firebase')
             const docRef = doc(db, 'public_roadmaps', roadmapId)
             const docSnap = await getDoc(docRef)
             if (docSnap.exists()) {
@@ -100,8 +111,8 @@ export default function RoadmapPage() {
         setRoadmap(loadedRoadmap)
         setCurrentRoadmap(loadedRoadmap)
 
-        // 3. Fetch progress: owner uses Firestore, others use localStorage
-        if (user && loadedRoadmap.user_id === user.id) {
+        // 3. Fetch progress: owner uses Firestore, others use localStorage (always use localStorage in offline/mock mode)
+        if (false && user && loadedRoadmap.user_id === user.id) {
           try {
             const { collection, getDocs, setDoc, doc: fsDoc } = await import('firebase/firestore')
             const progressRef = collection(db, 'users', user.id, 'roadmaps', roadmapId, 'progress')
@@ -200,7 +211,7 @@ export default function RoadmapPage() {
     }
     setCompletedLessons(newCompleted)
 
-    if (user && roadmap.user_id === user.id) {
+    if (false && user && roadmap.user_id === user.id) {
       try {
         const { doc, setDoc } = await import('firebase/firestore')
         const { db } = await import('@/lib/firebase')
@@ -250,7 +261,7 @@ export default function RoadmapPage() {
     }
     setBookmarkedLessons(newBookmarks)
 
-    if (user && roadmap.user_id === user.id) {
+    if (false && user && roadmap.user_id === user.id) {
       try {
         const { doc, setDoc, deleteDoc } = await import('firebase/firestore')
         const { db } = await import('@/lib/firebase')
@@ -275,31 +286,13 @@ export default function RoadmapPage() {
   }
 
   const handleShareToggle = async () => {
-    if (!roadmap || !user) return
+    if (!roadmap) return
     setIsSharing(true)
     try {
-      const { doc, setDoc, deleteDoc } = await import('firebase/firestore')
-      const { db } = await import('@/lib/firebase')
-      
       const newIsPublic = !roadmap.is_public
-      
-      // 1. Update user collection doc
-      const userRoadmapRef = doc(db, 'users', user.id, 'roadmaps', roadmap.id)
-      await setDoc(userRoadmapRef, { is_public: newIsPublic }, { merge: true })
-      
-      // 2. Update public collection doc
-      const publicRoadmapRef = doc(db, 'public_roadmaps', roadmap.id)
-      if (newIsPublic) {
-        await setDoc(publicRoadmapRef, {
-          ...roadmap,
-          user_id: user.id,
-          is_public: true,
-        })
-      } else {
-        await deleteDoc(publicRoadmapRef)
-      }
-      
-      setRoadmap(prev => prev ? { ...prev, is_public: newIsPublic } : null)
+      const updated = { ...roadmap, is_public: newIsPublic }
+      setRoadmap(updated)
+      window.localStorage.setItem(`roadmap_${roadmap.id}`, JSON.stringify(updated))
       
       if (newIsPublic) {
         await navigator.clipboard.writeText(window.location.href)

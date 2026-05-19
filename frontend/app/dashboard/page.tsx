@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchRoadmaps = async () => {
-      if (user) {
+      if (false && user) {
         try {
           const { collection, getDocs } = await import('firebase/firestore')
           const { db } = await import('@/lib/firebase')

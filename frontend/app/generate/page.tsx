@@ -144,15 +144,11 @@ export default function GeneratePage() {
 
       const roadmap = response.data
       
-      if (user) {
-        const { doc, setDoc } = await import('firebase/firestore')
-        const { db } = await import('@/lib/firebase')
-        const docRef = doc(db, 'users', user.id, 'roadmaps', roadmap.id)
-        roadmap.created_at = roadmap.created_at || new Date().toISOString()
-        roadmap.updated_at = roadmap.updated_at || new Date().toISOString()
-        roadmap.user_id = user.id
-        await setDoc(docRef, roadmap)
-      }
+      // Offline/mock mode: save generated roadmaps to localStorage
+      roadmap.created_at = roadmap.created_at || new Date().toISOString()
+      roadmap.updated_at = roadmap.updated_at || new Date().toISOString()
+      roadmap.user_id = user?.id || 'mock-user-123'
+      localStorage.setItem(`roadmap_${roadmap.id}`, JSON.stringify(roadmap))
 
       setCurrentRoadmap(roadmap)
       localStorage.setItem('current_roadmap', JSON.stringify(roadmap))
