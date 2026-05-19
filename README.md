@@ -49,10 +49,10 @@ git clone https://github.com/yourusername/roadmapai.git
 cd roadmapai
 
 # One-command setup — installs everything, generates secrets, starts servers
-.\run.ps1
+.\roadmap
 ```
 
-Or use `.\setup.ps1` for a step-by-step guided setup, or `setup.bat` for CMD.
+Or use `.\setup.ps1` for a step-by-step guided setup.
 
 ### Manual Setup
 
@@ -189,9 +189,9 @@ roadmapai/
 │   ├── types/index.ts          # TypeScript interfaces
 │   └── .env.example
 │
-├── run.ps1                     # One-command start (PowerShell)
+├── roadmap.ps1                 # One-command start (PowerShell)
+├── roadmap.bat                 # One-command start (CMD)
 ├── setup.ps1                   # Guided setup (PowerShell)
-├── setup.bat                   # Setup (CMD)
 ├── SPEC.md                     # Design specification
 ├── .gitignore
 └── README.md                   # ← You are here
