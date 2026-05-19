@@ -16,7 +16,7 @@ class AIService:
     def __init__(self):
         self.model = None
         if GEMINI_API_KEY:
-            self.model = genai.GenerativeModel("gemini-2.0-flash")
+            self.model = genai.GenerativeModel("gemini-flash-latest")
 
     def is_available(self) -> bool:
         return self.model is not None
@@ -126,12 +126,66 @@ Generate a comprehensive roadmap in JSON format with this exact structure:
         }}
     ],
     "resources": {{
-        "documentation": [],
-        "videos": [],
-        "articles": [],
-        "courses": [],
-        "github": [],
-        "practice": []
+        "documentation": [
+            {{
+                "type": "documentation",
+                "title": "string",
+                "url": "string",
+                "description": "string",
+                "difficulty": "beginner|intermediate|advanced",
+                "rating": number
+            }}
+        ],
+        "videos": [
+            {{
+                "type": "video",
+                "title": "string",
+                "url": "string",
+                "description": "string",
+                "difficulty": "beginner|intermediate|advanced",
+                "rating": number
+            }}
+        ],
+        "articles": [
+            {{
+                "type": "article",
+                "title": "string",
+                "url": "string",
+                "description": "string",
+                "difficulty": "beginner|intermediate|advanced",
+                "rating": number
+            }}
+        ],
+        "courses": [
+            {{
+                "type": "course",
+                "title": "string",
+                "url": "string",
+                "description": "string",
+                "difficulty": "beginner|intermediate|advanced",
+                "rating": number
+            }}
+        ],
+        "github": [
+            {{
+                "type": "github",
+                "title": "string",
+                "url": "string",
+                "description": "string",
+                "difficulty": "beginner|intermediate|advanced",
+                "rating": number
+            }}
+        ],
+        "practice": [
+            {{
+                "type": "practice",
+                "title": "string",
+                "url": "string",
+                "description": "string",
+                "difficulty": "beginner|intermediate|advanced",
+                "rating": number
+            }}
+        ]
     }},
     "revision_strategy": "string - detailed revision approach",
     "interview_preparation": "string - interview prep guidance",
