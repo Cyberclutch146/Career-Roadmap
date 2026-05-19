@@ -82,6 +82,8 @@ export interface Roadmap {
   generated_roadmap: GeneratedRoadmap
   created_at: string
   updated_at: string
+  completed_lessons_count?: number
+  is_public?: boolean
 }
 
 export interface User {
@@ -89,6 +91,8 @@ export interface User {
   email: string
   name: string
   created_at?: string
+  streak?: number
+  last_active?: string
 }
 
 export interface ChatMessage {

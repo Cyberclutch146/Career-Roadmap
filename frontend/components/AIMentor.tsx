@@ -6,6 +6,7 @@ import { X, Send, Bot, User, Sparkles } from 'lucide-react'
 import { Button } from './ui/Button'
 import { api } from '@/lib/api'
 import type { Roadmap, ChatMessage } from '@/types'
+import ReactMarkdown from 'react-markdown'
 
 interface AIMentorProps {
   roadmap: Roadmap
@@ -20,11 +21,65 @@ const suggestedQuestions = [
   'Help me understand this topic better',
 ]
 
+/** Renders assistant markdown content with code-block and inline-code styles */
+function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean }) {
+  return (
+    <ReactMarkdown
+      components={{
+        p: ({ children }) => (
+          <p className="text-sm leading-relaxed mb-1 last:mb-0">{children}</p>
+        ),
+        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+        em: ({ children }) => <em className="italic">{children}</em>,
+        ul: ({ children }) => (
+          <ul className="list-disc list-inside space-y-0.5 text-sm my-1">{children}</ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="list-decimal list-inside space-y-0.5 text-sm my-1">{children}</ol>
+        ),
+        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+        code: ({ inline, children }: any) =>
+          inline ? (
+            <code
+              className={`px-1 py-0.5 rounded text-xs font-mono ${
+                isUser ? 'bg-white/20 text-white' : 'bg-ink-900/10 text-ink-800'
+              }`}
+            >
+              {children}
+            </code>
+          ) : (
+            <pre
+              className={`my-2 p-3 rounded-lg text-xs font-mono overflow-x-auto whitespace-pre-wrap ${
+                isUser ? 'bg-white/20 text-white' : 'bg-ink-900 text-green-300'
+              }`}
+            >
+              <code>{children}</code>
+            </pre>
+          ),
+        blockquote: ({ children }) => (
+          <blockquote
+            className={`border-l-2 pl-3 my-1 italic text-sm ${
+              isUser ? 'border-white/40 text-white/80' : 'border-accent/40 text-ink-500'
+            }`}
+          >
+            {children}
+          </blockquote>
+        ),
+        h1: ({ children }) => <h1 className="font-bold text-base mb-1">{children}</h1>,
+        h2: ({ children }) => <h2 className="font-semibold text-sm mb-1">{children}</h2>,
+        h3: ({ children }) => <h3 className="font-semibold text-sm mb-0.5">{children}</h3>,
+      }}
+    >
+      {content}
+    </ReactMarkdown>
+  )
+}
+
 export function AIMentor({ roadmap, onClose }: AIMentorProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: `Hi! I'm your AI learning mentor for "${roadmap.goal}". I can help you understand concepts, suggest next steps, and guide you through your learning journey. What would you like to know?`,
+      content: `Hi! I'm your AI learning mentor for **"${roadmap.goal}"**. I can help you understand concepts, suggest next steps, and guide you through your learning journey. What would you like to know?`,
       timestamp: new Date().toISOString(),
     },
   ])
@@ -101,9 +156,10 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg h-[32rem] bg-white rounded-2xl shadow-lifted flex flex-col overflow-hidden"
+        className="w-full max-w-lg h-[36rem] bg-white rounded-2xl shadow-lifted flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-paper-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
@@ -111,7 +167,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
             </div>
             <div>
               <h3 className="font-serif font-bold text-ink-900">AI Mentor</h3>
-              <p className="text-xs text-ink-500">Based on your roadmap</p>
+              <p className="text-xs text-ink-500">Based on your roadmap · supports markdown</p>
             </div>
           </div>
           <button
@@ -122,6 +178,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
           </button>
         </div>
 
+        {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map((message, index) => (
             <motion.div
@@ -133,7 +190,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
               }`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
                   message.role === 'user'
                     ? 'bg-accent text-white'
                     : 'bg-paper-100 text-ink-500'
@@ -152,9 +209,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
                     : 'bg-paper-100 text-ink-700 rounded-tl-sm'
                 }`}
               >
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                  {message.content}
-                </p>
+                <MarkdownMessage content={message.content} isUser={message.role === 'user'} />
               </div>
             </motion.div>
           ))}
@@ -177,6 +232,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Input area */}
         <div className="border-t border-paper-200 p-4">
           <div className="flex flex-wrap gap-2 mb-3">
             {suggestedQuestions.slice(0, 3).map((question, index) => (

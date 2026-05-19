@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -8,20 +8,57 @@ import { Navbar } from '@/components/Navbar'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
-import { BookOpen, Mail, Lock, User } from 'lucide-react'
+import { BookOpen, Mail, Lock, User, Sparkles, CheckCircle2 } from 'lucide-react'
 import { auth } from '@/lib/firebase'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  updateProfile,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
+} from 'firebase/auth'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [isLogin, setIsLogin] = useState(true)
+  type AuthMode = 'login' | 'signup' | 'magic-link'
+  const [mode, setMode] = useState<AuthMode>('login')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [magicLinkSent, setMagicLinkSent] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
   })
+
+  // Handle incoming magic link sign in
+  useEffect(() => {
+    const handleIncomingLink = async () => {
+      if (isSignInWithEmailLink(auth, window.location.href)) {
+        let email = window.localStorage.getItem('emailForSignIn')
+        if (!email) {
+          email = window.prompt('Please enter your email to complete sign in:')
+        }
+        if (email) {
+          setIsLoading(true)
+          try {
+            await signInWithEmailLink(auth, email, window.location.href)
+            window.localStorage.removeItem('emailForSignIn')
+            router.push('/generate')
+          } catch (err: any) {
+            setError(err.message || 'Magic Link verification failed.')
+          } finally {
+            setIsLoading(false)
+          }
+        }
+      }
+    }
+    handleIncomingLink()
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,18 +66,42 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      if (isLogin) {
+      if (mode === 'login') {
         await signInWithEmailAndPassword(auth, formData.email, formData.password)
-      } else {
+        router.push('/generate')
+      } else if (mode === 'signup') {
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
         if (formData.name) {
           await updateProfile(userCredential.user, { displayName: formData.name })
         }
+        router.push('/generate')
+      } else if (mode === 'magic-link') {
+        const actionCodeSettings = {
+          url: window.location.origin + '/login',
+          handleCodeInApp: true,
+        }
+        await sendSignInLinkToEmail(auth, formData.email, actionCodeSettings)
+        window.localStorage.setItem('emailForSignIn', formData.email)
+        setMagicLinkSent(true)
       }
-      
-      router.push('/generate')
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSocialSignIn = async (providerName: 'google' | 'github') => {
+    setError(null)
+    setIsLoading(true)
+    try {
+      const provider = providerName === 'google' 
+        ? new GoogleAuthProvider() 
+        : new GithubAuthProvider()
+      await signInWithPopup(auth, provider)
+      router.push('/generate')
+    } catch (err: any) {
+      setError(err.message || `${providerName === 'google' ? 'Google' : 'GitHub'} authentication failed.`)
     } finally {
       setIsLoading(false)
     }
@@ -61,12 +122,14 @@ export default function LoginPage() {
               <BookOpen className="w-8 h-8 text-accent" />
             </div>
             <h1 className="text-2xl font-serif font-bold text-ink-900 mb-2">
-              {isLogin ? 'Welcome Back' : 'Create Account'}
+              {mode === 'login' && 'Welcome Back'}
+              {mode === 'signup' && 'Create Account'}
+              {mode === 'magic-link' && 'Passwordless Login'}
             </h1>
             <p className="text-ink-500">
-              {isLogin
-                ? 'Sign in to access your roadmaps'
-                : 'Start your learning journey today'}
+              {mode === 'login' && 'Sign in to access your roadmaps'}
+              {mode === 'signup' && 'Start your learning journey today'}
+              {mode === 'magic-link' && "We'll email you a direct sign-in link"}
             </p>
           </motion.div>
 
@@ -76,68 +139,170 @@ export default function LoginPage() {
             transition={{ delay: 0.1 }}
           >
             <Card>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {!isLogin && (
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
-                    <Input
-                      type="text"
-                      placeholder="Your name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="pl-10"
-                      required={!isLogin}
-                    />
+              {magicLinkSent ? (
+                <div className="text-center py-6 space-y-4">
+                  <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-6 h-6 text-success" />
                   </div>
-                )}
-
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
-                  <Input
-                    type="email"
-                    placeholder="Email address"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="pl-10"
-                    required
-                  />
+                  <h3 className="font-bold text-ink-900">Check your email</h3>
+                  <p className="text-sm text-ink-500">
+                    We've sent a magic link to <span className="font-semibold text-ink-700">{formData.email}</span>. Click the link in the email to log in instantly.
+                  </p>
+                  <Button variant="secondary" size="sm" onClick={() => setMagicLinkSent(false)}>
+                    Back to login
+                  </Button>
                 </div>
+              ) : (
+                <>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {mode === 'signup' && (
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
+                        <Input
+                          type="text"
+                          placeholder="Your name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="pl-10"
+                          required={mode === 'signup'}
+                        />
+                      </div>
+                    )}
 
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-10"
-                    required
-                  />
-                </div>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
+                      <Input
+                        type="email"
+                        placeholder="Email address"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
 
-                {error && (
-                  <div className="p-3 bg-error/10 text-error rounded-lg text-sm">
-                    {error}
+                    {mode !== 'magic-link' && (
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
+                        <Input
+                          type="password"
+                          placeholder="Password"
+                          value={formData.password}
+                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {error && (
+                      <div className="p-3 bg-error/10 text-error rounded-lg text-sm">
+                        {error}
+                      </div>
+                    )}
+
+                    <Button type="submit" size="lg" className="w-full" isLoading={isLoading}>
+                      {mode === 'login' && 'Sign In'}
+                      {mode === 'signup' && 'Create Account'}
+                      {mode === 'magic-link' && 'Send Magic Link'}
+                    </Button>
+                  </form>
+
+                  {/* Divider */}
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-ink-100"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-ink-300">Or continue with</span>
+                    </div>
                   </div>
-                )}
 
-                <Button type="submit" size="lg" className="w-full" isLoading={isLoading}>
-                  {isLogin ? 'Sign In' : 'Create Account'}
-                </Button>
-              </form>
+                  {/* Social SSO Buttons */}
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <button
+                      type="button"
+                      onClick={() => handleSocialSignIn('google')}
+                      disabled={isLoading}
+                      className="flex items-center justify-center gap-2 py-2.5 px-4 border border-ink-200 rounded-xl text-sm font-medium text-ink-700 hover:bg-paper-50 active:bg-paper-100 transition-colors"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path
+                          fill="#EA4335"
+                          d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.48 0-6.3-2.82-6.3-6.3s2.82-6.3 6.3-6.3c1.554 0 2.97.574 4.062 1.509l3.14-3.14C19.123 2.392 15.938 1 12.24 1 5.757 1 .5 6.257.5 12.75s5.257 11.75 11.74 11.75c6.545 0 11.76-5.22 11.76-11.75 0-.705-.075-1.4-.21-2.072l-11.55-.393z"
+                        />
+                      </svg>
+                      Google
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSocialSignIn('github')}
+                      disabled={isLoading}
+                      className="flex items-center justify-center gap-2 py-2.5 px-4 border border-ink-200 rounded-xl text-sm font-medium text-ink-700 hover:bg-paper-50 active:bg-paper-100 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.137 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+                        />
+                      </svg>
+                      GitHub
+                    </button>
+                  </div>
 
-              <div className="mt-6 text-center">
-                <p className="text-ink-500 text-sm">
-                  {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-                  <button
-                    type="button"
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-accent font-medium hover:underline"
-                  >
-                    {isLogin ? 'Sign up' : 'Sign in'}
-                  </button>
-                </p>
-              </div>
+                  <div className="mt-6 text-center space-y-2">
+                    <p className="text-ink-500 text-sm">
+                      {mode === 'login' && (
+                        <>
+                          Don't have an account?{' '}
+                          <button
+                            type="button"
+                            onClick={() => setMode('signup')}
+                            className="text-accent font-medium hover:underline"
+                          >
+                            Sign up
+                          </button>
+                        </>
+                      )}
+                      {mode === 'signup' && (
+                        <>
+                          Already have an account?{' '}
+                          <button
+                            type="button"
+                            onClick={() => setMode('login')}
+                            className="text-accent font-medium hover:underline"
+                          >
+                            Sign in
+                          </button>
+                        </>
+                      )}
+                      {mode === 'magic-link' && (
+                        <button
+                          type="button"
+                          onClick={() => setMode('login')}
+                          className="text-accent font-medium hover:underline"
+                        >
+                          Back to standard login
+                        </button>
+                      )}
+                    </p>
+
+                    {mode !== 'magic-link' && (
+                      <p className="text-xs text-ink-300">
+                        Prefer passwordless?{' '}
+                        <button
+                          type="button"
+                          onClick={() => setMode('magic-link')}
+                          className="text-accent font-medium hover:underline"
+                        >
+                          Sign in with Magic Link
+                        </button>
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
             </Card>
           </motion.div>
 

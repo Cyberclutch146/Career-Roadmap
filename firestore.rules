@@ -18,13 +18,21 @@ service cloud.firestore {
 
       // Match roadmaps subcollection
       match /roadmaps/{roadmapId} {
-        allow read, write: if isAuthenticated() && isOwner(userId);
+        allow read: if (isAuthenticated() && isOwner(userId)) || resource.data.is_public == true;
+        allow write: if isAuthenticated() && isOwner(userId);
 
         // Match progress subcollection
         match /progress/{lessonId} {
           allow read, write: if isAuthenticated() && isOwner(userId);
         }
       }
+    }
+
+    // Match public roadmaps collection
+    match /public_roadmaps/{roadmapId} {
+      allow read: if true;
+      allow create, update: if request.auth != null && request.auth.uid == request.resource.data.user_id;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.user_id;
     }
   }
 }

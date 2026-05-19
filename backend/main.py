@@ -12,7 +12,11 @@ from schemas import (
     RoadmapGenerationRequest,
     GeneratedRoadmap,
     ChatRequest,
-    ChatResponse
+    ChatResponse,
+    AssessmentRequest,
+    AssessmentResponse,
+    InterviewChatRequest,
+    InterviewChatResponse
 )
 from services.ai_service import AIService
 from services.auth import get_optional_user
@@ -84,7 +88,8 @@ async def generate_roadmap(
         skill_level=body.skill_level.value,
         daily_hours=body.daily_hours,
         learning_style=body.learning_style.value,
-        target_months=body.target_months
+        target_months=body.target_months,
+        assessment_score=body.assessment_score
     )
 
     now = datetime.now(timezone.utc)
@@ -102,6 +107,44 @@ async def generate_roadmap(
         "created_at": now.isoformat(),
         "updated_at": now.isoformat()
     }
+
+# ---------------------------------------------------------------------------
+# Assessments & Interview Prep
+# ---------------------------------------------------------------------------
+
+@app.post("/api/assessment/generate", response_model=AssessmentResponse)
+@limiter.limit("10/minute")
+async def generate_assessment(
+    request: Request,
+    body: AssessmentRequest
+):
+    questions = await ai_service.generate_assessment_quiz(
+        goal=body.goal,
+        skill_level=body.skill_level
+    )
+    return AssessmentResponse(questions=questions)
+
+
+@app.post("/api/interview/chat", response_model=InterviewChatResponse)
+@limiter.limit("20/minute")
+async def interview_chat(
+    request: Request,
+    body: InterviewChatRequest
+):
+    result = await ai_service.generate_interview_response(
+        roadmap_goal=body.roadmap_goal,
+        phase_name=body.phase_name,
+        phase_description=body.phase_description,
+        user_answer=body.user_answer,
+        history=body.history
+    )
+    return InterviewChatResponse(
+        next_question=result["next_question"],
+        feedback=result["feedback"],
+        final_evaluation=result["final_evaluation"],
+        history=result["history"]
+    )
+
 
 # ---------------------------------------------------------------------------
 # Chat / AI Mentor

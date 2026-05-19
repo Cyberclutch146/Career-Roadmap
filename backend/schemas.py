@@ -23,6 +23,39 @@ class RoadmapGenerationRequest(BaseModel):
     daily_hours: float = Field(..., gt=0, le=8)
     learning_style: LearningStyle
     target_months: int = Field(..., gt=0, le=36)
+    assessment_score: Optional[float] = None
+
+
+class AssessmentRequest(BaseModel):
+    goal: str
+    skill_level: str
+
+
+class QuizQuestion(BaseModel):
+    question: str
+    options: List[str]
+    answer_index: int
+    explanation: str
+
+
+class AssessmentResponse(BaseModel):
+    questions: List[QuizQuestion]
+
+
+class InterviewChatRequest(BaseModel):
+    roadmap_goal: str
+    phase_name: str
+    phase_description: str
+    user_answer: str
+    history: List[Dict[str, Any]] = []
+
+
+class InterviewChatResponse(BaseModel):
+    next_question: Optional[str] = None
+    feedback: Optional[str] = None
+    final_evaluation: Optional[str] = None
+    history: List[Dict[str, Any]]
+
 
 
 class ResourceItem(BaseModel):

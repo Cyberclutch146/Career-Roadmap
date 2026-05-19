@@ -14,6 +14,8 @@ import {
   BookOpen,
   Github,
   FileText,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react'
 import { formatDuration } from '@/lib/utils'
 import type { Phase, Chapter, Lesson, ResourceItem } from '@/types'
@@ -21,14 +23,18 @@ import type { Phase, Chapter, Lesson, ResourceItem } from '@/types'
 interface ChapterListProps {
   phases: Phase[]
   completedLessons: Set<string>
+  bookmarkedLessons: Set<string>
   onToggleLesson: (lessonId: string) => void
+  onToggleBookmark: (lessonId: string) => void
   onSelectLesson: (lesson: Lesson) => void
 }
 
 export function ChapterList({
   phases,
   completedLessons,
+  bookmarkedLessons,
   onToggleLesson,
+  onToggleBookmark,
   onSelectLesson,
 }: ChapterListProps) {
   const [expandedPhases, setExpandedPhases] = useState<Set<string>>(
@@ -150,6 +156,7 @@ export function ChapterList({
                         <div className="space-y-2">
                           {chapter.lessons.map((lesson) => {
                             const isCompleted = completedLessons.has(lesson.id)
+                            const isBookmarked = bookmarkedLessons.has(lesson.id)
                             return (
                               <div
                                 key={lesson.id}
@@ -159,9 +166,11 @@ export function ChapterList({
                                     : 'bg-white border border-paper-200 hover:border-paper-300'
                                 }`}
                               >
+                                {/* Completion toggle */}
                                 <button
                                   onClick={() => onToggleLesson(lesson.id)}
                                   className="mt-0.5 flex-shrink-0"
+                                  title={isCompleted ? 'Mark incomplete' : 'Mark complete'}
                                 >
                                   {isCompleted ? (
                                     <CheckCircle2 className="w-5 h-5 text-success" />
@@ -169,6 +178,8 @@ export function ChapterList({
                                     <Circle className="w-5 h-5 text-ink-300 hover:text-accent transition-colors" />
                                   )}
                                 </button>
+
+                                {/* Lesson title + meta */}
                                 <div className="flex-1 min-w-0">
                                   <div
                                     className={`font-medium cursor-pointer ${
@@ -188,6 +199,12 @@ export function ChapterList({
                                     {lesson.resources.length > 0 && (
                                       <span className="text-xs text-ink-300">
                                         {lesson.resources.length} resources
+                                      </span>
+                                    )}
+                                    {isBookmarked && (
+                                      <span className="text-xs text-amber-500 flex items-center gap-0.5 font-medium">
+                                        <BookmarkCheck className="w-3 h-3" />
+                                        Saved
                                       </span>
                                     )}
                                   </div>
@@ -212,6 +229,26 @@ export function ChapterList({
                                     </div>
                                   )}
                                 </div>
+
+                                {/* Bookmark toggle */}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    onToggleBookmark(lesson.id)
+                                  }}
+                                  title={isBookmarked ? 'Remove bookmark' : 'Bookmark this lesson'}
+                                  className={`mt-0.5 flex-shrink-0 transition-colors ${
+                                    isBookmarked
+                                      ? 'text-amber-500 hover:text-amber-600'
+                                      : 'text-ink-200 hover:text-amber-400'
+                                  }`}
+                                >
+                                  {isBookmarked ? (
+                                    <BookmarkCheck className="w-4 h-4" />
+                                  ) : (
+                                    <Bookmark className="w-4 h-4" />
+                                  )}
+                                </button>
                               </div>
                             )
                           })}

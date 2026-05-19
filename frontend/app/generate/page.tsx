@@ -10,9 +10,16 @@ import { Select } from '@/components/ui/Select'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
 import { useStore } from '@/store'
 import { api } from '@/lib/api'
-import { Sparkles, Clock, Target, BookOpen, ArrowRight } from 'lucide-react'
+import { Sparkles, Clock, Target, BookOpen, ArrowRight, HelpCircle, Award, CheckCircle, Loader2 } from 'lucide-react'
 import type { RoadmapFormData, SkillLevel, LearningStyle, Roadmap } from '@/types'
 import type { AxiosError } from 'axios'
+
+interface QuizQuestion {
+  question: string
+  options: string[]
+  answer_index: number
+  explanation: string
+}
 
 const skillLevelOptions = [
   { value: 'beginner', label: 'Beginner - No prior knowledge' },
@@ -59,6 +66,62 @@ export default function GeneratePage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setLocalError] = useState<string | null>(null)
 
+  // Pre-assessment state
+  const [isQuizLoading, setIsQuizLoading] = useState(false)
+  const [showQuizModal, setShowQuizModal] = useState(false)
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>([])
+  const [quizScore, setQuizScore] = useState<number | null>(null)
+  const [assessmentScore, setAssessmentScore] = useState<number | null>(null)
+
+  const handleStartQuiz = async () => {
+    if (!formData.goal.trim()) {
+      setLocalError('Please enter your learning goal first to generate a relevant assessment.')
+      return
+    }
+    setLocalError(null)
+    setIsQuizLoading(true)
+    try {
+      const res = await api.post<{ questions: QuizQuestion[] }>('/api/assessment/generate', {
+        goal: formData.goal,
+        skill_level: formData.skill_level,
+      })
+      setQuizQuestions(res.data.questions)
+      setCurrentQuestionIndex(0)
+      setSelectedAnswers([])
+      setQuizScore(null)
+      setShowQuizModal(true)
+    } catch (err) {
+      console.error(err)
+      setLocalError('Failed to generate assessment quiz. Please try again.')
+    } finally {
+      setIsQuizLoading(false)
+    }
+  }
+
+  const handleSelectOption = (optIndex: number) => {
+    const newAnswers = [...selectedAnswers]
+    newAnswers[currentQuestionIndex] = optIndex
+    setSelectedAnswers(newAnswers)
+  }
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < quizQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
+    } else {
+      let correct = 0
+      quizQuestions.forEach((q, idx) => {
+        if (selectedAnswers[idx] === q.answer_index) {
+          correct++
+        }
+      })
+      const finalScore = correct / quizQuestions.length
+      setQuizScore(correct)
+      setAssessmentScore(finalScore)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.goal.trim()) {
@@ -76,6 +139,7 @@ export default function GeneratePage() {
         daily_hours: formData.daily_hours,
         learning_style: formData.learning_style,
         target_months: formData.target_months,
+        assessment_score: assessmentScore,
       })
 
       const roadmap = response.data
@@ -204,6 +268,42 @@ export default function GeneratePage() {
                   onChange={(e) => setFormData({ ...formData, target_months: parseInt(e.target.value) })}
                 />
 
+                {/* Pre-Assessment Card */}
+                <div className="bg-paper-100 border border-paper-300 rounded-xl p-4.5 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-bold text-ink-900 flex items-center gap-1.5">
+                        <Award className="w-4 h-4 text-accent" />
+                        Skill Assessment (Optional)
+                      </h4>
+                      <p className="text-xs text-ink-500 leading-relaxed">
+                        Take a quick 5-question AI quiz on your goal. If you score 70% or higher, we will customize your roadmap by pre-completing introductory topics for you!
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleStartQuiz}
+                      isLoading={isQuizLoading}
+                      className="text-xs py-2"
+                    >
+                      {assessmentScore !== null ? 'Retake Quiz' : 'Take Quiz'}
+                    </Button>
+                  </div>
+                  {assessmentScore !== null && (
+                    <div className="bg-success/5 border border-success/20 rounded-lg p-3 text-xs text-success-dark flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                      <span>
+                        Assessment recorded: <strong>{quizScore}/5 ({Math.round(assessmentScore * 100)}%)</strong>.
+                        {assessmentScore >= 0.7 
+                          ? ' Introductory lessons will be marked completed so you can skip ahead!' 
+                          : ' We will tailor your roadmap explanations to support your level.'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
                 {error && (
                   <div className="p-4 bg-error/10 text-error rounded-lg text-sm">
                     {error}
@@ -261,6 +361,110 @@ export default function GeneratePage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Quiz Modal */}
+      {showQuizModal && quizQuestions.length > 0 && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl border border-paper-300 w-full max-w-lg shadow-2xl overflow-hidden flex flex-col"
+          >
+            {/* Modal Header */}
+            <div className="bg-paper-100 border-b border-paper-200 px-6 py-4 flex justify-between items-center">
+              <h3 className="font-serif font-bold text-lg text-ink-900 flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-accent" />
+                Assessment: {formData.goal}
+              </h3>
+              {quizScore === null && (
+                <span className="text-xs font-semibold text-ink-400 bg-white px-2.5 py-1 rounded-full border border-paper-200">
+                  Question {currentQuestionIndex + 1} of {quizQuestions.length}
+                </span>
+              )}
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 flex-1 overflow-y-auto min-h-[300px]">
+              {quizScore === null ? (
+                <div className="space-y-4">
+                  <h4 className="font-medium text-ink-900 leading-relaxed text-base">
+                    {quizQuestions[currentQuestionIndex].question}
+                  </h4>
+                  <div className="space-y-2.5 pt-2">
+                    {quizQuestions[currentQuestionIndex].options.map((option, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSelectOption(idx)}
+                        className={`w-full p-4 text-left text-sm rounded-xl border transition-all flex items-start gap-3 ${
+                          selectedAnswers[currentQuestionIndex] === idx
+                            ? 'border-accent bg-accent/5 text-accent font-medium'
+                            : 'border-paper-200 hover:border-paper-300 bg-white text-ink-700'
+                        }`}
+                      >
+                        <span className={`w-5 h-5 rounded-full flex items-center justify-center border text-xs font-bold ${
+                          selectedAnswers[currentQuestionIndex] === idx
+                            ? 'border-accent bg-accent text-white'
+                            : 'border-paper-300 text-ink-400'
+                        }`}>
+                          {String.fromCharCode(65 + idx)}
+                        </span>
+                        <span className="flex-1">{option}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6 text-center py-4">
+                  <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto shadow-sm">
+                    <Award className="w-8 h-8" />
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-serif font-bold text-xl text-ink-900">Quiz Completed!</h4>
+                    <p className="text-3xl font-extrabold text-accent">
+                      {quizScore} / {quizQuestions.length}
+                    </p>
+                    <p className="text-sm text-ink-500 max-w-sm mx-auto">
+                      {assessmentScore !== null && assessmentScore >= 0.7
+                        ? "Excellent job! You've shown solid competency. We'll automatically customize your roadmap by skipping basic topics."
+                        : "Thanks for taking the assessment! We'll tailor your roadmap to ensure you cover all necessary fundamentals."}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-paper-100 border-t border-paper-200 px-6 py-4 flex justify-end gap-3">
+              {quizScore === null ? (
+                <>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowQuizModal(false)}
+                    className="text-xs"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleNextQuestion}
+                    disabled={selectedAnswers[currentQuestionIndex] === undefined}
+                    className="text-xs"
+                  >
+                    {currentQuestionIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question'}
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={() => setShowQuizModal(false)}
+                  className="text-xs"
+                >
+                  Done
+                </Button>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

@@ -20,41 +20,144 @@ import {
   TrendingUp,
   Sparkles,
 } from 'lucide-react'
+import { useState } from 'react'
 import type { Roadmap } from '@/types'
+import { ProgressCalendar, CompletionItem } from '@/components/ProgressCalendar'
 
 export default function DashboardPage() {
   const router = useRouter()
   const { user, savedRoadmaps, setSavedRoadmaps } = useStore()
+  const [completions, setCompletions] = useState<CompletionItem[]>([])
 
   useEffect(() => {
-    if (!user) return
     const fetchRoadmaps = async () => {
-      try {
-        const { collection, getDocs } = await import('firebase/firestore')
-        const { db } = await import('@/lib/firebase')
-        
-        const roadmapsRef = collection(db, 'users', user.id, 'roadmaps')
-        const querySnapshot = await getDocs(roadmapsRef)
-        const roadmaps: Roadmap[] = []
-        
-        querySnapshot.forEach((doc) => {
-          roadmaps.push({ id: doc.id, ...doc.data() } as Roadmap)
-        })
-        
-        // Sort by created_at descending (assuming they have a timestamp)
-        roadmaps.sort((a, b) => {
-          const timeA = new Date(a.created_at || 0).getTime()
-          const timeB = new Date(b.created_at || 0).getTime()
-          return timeB - timeA
-        })
-        
-        setSavedRoadmaps(roadmaps)
-      } catch (err) {
-        console.error("Failed to fetch roadmaps from Firestore", err)
+      if (user) {
+        try {
+          const { collection, getDocs } = await import('firebase/firestore')
+          const { db } = await import('@/lib/firebase')
+          
+          const roadmapsRef = collection(db, 'users', user.id, 'roadmaps')
+          const querySnapshot = await getDocs(roadmapsRef)
+          const roadmaps: Roadmap[] = []
+          const allCompletions: CompletionItem[] = []
+          
+          for (const docSnap of querySnapshot.docs) {
+            const rData = docSnap.data() as Roadmap
+            const progressRef = collection(db, 'users', user.id, 'roadmaps', docSnap.id, 'progress')
+            const progressSnapshot = await getDocs(progressRef)
+            let completedCount = 0
+            
+            progressSnapshot.forEach(pDoc => {
+              const pData = pDoc.data()
+              if (pData.completed) {
+                completedCount++
+                
+                // Find lesson title
+                let lessonTitle = 'Completed Lesson'
+                for (const phase of rData.generated_roadmap.phases) {
+                  for (const chapter of phase.chapters) {
+                    for (const lesson of chapter.lessons) {
+                      if (lesson.id === pDoc.id) {
+                        lessonTitle = lesson.title
+                        break
+                      }
+                    }
+                  }
+                }
+
+                allCompletions.push({
+                  roadmapId: docSnap.id,
+                  roadmapTitle: rData.generated_roadmap.overview.title,
+                  lessonId: pDoc.id,
+                  lessonTitle,
+                  completedAt: pData.completed_at || rData.updated_at || rData.created_at || new Date().toISOString()
+                })
+              }
+            })
+            
+            roadmaps.push({
+              ...rData,
+              id: docSnap.id,
+              completed_lessons_count: completedCount
+            } as Roadmap)
+          }
+          
+          // Sort by created_at descending
+          roadmaps.sort((a, b) => {
+            const timeA = new Date(a.created_at || 0).getTime()
+            const timeB = new Date(b.created_at || 0).getTime()
+            return timeB - timeA
+          })
+          
+          setSavedRoadmaps(roadmaps)
+          
+          // Sort completions descending by date
+          allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+          setCompletions(allCompletions)
+        } catch (err) {
+          console.error("Failed to fetch roadmaps from Firestore", err)
+        }
+      } else {
+        // Handle guest/offline mode from localStorage
+        try {
+          const allCompletions: CompletionItem[] = []
+          const roadmaps: Roadmap[] = []
+          
+          // Let's see if we can find guest roadmaps in localStorage
+          // Usually guest roadmaps are saved under dynamic keys or not, but we can query localStorage keys
+          const keys = Object.keys(window.localStorage)
+          const roadmapKeys = keys.filter(k => k.startsWith('roadmap_') || k.match(/^[a-zA-Z0-9_-]{20,}$/))
+          
+          for (const key of keys) {
+            if (key.startsWith('progress_dates_')) {
+              const roadmapId = key.replace('progress_dates_', '')
+              const savedDatesRaw = window.localStorage.getItem(key)
+              const savedRoadmapRaw = window.localStorage.getItem(`roadmap_${roadmapId}`)
+              
+              if (savedDatesRaw && savedRoadmapRaw) {
+                const savedDates = JSON.parse(savedDatesRaw) as { [lessonId: string]: string }
+                const rData = JSON.parse(savedRoadmapRaw) as Roadmap
+                
+                Object.entries(savedDates).forEach(([lessonId, completedAt]) => {
+                  let lessonTitle = 'Completed Lesson'
+                  for (const phase of rData.generated_roadmap.phases) {
+                    for (const chapter of phase.chapters) {
+                      for (const lesson of chapter.lessons) {
+                        if (lesson.id === lessonId) {
+                          lessonTitle = lesson.title
+                          break
+                        }
+                      }
+                    }
+                  }
+                  
+                  allCompletions.push({
+                    roadmapId,
+                    roadmapTitle: rData.generated_roadmap.overview.title,
+                    lessonId,
+                    lessonTitle,
+                    completedAt
+                  })
+                })
+              }
+            }
+          }
+          allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+          setCompletions(allCompletions)
+        } catch (e) {
+          console.error("Failed to fetch guest completions:", e)
+        }
       }
     }
     fetchRoadmaps()
   }, [user, setSavedRoadmaps])
+
+  const totalCompletedLessons = savedRoadmaps.reduce(
+    (sum, rm) => sum + (rm.completed_lessons_count || 0),
+    0
+  )
+
+  const dayStreak = user?.streak || 0
 
   return (
     <div className="min-h-screen bg-paper-50">
@@ -99,7 +202,7 @@ export default function DashboardPage() {
                 <div className="w-12 h-12 bg-success/10 rounded-xl flex items-center justify-center mx-auto mb-3">
                   <TrendingUp className="w-6 h-6 text-success" />
                 </div>
-                <div className="text-2xl font-bold text-ink-900">0</div>
+                <div className="text-2xl font-bold text-ink-900">{totalCompletedLessons}</div>
                 <div className="text-sm text-ink-500">Lessons Completed</div>
               </Card>
             </motion.div>
@@ -113,7 +216,7 @@ export default function DashboardPage() {
                 <div className="w-12 h-12 bg-warning/10 rounded-xl flex items-center justify-center mx-auto mb-3">
                   <Calendar className="w-6 h-6 text-warning" />
                 </div>
-                <div className="text-2xl font-bold text-ink-900">0</div>
+                <div className="text-2xl font-bold text-ink-900">{dayStreak}</div>
                 <div className="text-sm text-ink-500">Day Streak</div>
               </Card>
             </motion.div>
@@ -132,6 +235,15 @@ export default function DashboardPage() {
                 <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
+          </motion.div>
+
+          {/* Progress & Consistency Heatmap Calendar */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.28 }}
+          >
+            <ProgressCalendar completions={completions} streak={dayStreak} />
           </motion.div>
 
           <motion.div
@@ -177,7 +289,7 @@ export default function DashboardPage() {
 
 function RoadmapCard({ roadmap }: { roadmap: Roadmap }) {
   const totalLessons = roadmap.generated_roadmap.overview.total_lessons
-  const completedLessons = 0
+  const completedLessons = roadmap.completed_lessons_count || 0
   const progress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
   return (

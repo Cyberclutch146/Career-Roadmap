@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Merriweather, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
+import { MobileNav } from '@/components/MobileNav'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -33,9 +34,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${merriweather.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen bg-paper-50">
+      <body className="min-h-screen bg-paper-50 pb-16 md:pb-0">
         <AuthProvider>
           {children}
+          <MobileNav />
         </AuthProvider>
       </body>
     </html>

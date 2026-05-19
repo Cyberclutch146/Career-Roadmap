@@ -27,10 +27,11 @@ class AIService:
         skill_level: str,
         daily_hours: float,
         learning_style: str,
-        target_months: int
+        target_months: int,
+        assessment_score: Optional[float] = None
     ) -> Dict[str, Any]:
         prompt = self._create_roadmap_prompt(
-            goal, skill_level, daily_hours, learning_style, target_months
+            goal, skill_level, daily_hours, learning_style, target_months, assessment_score
         )
 
         if self.model:
@@ -50,9 +51,19 @@ class AIService:
         skill_level: str,
         daily_hours: float,
         learning_style: str,
-        target_months: int
+        target_months: int,
+        assessment_score: Optional[float] = None
     ) -> str:
         total_hours_estimate = daily_hours * 30 * target_months
+
+        assessment_instr = ""
+        if assessment_score is not None:
+            assessment_instr = f"\nUser has taken a skill assessment for this goal and scored {assessment_score * 100:.1f}%. "
+            if assessment_score >= 0.7:
+                assessment_instr += "Since they scored high, you MUST customize the roadmap by pre-marking basic/introductory lessons or chapters as completed. That is, set 'completed': true for the lessons and chapters that cover simple definitions, setup, or core concepts the user already demonstrated knowledge of. This allows them to skip ahead."
+            else:
+                assessment_instr += "Since they scored lower/medium, do not pre-complete lessons but ensure explanations and exercises are helpful and tailored to their current skill level."
+
 
         return f"""You are an expert educational advisor creating a comprehensive learning roadmap.
 
@@ -200,7 +211,7 @@ Important:
 5. Provide 2-3 resources per lesson
 6. Resources should be real or realistic (use realistic URLs like example.com for fictional)
 7. Timelines should be proportional to the target duration
-8. Lessons should build progressively from fundamentals to advanced topics
+8. Lessons should build progressively from fundamentals to advanced topics{assessment_instr}
 
 Return ONLY the JSON, no additional text or explanation."""
 
@@ -1136,3 +1147,186 @@ If asking what to learn next, reference their roadmap phases and chapters.
             "reply": reply,
             "suggestions": suggestions
         }
+
+    async def generate_assessment_quiz(self, goal: str, skill_level: str) -> List[Dict[str, Any]]:
+        prompt = f"""You are an expert technical interviewer.
+Generate 5 multiple-choice questions to assess a user's knowledge for the goal: "{goal}" at a "{skill_level}" level.
+The questions should test key concepts of this domain.
+
+Return ONLY a JSON array containing exactly 5 question objects, with this exact structure:
+[
+  {{
+    "question": "string - clear and conceptual question",
+    "options": ["option A", "option B", "option C", "option D"],
+    "answer_index": number (0 to 3),
+    "explanation": "string - brief educational explanation of why the answer is correct"
+  }}
+]
+
+Return only valid JSON, no markdown formatting (like ```json), no surrounding text."""
+        
+        if self.model:
+            try:
+                response = await self.model.generate_content_async(prompt)
+                text = response.text.strip()
+                # Clean markdown wrapper if generated
+                if text.startswith("```json"):
+                    text = text[7:]
+                if text.startswith("```"):
+                    text = text[3:]
+                if text.endswith("```"):
+                    text = text[:-3]
+                return json.loads(text.strip())
+            except Exception as e:
+                print(f"Error generating assessment: {e}")
+        
+        # Fallback assessment questions
+        return [
+            {
+                "question": f"What is the primary foundation of {goal}?",
+                "options": ["Understanding the core principles", "Using libraries without studying basics", "Ignoring best practices", "Copying code blindly"],
+                "answer_index": 0,
+                "explanation": "A strong foundation requires understanding the core principles first."
+            },
+            {
+                "question": f"Which of the following is a recommended practice in {goal}?",
+                "options": ["Continuous learning and practicing", "Memorizing code snippets", "Never testing the code", "Avoiding documentation"],
+                "answer_index": 0,
+                "explanation": "Active learning, testing, and documentation are crucial for success."
+            },
+            {
+                "question": "What is the role of version control (like Git) in software development?",
+                "options": ["To track changes and collaborate", "To write faster code", "To compile the application", "To design user interfaces"],
+                "answer_index": 0,
+                "explanation": "Git helps track revisions, manage code history, and coordinate work among developers."
+            },
+            {
+                "question": "How do you handle difficult concepts when learning a new technology?",
+                "options": ["Break them down into smaller pieces and build mini-projects", "Skip them completely", "Complain on social media", "Wait for someone else to do it"],
+                "answer_index": 0,
+                "explanation": "Breaking complex subjects down into small, digestible parts and implementing them makes learning effective."
+            },
+            {
+                "question": "Why is writing clean code important?",
+                "options": ["It makes code easier to read, maintain, and debug", "It is required for code execution", "It makes the program run 10x faster", "It is only for experts"],
+                "answer_index": 0,
+                "explanation": "Clean code ensures readability and long-term maintainability of a software project."
+            }
+        ]
+
+    async def generate_interview_response(
+        self,
+        roadmap_goal: str,
+        phase_name: str,
+        phase_description: str,
+        user_answer: str,
+        history: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Manages a conversational AI mock interview session.
+        If history is empty, it starts the interview and returns the first question.
+        If history has questions and user_answer is provided, it evaluates the user's answer,
+        provides feedback, and either asks the next question or finishes the interview with a final evaluation.
+        """
+        total_questions = 3
+        current_question_index = len(history)
+
+        if current_question_index == 0:
+            prompt = f"""You are an elite technical interviewer. Start a mock interview for a candidate learning "{roadmap_goal}", focusing on the phase: "{phase_name}" ({phase_description}).
+Ask the FIRST question. Keep it clear, conceptual, and relevant to the phase's topics.
+Do not say hello or provide intro filler, just output the interview question directly in 1-2 sentences."""
+            
+            question = f"Could you explain the core concepts of {phase_name} and how they are typically applied?"
+            if self.model:
+                try:
+                    response = await self.model.generate_content_async(prompt)
+                    question = response.text.strip()
+                except Exception as e:
+                    print(f"Error starting interview: {e}")
+            
+            return {
+                "next_question": question,
+                "feedback": None,
+                "final_evaluation": None,
+                "history": [{"question": question, "answer": None, "feedback": None}]
+            }
+        
+        last_question = history[-1]["question"]
+        
+        eval_prompt = f"""You are an elite technical interviewer.
+Candidate is interviewing for "{roadmap_goal}" in the phase "{phase_name}" ({phase_description}).
+
+Question asked: {last_question}
+Candidate's answer: {user_answer}
+
+Provide constructive feedback (2-3 sentences) evaluating their answer. Mention what they got right, and any missing details. Be encouraging but honest.
+Output ONLY the feedback, no filler."""
+
+        feedback = "Good start! You covered the basics, but make sure to focus on efficiency and best practices."
+        if self.model:
+            try:
+                response = await self.model.generate_content_async(eval_prompt)
+                feedback = response.text.strip()
+            except Exception as e:
+                print(f"Error evaluating answer: {e}")
+        
+        updated_history = list(history)
+        updated_history[-1]["answer"] = user_answer
+        updated_history[-1]["feedback"] = feedback
+
+        if current_question_index < total_questions:
+            next_prompt = f"""You are an elite technical interviewer.
+Candidate is interviewing for "{roadmap_goal}" in the phase "{phase_name}" ({phase_description}).
+Here is the interview history so far:
+{json.dumps(updated_history, indent=2)}
+
+Ask the NEXT question (Question {current_question_index + 1} of {total_questions}) for this phase.
+Ensure it doesn't overlap with the questions already asked.
+Output ONLY the question directly in 1-2 sentences, no filler."""
+
+            next_question = "What are the common strategies for managing this type of workflow, and how do you handle issues?"
+            if self.model:
+                try:
+                    response = await self.model.generate_content_async(next_prompt)
+                    next_question = response.text.strip()
+                except Exception as e:
+                    print(f"Error asking next question: {e}")
+            
+            updated_history.append({"question": next_question, "answer": None, "feedback": None})
+            
+            return {
+                "next_question": next_question,
+                "feedback": feedback,
+                "final_evaluation": None,
+                "history": updated_history
+            }
+        else:
+            summary_prompt = f"""You are an elite technical interviewer.
+Candidate completed a mock interview for "{roadmap_goal}" in the phase "{phase_name}".
+Here is the full interview transcript:
+{json.dumps(updated_history, indent=2)}
+
+Provide a final evaluation report for the candidate.
+Include:
+1. Overall Interview Score (out of 100).
+2. Key Strengths.
+3. Areas for Improvement.
+4. Clear recommendation on whether they should move to the next phase or review current topics.
+
+Output the evaluation in clean Markdown format. Keep it concise, professional, and highly actionable."""
+
+            final_evaluation = "### Interview Completed\n\n**Score: 80/100**\n\n*   **Strengths:** Good understanding of foundational concepts.\n*   **Improvement areas:** Dive deeper into implementation details and performance optimization."
+            if self.model:
+                try:
+                    response = await self.model.generate_content_async(summary_prompt)
+                    final_evaluation = response.text.strip()
+                except Exception as e:
+                    print(f"Error generating final evaluation: {e}")
+            
+            return {
+                "next_question": None,
+                "feedback": feedback,
+                "final_evaluation": final_evaluation,
+                "history": updated_history
+            }
+
