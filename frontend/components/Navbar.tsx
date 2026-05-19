@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, LogOut, User as UserIcon, LayoutDashboard } from 'lucide-react'
 import { Button } from './ui/Button'
 import { useStore } from '@/store'
-import { auth } from '@/lib/firebase'
-import { signOut } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 
 export function Navbar() {
@@ -27,16 +25,11 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth)
-      logout()
-      setIsDropdownOpen(false)
-      setIsMenuOpen(false)
-      router.push('/')
-    } catch (error) {
-      console.error('Sign out error:', error)
-    }
+  const handleLogout = () => {
+    logout()
+    setIsDropdownOpen(false)
+    setIsMenuOpen(false)
+    router.push('/')
   }
 
   const baseLinks = [

@@ -1,10 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import { useStore } from '@/store'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 const isPublicPath = (path: string) => {
   if (path === '/' || path === '/login' || path === '/gallery') return true
@@ -12,33 +10,26 @@ const isPublicPath = (path: string) => {
   return false
 }
 
-const isRedirectIfLoggedInPath = (path: string) => {
-  return path === '/' || path === '/login'
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { setUser } = useStore()
-  const router = useRouter()
+  const { user, setUser } = useStore()
   const pathname = usePathname()
   const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
-    // Bypass authentication: Set a mock user
-    const mockUser = {
-      id: 'mock-user-123',
-      email: 'learner@roadmap.ai',
-      name: 'Alex Learner',
-      streak: 5,
-      last_active: new Date().toISOString().split('T')[0]
+    // If accessing a non-public path (e.g., /dashboard, /generate) and there is no user,
+    // automatically set the mock user to bypass auth.
+    if (!isPublicPath(pathname) && !user) {
+      const mockUser = {
+        id: 'mock-user-123',
+        email: 'learner@roadmap.ai',
+        name: 'Alex Learner',
+        streak: 5,
+        last_active: new Date().toISOString().split('T')[0]
+      }
+      setUser(mockUser)
     }
-    setUser(mockUser)
     setIsInitializing(false)
-
-    // Redirect to dashboard if logged in and accessing landing/login paths
-    if (isRedirectIfLoggedInPath(pathname)) {
-      router.push('/dashboard')
-    }
-  }, [setUser, pathname, router])
+  }, [setUser, pathname, user])
 
   if (isInitializing) {
     return (

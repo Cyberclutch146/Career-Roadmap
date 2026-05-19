@@ -20,28 +20,11 @@ if not firebase_admin._apps:
         firebase_admin.initialize_app()
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))
 ) -> Dict[str, Any]:
-    token = credentials.credentials
-    try:
-        decoded_token = auth.verify_id_token(token)
-        return {"user_id": decoded_token.get("uid"), "email": decoded_token.get("email")}
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired Firebase token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    return {"user_id": "mock-user-123", "email": "learner@roadmap.ai"}
 
 async def get_optional_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))
 ) -> Optional[Dict[str, Any]]:
-    if credentials is None:
-        return None
-
-    token = credentials.credentials
-    try:
-        decoded_token = auth.verify_id_token(token)
-        return {"user_id": decoded_token.get("uid"), "email": decoded_token.get("email")}
-    except Exception:
-        return None
+    return {"user_id": "mock-user-123", "email": "learner@roadmap.ai"}

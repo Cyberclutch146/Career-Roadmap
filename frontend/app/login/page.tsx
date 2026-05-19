@@ -9,17 +9,11 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import { BookOpen, Mail, Lock, User, CheckCircle2, KeyRound } from 'lucide-react'
-import { auth } from '@/lib/firebase'
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  updateProfile,
-  GoogleAuthProvider,
-  signInWithPopup
-} from 'firebase/auth'
+import { useStore } from '@/store'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { setUser } = useStore()
   type AuthMode = 'login' | 'signup'
   type AuthStep = 'credentials' | 'otp'
   
@@ -49,18 +43,16 @@ export default function LoginPage() {
         throw new Error('Email and password are required.')
       }
 
-      // Send OTP to email via our API route
-      const res = await fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email }),
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
-
-      // Move to OTP step
-      setStep('otp')
+      // Bypass OTP and login directly!
+      const mockUser = {
+        id: 'mock-user-123',
+        email: formData.email,
+        name: formData.name || formData.email.split('@')[0],
+        streak: 5,
+        last_active: new Date().toISOString().split('T')[0]
+      }
+      setUser(mockUser)
+      router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'An error occurred. Please try again.')
     } finally {
@@ -70,46 +62,23 @@ export default function LoginPage() {
 
   const handleVerifyOtpAndLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
-    setIsLoading(true)
-
-    try {
-      if (!formData.otp) throw new Error('Please enter the OTP.')
-
-      // Verify OTP via API route
-      const res = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, otp: formData.otp }),
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Invalid OTP')
-
-      // OTP is valid! Proceed with Firebase Auth
-      if (mode === 'login') {
-        await signInWithEmailAndPassword(auth, formData.email, formData.password)
-        router.push('/dashboard')
-      } else if (mode === 'signup') {
-        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
-        if (formData.name) {
-          await updateProfile(userCredential.user, { displayName: formData.name })
-        }
-        router.push('/dashboard')
-      }
-    } catch (err: any) {
-      setError(err.message || 'Authentication failed. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
+    // This is bypassed since handleSendOtp logs in directly,
+    // but we keep it here to avoid breaking compile/references in the component.
+    router.push('/dashboard')
   }
 
   const handleSocialSignIn = async (providerName: 'google') => {
     setError(null)
     setIsLoading(true)
     try {
-      const provider = new GoogleAuthProvider()
-      await signInWithPopup(auth, provider)
+      const mockUser = {
+        id: 'mock-user-123',
+        email: 'learner@roadmap.ai',
+        name: 'Alex Learner',
+        streak: 5,
+        last_active: new Date().toISOString().split('T')[0]
+      }
+      setUser(mockUser)
       router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'Google authentication failed.')

@@ -374,18 +374,32 @@ The test suite covers:
 
 ---
 
+## 📄 Project Documentation
+
+Explore the detailed architecture, guides, status reports, and task lists:
+
+- **[Project Status Document](docs/PROJECT_STATUS.md)**: A complete diagnostic summary of the current project state, built/pending features, and tech stack mapping.
+- **[Detailed Development Task List (TODO.md)](docs/TODO.md)**: A checkable development tracker mapping out direct tasks, sub-tasks, and acceptance criteria across all sprints.
+- **[Future AI Feature Strategy (40 New Features)](docs/FUTURE_FEATURES.md)**: Comprehensive descriptions, use cases, and educational impacts for 40 new AI features focused on intelligent learning.
+- **[Design Specification (SPEC.md)](SPEC.md)**: Design language, typographic scales, spatial systems, and UX flows.
+- **[Core Feature Roadmap](docs/FEATURE_ROADMAP.md)**: Strategic plan outlining the specifications and rationale for the core 10 features.
+- **[Step-by-Step Implementation Plan](docs/IMPLEMENTATION_PLAN.md)**: Execution steps, dependencies, and file change maps for the sprint roadmap.
+
+---
+
 ## 🗺️ Roadmap
 
-Development is organized into **4 sprints** covering 10 planned features. See [`docs/FEATURE_ROADMAP.md`](docs/FEATURE_ROADMAP.md) for full specifications and [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the step-by-step execution plan.
+Development is organized into **4 sprints** covering 10 planned core features, followed by a **Future Expansion Phase** focusing on 40 new AI-powered learning systems.
 
-| Sprint | Theme | Key Features | Effort |
-|---|---|---|---|
-| **Sprint 1** | Dashboard Glow-Up | Skills Radar Integration, Progress Analytics | 6–8h |
-| **Sprint 2** | Active Learning | AI Chapter Quizzes, Achievement Badge System | 14–18h |
-| **Sprint 3** | Power Tools | Rich Markdown Notes, PDF Export, Offline-to-Cloud Sync | 12–15h |
-| **Sprint 4** | Polish | Resource Bookmarking, Calendar Sync, Dark Mode | 8–11h |
+| Sprint / Phase | Theme | Key Features | Effort | Status |
+|---|---|---|---|---|
+| **Sprint 1** | Dashboard Glow-Up | Skills Radar Integration, Progress Analytics | 6–8h | ⏳ Pending |
+| **Sprint 2** | Active Learning | AI Chapter Quizzes, Achievement Badge System | 14–18h | ⏳ Pending |
+| **Sprint 3** | Power Tools | Rich Markdown Notes, PDF Export, Offline-to-Cloud Sync | 12–15h | ⏳ Pending |
+| **Sprint 4** | Polish | Resource Bookmarking, Calendar Sync, Dark Mode | 8–11h | ⏳ Pending |
+| **Phase 5** | AI-First Expansion | 40 AI Personalization, Sandbox, & Career Features | Long-term | 🧠 Planning |
 
-### Current Status
+### Current Development Status
 
 - [x] AI Roadmap Generation (Gemini 2.0 Flash)
 - [x] Interactive Lesson Workspace (4-tab view)
@@ -407,6 +421,7 @@ Development is organized into **4 sprints** covering 10 planned features. See [`
 - [ ] Resource Bookmarking *(Sprint 4)*
 - [ ] Calendar Sync (iCal) *(Sprint 4)*
 - [ ] Dark Mode *(Sprint 4)*
+- [ ] 40 AI-First Future Features *(Phase 5 - see [FUTURE_FEATURES.md](docs/FUTURE_FEATURES.md))*
 
 ---
 
