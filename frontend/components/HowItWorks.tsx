@@ -60,12 +60,12 @@ export function HowItWorks() {
             {index < steps.length - 1 && (
               <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-outline-variant/50 to-transparent -translate-x-1/2" />
             )}
-            <div className="glass-card p-6 relative group hover:border-primary/40 transition-colors duration-500">
+            <div className="glass-card p-6 relative group hover:border-primary/30 transition-colors duration-500">
               {/* Ambient glow */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/3 rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center shadow-glow">
-                <step.icon className="w-4 h-4 text-on-primary" />
+              <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-full flex items-center justify-center text-primary group-hover:text-secondary transition-colors duration-300">
+                <step.icon className="w-4 h-4" />
               </div>
               <div className="pt-4">
                 <span className="text-4xl font-headline font-bold text-outline-variant/40">

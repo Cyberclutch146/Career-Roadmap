@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/store'
@@ -19,15 +19,19 @@ import {
   Calendar,
   TrendingUp,
   Sparkles,
+  Clock,
 } from 'lucide-react'
-import { useState } from 'react'
 import type { Roadmap } from '@/types'
 import { ProgressCalendar, CompletionItem } from '@/components/ProgressCalendar'
+import { SkillsRadar } from '@/components/SkillsRadar'
+import { WeeklyVelocity } from '@/components/WeeklyVelocity'
 
 export default function DashboardPage() {
   const router = useRouter()
   const { user, savedRoadmaps, setSavedRoadmaps } = useStore()
   const [completions, setCompletions] = useState<CompletionItem[]>([])
+  const [selectedRoadmapId, setSelectedRoadmapId] = useState<string>('')
+  const [completedLessonsByRoadmap, setCompletedLessonsByRoadmap] = useState<Record<string, Set<string>>>({})
 
   useEffect(() => {
     const fetchRoadmaps = async () => {
@@ -40,25 +44,30 @@ export default function DashboardPage() {
           const querySnapshot = await getDocs(roadmapsRef)
           const roadmaps: Roadmap[] = []
           const allCompletions: CompletionItem[] = []
+          const completedByRm: Record<string, Set<string>> = {}
           
           for (const docSnap of querySnapshot.docs) {
             const rData = docSnap.data() as Roadmap
             const progressRef = collection(db, 'users', user.id, 'roadmaps', docSnap.id, 'progress')
             const progressSnapshot = await getDocs(progressRef)
             let completedCount = 0
+            const completedSet = new Set<string>()
             
             progressSnapshot.forEach(pDoc => {
               const pData = pDoc.data()
               if (pData.completed) {
                 completedCount++
+                completedSet.add(pDoc.id)
                 
-                // Find lesson title
+                // Find lesson title and duration
                 let lessonTitle = 'Completed Lesson'
+                let durationMinutes = 30 // default fallback
                 for (const phase of rData.generated_roadmap.phases) {
                   for (const chapter of phase.chapters) {
                     for (const lesson of chapter.lessons) {
                       if (lesson.id === pDoc.id) {
                         lessonTitle = lesson.title
+                        durationMinutes = lesson.duration_minutes || 30
                         break
                       }
                     }
@@ -70,10 +79,13 @@ export default function DashboardPage() {
                   roadmapTitle: rData.generated_roadmap.overview.title,
                   lessonId: pDoc.id,
                   lessonTitle,
-                  completedAt: pData.completed_at || rData.updated_at || rData.created_at || new Date().toISOString()
+                  completedAt: pData.completed_at || rData.updated_at || rData.created_at || new Date().toISOString(),
+                  durationMinutes
                 })
               }
             })
+            
+            completedByRm[docSnap.id] = completedSet
             
             roadmaps.push({
               ...rData,
@@ -90,6 +102,10 @@ export default function DashboardPage() {
           })
           
           setSavedRoadmaps(roadmaps)
+          setCompletedLessonsByRoadmap(completedByRm)
+          if (roadmaps.length > 0) {
+            setSelectedRoadmapId(roadmaps[0].id)
+          }
           
           // Sort completions descending by date
           allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
@@ -99,53 +115,94 @@ export default function DashboardPage() {
         }
       } else {
         // Handle guest/offline mode from localStorage
-        try {
-          const allCompletions: CompletionItem[] = []
-          const roadmaps: Roadmap[] = []
-          
-          // Let's see if we can find guest roadmaps in localStorage
-          // Usually guest roadmaps are saved under dynamic keys or not, but we can query localStorage keys
-          const keys = Object.keys(window.localStorage)
-          const roadmapKeys = keys.filter(k => k.startsWith('roadmap_') || k.match(/^[a-zA-Z0-9_-]{20,}$/))
-          
-          for (const key of keys) {
-            if (key.startsWith('progress_dates_')) {
-              const roadmapId = key.replace('progress_dates_', '')
-              const savedDatesRaw = window.localStorage.getItem(key)
-              const savedRoadmapRaw = window.localStorage.getItem(`roadmap_${roadmapId}`)
-              
-              if (savedDatesRaw && savedRoadmapRaw) {
-                const savedDates = JSON.parse(savedDatesRaw) as { [lessonId: string]: string }
-                const rData = JSON.parse(savedRoadmapRaw) as Roadmap
+        if (typeof window !== 'undefined') {
+          try {
+            const allCompletions: CompletionItem[] = []
+            const roadmaps: Roadmap[] = []
+            const completedByRm: Record<string, Set<string>> = {}
+            
+            const keys = Object.keys(window.localStorage)
+            
+            for (const key of keys) {
+              if (key.startsWith('progress_dates_')) {
+                const roadmapId = key.replace('progress_dates_', '')
+                const savedDatesRaw = window.localStorage.getItem(key)
+                const savedRoadmapRaw = window.localStorage.getItem(`roadmap_${roadmapId}`)
                 
-                Object.entries(savedDates).forEach(([lessonId, completedAt]) => {
-                  let lessonTitle = 'Completed Lesson'
-                  for (const phase of rData.generated_roadmap.phases) {
-                    for (const chapter of phase.chapters) {
-                      for (const lesson of chapter.lessons) {
-                        if (lesson.id === lessonId) {
-                          lessonTitle = lesson.title
-                          break
+                if (savedDatesRaw && savedRoadmapRaw) {
+                  const savedDates = JSON.parse(savedDatesRaw) as { [lessonId: string]: string }
+                  const rData = JSON.parse(savedRoadmapRaw) as Roadmap
+                  const completedSet = new Set<string>()
+                  
+                  Object.entries(savedDates).forEach(([lessonId, completedAt]) => {
+                    completedSet.add(lessonId)
+                    
+                    let lessonTitle = 'Completed Lesson'
+                    let durationMinutes = 30 // default fallback
+                    for (const phase of rData.generated_roadmap.phases) {
+                      for (const chapter of phase.chapters) {
+                        for (const lesson of chapter.lessons) {
+                          if (lesson.id === lessonId) {
+                            lessonTitle = lesson.title
+                            durationMinutes = lesson.duration_minutes || 30
+                            break
+                          }
                         }
                       }
                     }
-                  }
-                  
-                  allCompletions.push({
-                    roadmapId,
-                    roadmapTitle: rData.generated_roadmap.overview.title,
-                    lessonId,
-                    lessonTitle,
-                    completedAt
+                    
+                    allCompletions.push({
+                      roadmapId,
+                      roadmapTitle: rData.generated_roadmap.overview.title,
+                      lessonId,
+                      lessonTitle,
+                      completedAt,
+                      durationMinutes
+                    })
                   })
-                })
+
+                  completedByRm[roadmapId] = completedSet
+                  
+                  roadmaps.push({
+                    ...rData,
+                    id: roadmapId,
+                    completed_lessons_count: completedSet.size
+                  } as Roadmap)
+                }
+              } else if (key.startsWith('roadmap_')) {
+                const roadmapId = key.replace('roadmap_', '')
+                if (!roadmaps.some(r => r.id === roadmapId)) {
+                  const savedRoadmapRaw = window.localStorage.getItem(key)
+                  if (savedRoadmapRaw) {
+                    const rData = JSON.parse(savedRoadmapRaw) as Roadmap
+                    roadmaps.push({
+                      ...rData,
+                      id: roadmapId,
+                      completed_lessons_count: 0
+                    } as Roadmap)
+                    completedByRm[roadmapId] = new Set<string>()
+                  }
+                }
               }
             }
+
+            roadmaps.sort((a, b) => {
+              const timeA = new Date(a.created_at || 0).getTime()
+              const timeB = new Date(b.created_at || 0).getTime()
+              return timeB - timeA
+            })
+            
+            setSavedRoadmaps(roadmaps)
+            setCompletedLessonsByRoadmap(completedByRm)
+            if (roadmaps.length > 0) {
+              setSelectedRoadmapId(roadmaps[0].id)
+            }
+
+            allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+            setCompletions(allCompletions)
+          } catch (e) {
+            console.error("Failed to fetch guest completions:", e)
           }
-          allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
-          setCompletions(allCompletions)
-        } catch (e) {
-          console.error("Failed to fetch guest completions:", e)
         }
       }
     }
@@ -158,6 +215,20 @@ export default function DashboardPage() {
   )
 
   const dayStreak = user?.streak || 0
+
+  const totalTimeMinutes = completions.reduce(
+    (sum, item) => sum + (item.durationMinutes || 0),
+    0
+  )
+
+  const formatTimeInvested = (minutes: number) => {
+    if (minutes <= 0) return '0h'
+    const h = Math.floor(minutes / 60)
+    const m = minutes % 60
+    if (h > 0 && m > 0) return `${h}h ${m}m`
+    if (h > 0) return `${h}h`
+    return `${m}m`
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -178,7 +249,7 @@ export default function DashboardPage() {
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -220,6 +291,22 @@ export default function DashboardPage() {
                 <div className="text-sm text-on-surface-variant">Day Streak</div>
               </Card>
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <Card className="text-center p-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <Clock className="w-6 h-6 text-primary" />
+                </div>
+                <div className="text-2xl font-bold text-on-surface">
+                  {formatTimeInvested(totalTimeMinutes)}
+                </div>
+                <div className="text-sm text-on-surface-variant">Time Invested</div>
+              </Card>
+            </motion.div>
           </div>
 
           <motion.div
@@ -246,10 +333,137 @@ export default function DashboardPage() {
             <ProgressCalendar completions={completions} streak={dayStreak} />
           </motion.div>
 
+          {savedRoadmaps.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.29 }}
+              className="mb-8"
+            >
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                  <h2 className="text-xl font-headline font-bold text-on-surface">Learning Analytics</h2>
+                  <p className="text-sm text-on-surface-variant">Analyze your learning habits and forecast completion</p>
+                </div>
+                {savedRoadmaps.length > 1 && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-on-surface-variant font-medium">Select Roadmap:</span>
+                    <select
+                      value={selectedRoadmapId}
+                      onChange={(e) => setSelectedRoadmapId(e.target.value)}
+                      className="px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-sm text-on-surface focus:outline-none focus:border-primary"
+                    >
+                      {savedRoadmaps.map((rm) => (
+                        <option key={rm.id} value={rm.id}>
+                          {rm.generated_roadmap.overview.title || rm.goal}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              {(() => {
+                const selectedRoadmap = savedRoadmaps.find(r => r.id === selectedRoadmapId)
+                if (!selectedRoadmap) return null
+
+                const totalLessons = selectedRoadmap.generated_roadmap.overview.total_lessons || 0
+                const completedCount = completedLessonsByRoadmap[selectedRoadmapId]?.size || 0
+                const remainingLessons = Math.max(0, totalLessons - completedCount)
+                const completedSet = completedLessonsByRoadmap[selectedRoadmapId] || new Set<string>()
+
+                const createdAt = new Date(selectedRoadmap.created_at || new Date())
+                const now = new Date()
+                const msSinceCreation = now.getTime() - createdAt.getTime()
+                const weeksSinceCreation = Math.max(1, msSinceCreation / (7 * 24 * 60 * 60 * 1000))
+
+                const roadmapCompletions = completions.filter(c => c.roadmapId === selectedRoadmapId)
+                const velocity = roadmapCompletions.length / weeksSinceCreation
+                const roundedVelocity = Math.round(velocity * 10) / 10
+
+                const targetMonths = selectedRoadmap.target_months || 3
+                const targetCompletionDate = new Date(createdAt)
+                targetCompletionDate.setMonth(targetCompletionDate.getMonth() + targetMonths)
+
+                const formattedTargetDate = targetCompletionDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+
+                let estCompletionText = ''
+                let badgeText = 'Not Started'
+                let badgeClass = 'border-outline-variant/30 bg-surface-container text-on-surface-variant'
+
+                if (completedCount > 0) {
+                  if (remainingLessons === 0) {
+                    badgeText = 'Completed'
+                    badgeClass = 'border-success/30 bg-success/10 text-success'
+                    estCompletionText = 'Congratulations! You have completed all lessons in this roadmap.'
+                  } else if (velocity > 0) {
+                    const weeksToComplete = remainingLessons / velocity
+                    const estCompletionDate = new Date()
+                    estCompletionDate.setDate(estCompletionDate.getDate() + Math.ceil(weeksToComplete * 7))
+                    const formattedEstDate = estCompletionDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+
+                    if (estCompletionDate <= targetCompletionDate) {
+                      badgeText = 'On Track'
+                      badgeClass = 'border-success/30 bg-success/10 text-success'
+                      estCompletionText = `At your current pace of ${roundedVelocity} lessons/week, you are on track to complete by ${formattedEstDate} (target: ${formattedTargetDate}).`
+                    } else {
+                      badgeText = 'Behind Target'
+                      badgeClass = 'border-warning/30 bg-warning/10 text-warning'
+
+                      const msRemaining = targetCompletionDate.getTime() - now.getTime()
+                      const weeksRemaining = Math.max(0.5, msRemaining / (7 * 24 * 60 * 60 * 1000))
+                      const neededVelocity = Math.round((remainingLessons / weeksRemaining) * 10) / 10
+
+                      estCompletionText = `Current pace (${roundedVelocity} lessons/week) estimates completion by ${formattedEstDate}. Target is ${formattedTargetDate}. To finish on time, aim for ${neededVelocity} lessons/week.`
+                    }
+                  }
+                } else {
+                  const expectedVelocity = Math.round((totalLessons / (targetMonths * 4.34)) * 10) / 10
+                  estCompletionText = `Complete your first lesson to start tracking your velocity. Target completion date is ${formattedTargetDate} (recommended pace: ${expectedVelocity} lessons/week).`
+                }
+
+                return (
+                  <div className="space-y-6">
+                    {/* Forecast Banner */}
+                    <div className="glass-card p-5 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/10 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-headline font-bold text-base text-on-surface">Completion Forecast</h3>
+                          <span className={`text-xs px-2.5 py-0.5 rounded-full border font-semibold ${badgeClass}`}>
+                            {badgeText}
+                          </span>
+                        </div>
+                        <p className="text-sm text-on-surface-variant leading-relaxed">
+                          {estCompletionText}
+                        </p>
+                      </div>
+                      <div className="flex gap-6 flex-shrink-0 w-full md:w-auto border-t md:border-t-0 md:border-l border-outline-variant/20 pt-4 md:pt-0 md:pl-6 text-left">
+                        <div>
+                          <div className="text-xs text-on-surface-variant font-medium">Remaining</div>
+                          <div className="text-xl font-bold text-on-surface">{remainingLessons} lessons</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-on-surface-variant font-medium">Target Date</div>
+                          <div className="text-xl font-bold text-primary">{formattedTargetDate}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Visualizations Grid */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <SkillsRadar roadmap={selectedRoadmap} completedLessons={completedSet} />
+                      <WeeklyVelocity completions={roadmapCompletions} />
+                    </div>
+                  </div>
+                )
+              })()}
+            </motion.div>
+          )}
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.32 }}
           >
             <h2 className="text-xl font-headline font-bold text-on-surface mb-4">Your Roadmaps</h2>
 

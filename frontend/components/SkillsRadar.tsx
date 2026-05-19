@@ -54,18 +54,26 @@ export function SkillsRadar({ roadmap, completedLessons }: SkillsRadarProps) {
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-              <PolarGrid stroke="#e2e8f0" />
+              <PolarGrid stroke="#5b403e" />
               <PolarAngleAxis 
                 dataKey="subject" 
-                tick={{ fill: '#64748b', fontSize: 12 }} 
+                tick={{ fill: '#e4bebb', fontSize: 11 }} 
               />
               <PolarRadiusAxis 
                 angle={30} 
                 domain={[0, 100]} 
-                tick={{ fill: '#94a3b8', fontSize: 10 }}
+                tick={{ fill: '#ab8986', fontSize: 9 }}
                 tickCount={6}
+                stroke="#5b403e"
               />
               <Tooltip 
+                contentStyle={{
+                  backgroundColor: '#2c1b1a',
+                  borderColor: '#5b403e',
+                  borderRadius: '0.75rem',
+                  color: '#f9dcd9',
+                }}
+                itemStyle={{ color: '#ffb3ae' }}
                 formatter={(value: any) => [`${value}%`, 'Mastery']}
                 labelFormatter={(label, payload) => {
                   if (payload && payload.length > 0) {
@@ -77,9 +85,9 @@ export function SkillsRadar({ roadmap, completedLessons }: SkillsRadarProps) {
               <Radar
                 name="Mastery"
                 dataKey="A"
-                stroke="#6366f1"
-                fill="#6366f1"
-                fillOpacity={0.4}
+                stroke="#ffb3ae"
+                fill="#ffb3ae"
+                fillOpacity={0.25}
               />
             </RadarChart>
           </ResponsiveContainer>

@@ -35,18 +35,18 @@ const exampleRoadmap = {
 
 export function ExampleRoadmap() {
   return (
-    <section id="examples" className="py-20 bg-surface">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="examples" className="py-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+      <div className="w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center max-w-2xl mx-auto mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-heading font-bold text-on-surface mb-4">
+          <h2 className="section-heading mb-4">
             See What Your Roadmap Looks Like
           </h2>
-          <p className="text-on-surface-variant text-lg">
+          <p className="font-body text-body-lg text-on-surface-variant">
             Preview an example roadmap for becoming a Full Stack Developer
           </p>
         </motion.div>
@@ -55,36 +55,36 @@ export function ExampleRoadmap() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-white rounded-2xl border border-border shadow-medium overflow-hidden max-w-4xl mx-auto"
+          className="glass-card overflow-hidden max-w-4xl mx-auto border border-outline-variant/30 shadow-lifted"
         >
-          <div className="p-6 bg-primary">
-            <h3 className="text-xl font-heading font-bold text-white">
+          <div className="p-6 bg-gradient-to-r from-primary/10 via-secondary/5 to-transparent border-b border-outline-variant/30">
+            <h3 className="font-headline text-headline-md font-bold text-on-surface">
               {exampleRoadmap.title}
             </h3>
-            <div className="flex items-center gap-4 mt-2 text-white/80 text-sm">
-              <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" /> 6 months
+            <div className="flex flex-wrap items-center gap-4 mt-2 text-on-surface-variant text-sm font-label">
+              <span className="flex items-center gap-1.5 bg-surface-container/60 px-3 py-1 rounded-full border border-outline-variant/20">
+                <Clock className="w-4 h-4 text-primary" /> 6 months
               </span>
-              <span className="flex items-center gap-1">
-                <BookOpen className="w-4 h-4" /> 68 lessons
+              <span className="flex items-center gap-1.5 bg-surface-container/60 px-3 py-1 rounded-full border border-outline-variant/20">
+                <BookOpen className="w-4 h-4 text-secondary" /> 68 lessons
               </span>
-              <span className="flex items-center gap-1">
-                <Zap className="w-4 h-4" /> 3 phases
+              <span className="flex items-center gap-1.5 bg-surface-container/60 px-3 py-1 rounded-full border border-outline-variant/20">
+                <Zap className="w-4 h-4 text-primary" /> 3 phases
               </span>
             </div>
           </div>
 
           <div className="p-6 space-y-6">
             {exampleRoadmap.phases.map((phase, index) => (
-              <div key={phase.name}>
-                <div className="flex items-center justify-between mb-3">
+              <div key={phase.name} className="space-y-3">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-label text-sm ${
                       phase.progress === 100
-                        ? 'bg-success text-white'
+                        ? 'bg-success/20 text-success border border-success/40'
                         : phase.progress > 0
-                        ? 'bg-primary text-white'
-                        : 'bg-surface text-on-surface-variant'
+                        ? 'bg-primary/20 text-primary border border-primary/40'
+                        : 'bg-surface-container-high text-on-surface-variant border border-outline-variant/30'
                     }`}>
                       {phase.progress === 100 ? (
                         <CheckCircle2 className="w-4 h-4" />
@@ -92,24 +92,24 @@ export function ExampleRoadmap() {
                         <span className="text-xs font-bold">{index + 1}</span>
                       )}
                     </div>
-                    <h4 className="font-heading font-bold text-on-surface">{phase.name}</h4>
+                    <h4 className="font-headline font-semibold text-on-surface">{phase.name}</h4>
                   </div>
-                  <span className="text-sm font-medium text-on-surface-variant">{phase.progress}%</span>
+                  <span className="font-label text-sm text-on-surface-variant">{phase.progress}%</span>
                 </div>
-                <div className="h-2 bg-surface rounded-full overflow-hidden">
+                <div className="h-2 bg-surface-container-highest rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500"
                     style={{ width: `${phase.progress}%` }}
                   />
                 </div>
-                <div className="mt-3 space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                   {phase.chapters.map((chapter) => (
                     <div
                       key={chapter.title}
-                      className="flex items-center justify-between p-3 bg-surface rounded-lg"
+                      className="flex items-center justify-between p-4 bg-surface-container-low/40 rounded-xl border border-outline-variant/10 hover:border-outline-variant/30 transition-colors duration-200"
                     >
-                      <span className="text-sm text-on-surface-variant">{chapter.title}</span>
-                      <span className="text-xs text-on-surface-variant">
+                      <span className="font-body text-body-md text-on-surface-variant">{chapter.title}</span>
+                      <span className="font-label text-xs text-primary bg-primary/5 px-2.5 py-1 rounded-full border border-primary/10">
                         {chapter.completed}/{chapter.lessons} lessons
                       </span>
                     </div>

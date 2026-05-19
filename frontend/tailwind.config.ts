@@ -146,9 +146,9 @@ const config: Config = {
         soft: '0 2px 8px rgba(0, 0, 0, 0.2)',
         medium: '0 4px 16px rgba(0, 0, 0, 0.25)',
         lifted: '0 8px 24px rgba(0, 0, 0, 0.3)',
-        glow: '0 8px 24px -8px rgba(255, 179, 174, 0.6)',
-        'glow-secondary': '0 8px 24px -8px rgba(255, 177, 195, 0.4)',
-        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.3)',
+        glow: '0 4px 20px -6px rgba(255, 179, 174, 0.35)',
+        'glow-secondary': '0 4px 20px -6px rgba(255, 177, 195, 0.25)',
+        inner: 'inset 0 1px 2px 0 rgba(0, 0, 0, 0.4)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
@@ -175,3 +175,5 @@ const config: Config = {
   plugins: [],
 }
 export default config
+
+

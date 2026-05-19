@@ -47,9 +47,9 @@ export default function RootLayout({
     <html lang="en" className={`dark ${dmSans.variable} ${plusJakarta.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-background text-on-surface pb-16 md:pb-0 overflow-x-hidden antialiased">
         {/* Atmospheric Background Glow */}
-        <div className="fixed inset-0 pointer-events-none -z-10">
-          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] rounded-full bg-primary/20 blur-[120px]" />
-          <div className="absolute bottom-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-secondary/10 blur-[150px]" />
+        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+          <div className="absolute top-[-15%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-primary/[0.07] blur-[140px]" />
+          <div className="absolute bottom-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-secondary/[0.04] blur-[160px]" />
         </div>
         <AuthProvider>
           {children}

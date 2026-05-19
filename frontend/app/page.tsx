@@ -22,29 +22,36 @@ export default function Home() {
       <ExampleRoadmap />
       <Testimonials />
 
-      <section className="py-20 bg-primary">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="p-12 rounded-3xl bg-gradient-to-br from-surface-container/60 to-background border border-outline-variant/10 relative overflow-hidden backdrop-blur-md"
           >
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white mb-4">
+            {/* Ambient glow inside the card */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+            
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-on-surface mb-4 relative z-10">
               Ready to Start Your Learning Journey?
             </h2>
-            <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-on-surface-variant text-lg mb-8 max-w-2xl mx-auto relative z-10">
               Join thousands of learners who have transformed their goals into achievements.
               Your personalized roadmap is just a few clicks away.
             </p>
-            <Link href="/generate">
-              <Button
-                size="lg"
-                className="bg-white text-primary hover:bg-surface-container group"
-              >
-                Generate Your Roadmap
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+            <div className="relative z-10 flex justify-center">
+              <Link href="/generate">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="group"
+                >
+                  Generate Your Roadmap
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>

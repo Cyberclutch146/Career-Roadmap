@@ -49,7 +49,7 @@ export function Navbar() {
     : [...baseLinks, { href: '/#how-it-works', label: 'How It Works' }, { href: '/generate', label: 'Get Started' }]
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/60 backdrop-blur-xl border-b border-surface-variant/20 shadow-lg shadow-primary/5">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/60 backdrop-blur-xl border-b border-outline-variant/10 shadow-sm">
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-stack-md">

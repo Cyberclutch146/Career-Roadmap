@@ -73,7 +73,7 @@ export function Hero() {
           <div className="lg:col-span-5 relative hidden lg:block h-[500px] w-full">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, rotate: 0 }}
-              animate={{ opacity: 1, scale: 1, rotate: 3 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="absolute inset-0 bg-gradient-to-br from-surface-container-high/40 to-background/10 rounded-2xl glass-card border border-white/10 scale-105 shadow-2xl overflow-hidden"
             >
@@ -85,7 +85,7 @@ export function Hero() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
-                className="absolute top-8 left-8 right-8 bg-surface/80 backdrop-blur-md rounded-xl p-4 border border-outline-variant/50 shadow-lg -rotate-2"
+                className="absolute top-8 left-8 right-8 bg-surface/80 backdrop-blur-md rounded-xl p-4 border border-outline-variant/50 shadow-lg"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
@@ -105,7 +105,7 @@ export function Hero() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 1.0 }}
-                className="absolute bottom-12 right-[-20px] bg-surface-container-high/90 backdrop-blur-xl rounded-xl p-4 border border-outline/30 shadow-2xl rotate-6 w-64"
+                className="absolute bottom-12 right-4 bg-surface-container-high/90 backdrop-blur-xl rounded-xl p-4 border border-outline/30 shadow-2xl w-64"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">

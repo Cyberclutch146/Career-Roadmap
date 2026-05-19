@@ -57,7 +57,7 @@ export function Features() {
         {features.map((feature, index) => {
           const Icon = feature.icon
           const borderColor = feature.color === 'primary' ? 'hover:border-primary/50' : 'hover:border-secondary/50'
-          const glowColor = feature.color === 'primary' ? 'bg-primary/10' : 'bg-secondary/10'
+          const glowColor = feature.color === 'primary' ? 'bg-primary/5' : 'bg-secondary/5'
           const iconColor = feature.color === 'primary' ? 'text-primary' : 'text-secondary'
           
           return (
