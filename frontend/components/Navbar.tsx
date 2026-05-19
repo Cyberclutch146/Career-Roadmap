@@ -10,10 +10,10 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navLinks = [
-    { href: '#features', label: 'Features' },
-    { href: '#how-it-works', label: 'How It Works' },
-    { href: '#examples', label: 'Examples' },
-    { href: '#pricing', label: 'Pricing' },
+    { href: '/#features', label: 'Features' },
+    { href: '/#how-it-works', label: 'How It Works' },
+    { href: '/#examples', label: 'Examples' },
+    { href: '/generate', label: 'Get Started' },
   ]
 
   return (

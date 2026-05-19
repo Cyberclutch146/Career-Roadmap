@@ -57,14 +57,16 @@ export const useStore = create<AppState>()(
         set({
           user: null,
           currentRoadmap: null,
+          savedRoadmaps: [],
           chatHistory: []
         }),
     }),
     {
       name: 'roadmapai-storage',
+      // Only persist lightweight user identity — NOT roadmaps or chat
+      // (roadmaps are fetched fresh from API; chat is per-session)
       partialize: (state) => ({
         user: state.user,
-        savedRoadmaps: state.savedRoadmaps,
       }),
     }
   )

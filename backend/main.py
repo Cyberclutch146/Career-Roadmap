@@ -1,11 +1,16 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from typing import Optional, List, Dict, Any
+from datetime import datetime, timezone
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 import uuid
+import os
 
-from database import DatabaseConnection
+from database import DatabaseConnection, get_database
 from schemas import (
     RoadmapGenerationRequest,
     RoadmapResponse,
@@ -34,6 +39,11 @@ from services.auth import (
     get_optional_user
 )
 
+# ---------------------------------------------------------------------------
+# Rate limiter
+# ---------------------------------------------------------------------------
+limiter = Limiter(key_func=get_remote_address)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -49,9 +59,18 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# ---------------------------------------------------------------------------
+# CORS — configurable via environment for production deployments
+# ---------------------------------------------------------------------------
+_raw_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
+CORS_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -59,6 +78,30 @@ app.add_middleware(
 
 ai_service = AIService()
 
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _verify_roadmap_access(
+    roadmap: Dict[str, Any],
+    current_user: Optional[Dict[str, Any]]
+) -> None:
+    """Raise 403 if the roadmap belongs to a specific user and the caller
+    is not that user. Guest-generated roadmaps (user_id=None) are public."""
+    owner = roadmap.get("user_id")
+    if owner is None:
+        return
+    if current_user is None or current_user.get("user_id") != owner:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this roadmap"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Info
+# ---------------------------------------------------------------------------
 
 @app.get("/")
 async def root():
@@ -72,15 +115,27 @@ async def root():
 
 @app.get("/health")
 async def health_check():
+    db_status = "disconnected"
+    try:
+        db = get_database()
+        await db.command("ping")
+        db_status = "connected"
+    except Exception:
+        pass
     return {
-        "status": "healthy",
-        "database": "connected",
+        "status": "healthy" if db_status == "connected" else "degraded",
+        "database": db_status,
         "ai_service": ai_service.is_available()
     }
 
 
+# ---------------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------------
+
 @app.post("/api/auth/register", response_model=TokenResponse)
-async def register(user_data: UserCreate):
+@limiter.limit("10/minute")
+async def register(request: Request, user_data: UserCreate):
     existing_user = await UserRepository.find_by_email(user_data.email)
     if existing_user:
         raise HTTPException(
@@ -102,13 +157,14 @@ async def register(user_data: UserCreate):
             id=user_id,
             email=user_data.email,
             name=user_data.name,
-            created_at=None
+            created_at=datetime.now(timezone.utc)
         )
     )
 
 
 @app.post("/api/auth/login", response_model=TokenResponse)
-async def login(login_data: UserLogin):
+@limiter.limit("10/minute")
+async def login(request: Request, login_data: UserLogin):
     user = await UserRepository.find_by_email(login_data.email)
     if not user or not verify_password(login_data.password, user["password"]):
         raise HTTPException(
@@ -129,49 +185,57 @@ async def login(login_data: UserLogin):
     )
 
 
+# ---------------------------------------------------------------------------
+# Roadmaps
+# ---------------------------------------------------------------------------
+
 @app.post("/api/roadmaps/generate", response_model=RoadmapResponse)
+@limiter.limit("5/minute")
 async def generate_roadmap(
-    request: RoadmapGenerationRequest,
+    request: Request,
+    body: RoadmapGenerationRequest,
     current_user: Optional[Dict[str, Any]] = Depends(get_optional_user)
 ):
     generated_roadmap = await ai_service.generate_roadmap(
-        goal=request.goal,
-        skill_level=request.skill_level.value,
-        daily_hours=request.daily_hours,
-        learning_style=request.learning_style.value,
-        target_months=request.target_months
+        goal=body.goal,
+        skill_level=body.skill_level.value,
+        daily_hours=body.daily_hours,
+        learning_style=body.learning_style.value,
+        target_months=body.target_months
     )
 
+    now = datetime.now(timezone.utc)
     roadmap_id = str(uuid.uuid4())
     roadmap_data = {
         "id": roadmap_id,
         "user_id": current_user["user_id"] if current_user else None,
-        "goal": request.goal,
-        "skill_level": request.skill_level.value,
-        "daily_hours": request.daily_hours,
-        "learning_style": request.learning_style.value,
-        "target_months": request.target_months,
-        "generated_roadmap": generated_roadmap
+        "goal": body.goal,
+        "skill_level": body.skill_level.value,
+        "daily_hours": body.daily_hours,
+        "learning_style": body.learning_style.value,
+        "target_months": body.target_months,
+        "generated_roadmap": generated_roadmap,
+        "created_at": now,
+        "updated_at": now,
     }
 
-    saved_id = await RoadmapRepository.create(roadmap_data)
-    roadmap_data["_id"] = saved_id
+    await RoadmapRepository.create(roadmap_data)
 
     return RoadmapResponse(
         id=roadmap_id,
         user_id=current_user["user_id"] if current_user else None,
-        goal=request.goal,
-        skill_level=request.skill_level,
-        daily_hours=request.daily_hours,
-        learning_style=request.learning_style,
-        target_months=request.target_months,
+        goal=body.goal,
+        skill_level=body.skill_level,
+        daily_hours=body.daily_hours,
+        learning_style=body.learning_style,
+        target_months=body.target_months,
         generated_roadmap=GeneratedRoadmap(**generated_roadmap),
-        created_at=roadmap_data.get("created_at"),
-        updated_at=roadmap_data.get("updated_at")
+        created_at=now,
+        updated_at=now,
     )
 
 
-@app.get("/api/roadmaps/{roadmap_id}")
+@app.get("/api/roadmaps/{roadmap_id}", response_model=RoadmapResponse)
 async def get_roadmap(
     roadmap_id: str,
     current_user: Optional[Dict[str, Any]] = Depends(get_optional_user)
@@ -183,6 +247,7 @@ async def get_roadmap(
             detail="Roadmap not found"
         )
 
+    _verify_roadmap_access(roadmap, current_user)
     return roadmap
 
 
@@ -193,6 +258,27 @@ async def get_user_roadmaps(
     roadmaps = await RoadmapRepository.find_by_user(current_user["user_id"])
     return roadmaps
 
+
+@app.delete("/api/roadmaps/{roadmap_id}")
+async def delete_roadmap(
+    roadmap_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    roadmap = await RoadmapRepository.find_by_id(roadmap_id)
+    if not roadmap:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Roadmap not found"
+        )
+
+    _verify_roadmap_access(roadmap, current_user)
+    success = await RoadmapRepository.delete(roadmap_id)
+    return {"success": success}
+
+
+# ---------------------------------------------------------------------------
+# Progress
+# ---------------------------------------------------------------------------
 
 @app.put("/api/roadmaps/{roadmap_id}/progress")
 async def update_progress(
@@ -206,6 +292,8 @@ async def update_progress(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Roadmap not found"
         )
+
+    _verify_roadmap_access(roadmap, current_user)
 
     await ProgressRepository.upsert(
         roadmap_id=roadmap_id,
@@ -226,6 +314,15 @@ async def get_progress(
     roadmap_id: str,
     current_user: Optional[Dict[str, Any]] = Depends(get_optional_user)
 ):
+    roadmap = await RoadmapRepository.find_by_id(roadmap_id)
+    if not roadmap:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Roadmap not found"
+        )
+
+    _verify_roadmap_access(roadmap, current_user)
+
     progress = await ProgressRepository.get_by_roadmap(roadmap_id)
     completed_count = await ProgressRepository.get_completed_count(roadmap_id)
 
@@ -235,8 +332,14 @@ async def get_progress(
     }
 
 
+# ---------------------------------------------------------------------------
+# Chat / AI Mentor
+# ---------------------------------------------------------------------------
+
 @app.post("/api/chat", response_model=ChatResponse)
+@limiter.limit("20/minute")
 async def chat_with_mentor(
+    request: Request,
     chat_request: ChatRequest,
     current_user: Optional[Dict[str, Any]] = Depends(get_optional_user)
 ):
@@ -246,6 +349,8 @@ async def chat_with_mentor(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Roadmap not found"
         )
+
+    _verify_roadmap_access(roadmap, current_user)
 
     user_message = chat_request.message
     await ChatHistoryRepository.add_message(
@@ -282,15 +387,6 @@ async def get_chat_history(
     roadmap_id: str,
     current_user: Optional[Dict[str, Any]] = Depends(get_optional_user)
 ):
-    messages = await ChatHistoryRepository.get_messages(roadmap_id)
-    return {"messages": messages}
-
-
-@app.delete("/api/roadmaps/{roadmap_id}")
-async def delete_roadmap(
-    roadmap_id: str,
-    current_user: Dict[str, Any] = Depends(get_current_user)
-):
     roadmap = await RoadmapRepository.find_by_id(roadmap_id)
     if not roadmap:
         raise HTTPException(
@@ -298,15 +394,10 @@ async def delete_roadmap(
             detail="Roadmap not found"
         )
 
-    if roadmap.get("user_id") != current_user["user_id"]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to delete this roadmap"
-        )
+    _verify_roadmap_access(roadmap, current_user)
 
-    success = await RoadmapRepository.delete(roadmap_id)
-
-    return {"success": success}
+    messages = await ChatHistoryRepository.get_messages(roadmap_id)
+    return {"messages": messages}
 
 
 if __name__ == "__main__":

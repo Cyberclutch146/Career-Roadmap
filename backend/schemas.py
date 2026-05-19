@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 
@@ -104,8 +104,9 @@ class RoadmapResponse(BaseModel):
     learning_style: LearningStyle
     target_months: int
     generated_roadmap: GeneratedRoadmap
-    created_at: datetime
-    updated_at: datetime
+    # Optional to avoid 500 when timestamps aren't yet persisted
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class RoadmapCreateResponse(BaseModel):
@@ -121,12 +122,12 @@ class ProgressUpdate(BaseModel):
 class ChatMessage(BaseModel):
     role: str
     content: str
-    timestamp: datetime = Field(default_factory=datetime.now)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class ChatRequest(BaseModel):
     roadmap_id: str
-    message: str
+    message: str = Field(..., min_length=1, max_length=2000)
 
 
 class ChatResponse(BaseModel):
@@ -135,13 +136,13 @@ class ChatResponse(BaseModel):
 
 
 class UserCreate(BaseModel):
-    email: str
-    password: str
-    name: str
+    email: EmailStr
+    password: str = Field(..., min_length=8, max_length=128)
+    name: str = Field(..., min_length=1, max_length=100)
 
 
 class UserLogin(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 
@@ -149,7 +150,8 @@ class UserResponse(BaseModel):
     id: str
     email: str
     name: str
-    created_at: datetime
+    # Optional to avoid 500 when timestamp isn't returned from DB query
+    created_at: Optional[datetime] = None
 
 
 class TokenResponse(BaseModel):

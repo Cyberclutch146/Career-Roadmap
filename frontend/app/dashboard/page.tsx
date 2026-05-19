@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/store'
+import { api } from '@/lib/api'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
@@ -12,7 +13,6 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import {
   BookOpen,
-  Clock,
   Target,
   ChevronRight,
   Plus,
@@ -24,7 +24,20 @@ import type { Roadmap } from '@/types'
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { user, savedRoadmaps } = useStore()
+  const { user, savedRoadmaps, setSavedRoadmaps } = useStore()
+
+  useEffect(() => {
+    if (!user) return
+    const fetchRoadmaps = async () => {
+      try {
+        const res = await api.get<Roadmap[]>('/api/roadmaps')
+        setSavedRoadmaps(res.data)
+      } catch {
+        // If fetch fails, keep whatever is already in state
+      }
+    }
+    fetchRoadmaps()
+  }, [user, setSavedRoadmaps])
 
   return (
     <div className="min-h-screen bg-paper-50">

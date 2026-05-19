@@ -44,16 +44,31 @@ export default function RoadmapPage() {
     const loadRoadmap = async () => {
       const roadmapId = params.id as string
 
-      if (currentRoadmap && currentRoadmap.id === roadmapId) {
-        setRoadmap(currentRoadmap)
-        setIsLoading(false)
-        return
-      }
-
       try {
-        const response = await api.get<Roadmap>(`/api/roadmaps/${roadmapId}`)
-        setRoadmap(response.data)
-        setCurrentRoadmap(response.data)
+        // Always fetch from API to get fresh data
+        let loadedRoadmap: Roadmap
+        if (currentRoadmap && currentRoadmap.id === roadmapId) {
+          loadedRoadmap = currentRoadmap
+          setRoadmap(currentRoadmap)
+        } else {
+          const response = await api.get<Roadmap>(`/api/roadmaps/${roadmapId}`)
+          loadedRoadmap = response.data
+          setRoadmap(loadedRoadmap)
+          setCurrentRoadmap(loadedRoadmap)
+        }
+
+        // Fetch persisted progress from the backend
+        try {
+          const progressRes = await api.get(`/api/roadmaps/${roadmapId}/progress`)
+          const completed = new Set<string>(
+            (progressRes.data.progress as Array<{ lesson_id: string; completed: boolean }>)
+              .filter((p) => p.completed)
+              .map((p) => p.lesson_id)
+          )
+          setCompletedLessons(completed)
+        } catch {
+          // Progress fetch failed silently — start fresh
+        }
       } catch (error) {
         console.error('Failed to load roadmap:', error)
         router.push('/generate')
@@ -63,11 +78,12 @@ export default function RoadmapPage() {
     }
 
     loadRoadmap()
-  }, [params.id, currentRoadmap, setCurrentRoadmap, router])
+  }, [params.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleLessonComplete = async (lessonId: string) => {
     if (!roadmap) return
 
+    const previousCompleted = new Set(completedLessons)
     const newCompleted = new Set(completedLessons)
     const isCompleted = newCompleted.has(lessonId)
 
@@ -84,7 +100,8 @@ export default function RoadmapPage() {
         completed: !isCompleted
       })
     } catch (error) {
-      setCompletedLessons(newCompleted)
+      // Rollback to previous state on API failure
+      setCompletedLessons(previousCompleted)
     }
   }
 

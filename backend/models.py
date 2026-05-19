@@ -1,74 +1,14 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any
 from bson import ObjectId
-from pydantic import BaseModel, Field
 from database import get_database
-import json
 
 
-class PyObjectId(ObjectId):
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v, info=None):
-        if not ObjectId.is_valid(v):
-            raise ValueError("Invalid ObjectId")
-        return ObjectId(v)
-
-
-class UserModel(BaseModel):
-    id: Optional[str] = Field(default=None, alias="_id")
-    email: str
-    password: str
-    name: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-    class Config:
-        populate_by_name = True
-        arbitrary_types_allowed = True
-
-
-class RoadmapModel(BaseModel):
-    id: Optional[str] = Field(default=None, alias="_id")
-    user_id: Optional[str] = None
-    goal: str
-    skill_level: str
-    daily_hours: float
-    learning_style: str
-    target_months: int
-    generated_roadmap: Dict[str, Any]
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-    class Config:
-        populate_by_name = True
-        arbitrary_types_allowed = True
-
-
-class ProgressModel(BaseModel):
-    id: Optional[str] = Field(default=None, alias="_id")
-    roadmap_id: str
-    lesson_id: str
-    completed: bool = False
-    completed_at: Optional[datetime] = None
-
-    class Config:
-        populate_by_name = True
-        arbitrary_types_allowed = True
-
-
-class ChatHistoryModel(BaseModel):
-    id: Optional[str] = Field(default=None, alias="_id")
-    roadmap_id: str
-    messages: List[Dict[str, Any]] = []
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-    class Config:
-        populate_by_name = True
-        arbitrary_types_allowed = True
-
+# ---------------------------------------------------------------------------
+# Repository: Users
+# (Users are still looked up by MongoDB ObjectId _id, which is correct
+#  because the token stores the ObjectId string from insert_one.)
+# ---------------------------------------------------------------------------
 
 class UserRepository:
     @staticmethod
@@ -78,7 +18,7 @@ class UserRepository:
             "email": email,
             "password": password,
             "name": name,
-            "created_at": datetime.utcnow()
+            "created_at": datetime.now(timezone.utc)
         }
         result = await db.users.insert_one(user_doc)
         return str(result.inserted_id)
@@ -94,28 +34,40 @@ class UserRepository:
     @staticmethod
     async def find_by_id(user_id: str) -> Optional[Dict[str, Any]]:
         db = get_database()
-        user = await db.users.find_one({"_id": ObjectId(user_id)})
+        try:
+            user = await db.users.find_one({"_id": ObjectId(user_id)})
+        except Exception:
+            return None
         if user:
             user["_id"] = str(user["_id"])
         return user
 
 
+# ---------------------------------------------------------------------------
+# Repository: Roadmaps
+# Roadmaps use a UUID "id" field as the public identifier.
+# All lookups query on {"id": roadmap_id}, NOT {"_id": ObjectId(...)}.
+# ---------------------------------------------------------------------------
+
 class RoadmapRepository:
     @staticmethod
     async def create(roadmap_data: Dict[str, Any]) -> str:
         db = get_database()
+        # Timestamps should already be set by main.py; set as fallback here.
+        now = datetime.now(timezone.utc)
         roadmap_doc = {
             **roadmap_data,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "created_at": roadmap_data.get("created_at", now),
+            "updated_at": roadmap_data.get("updated_at", now),
         }
         result = await db.roadmaps.insert_one(roadmap_doc)
         return str(result.inserted_id)
 
     @staticmethod
     async def find_by_id(roadmap_id: str) -> Optional[Dict[str, Any]]:
+        """Find a roadmap by its UUID string 'id' field."""
         db = get_database()
-        roadmap = await db.roadmaps.find_one({"_id": ObjectId(roadmap_id)})
+        roadmap = await db.roadmaps.find_one({"id": roadmap_id})
         if roadmap:
             roadmap["_id"] = str(roadmap["_id"])
         return roadmap
@@ -132,9 +84,9 @@ class RoadmapRepository:
     @staticmethod
     async def update(roadmap_id: str, update_data: Dict[str, Any]) -> bool:
         db = get_database()
-        update_data["updated_at"] = datetime.utcnow()
+        update_data["updated_at"] = datetime.now(timezone.utc)
         result = await db.roadmaps.update_one(
-            {"_id": ObjectId(roadmap_id)},
+            {"id": roadmap_id},
             {"$set": update_data}
         )
         return result.modified_count > 0
@@ -142,9 +94,13 @@ class RoadmapRepository:
     @staticmethod
     async def delete(roadmap_id: str) -> bool:
         db = get_database()
-        result = await db.roadmaps.delete_one({"_id": ObjectId(roadmap_id)})
+        result = await db.roadmaps.delete_one({"id": roadmap_id})
         return result.deleted_count > 0
 
+
+# ---------------------------------------------------------------------------
+# Repository: Progress
+# ---------------------------------------------------------------------------
 
 class ProgressRepository:
     @staticmethod
@@ -154,7 +110,7 @@ class ProgressRepository:
             "roadmap_id": roadmap_id,
             "lesson_id": lesson_id,
             "completed": completed,
-            "completed_at": datetime.utcnow() if completed else None
+            "completed_at": datetime.now(timezone.utc) if completed else None
         }
         result = await db.progress.update_one(
             {"roadmap_id": roadmap_id, "lesson_id": lesson_id},
@@ -182,17 +138,32 @@ class ProgressRepository:
         return count
 
 
+# ---------------------------------------------------------------------------
+# Repository: Chat History
+# Uses upsert=True so the document is created on the first message.
+# ---------------------------------------------------------------------------
+
 class ChatHistoryRepository:
     @staticmethod
-    async def create(roadmap_id: str) -> str:
+    async def add_message(roadmap_id: str, role: str, content: str) -> bool:
         db = get_database()
-        chat_doc = {
-            "roadmap_id": roadmap_id,
-            "messages": [],
-            "created_at": datetime.utcnow()
+        message = {
+            "role": role,
+            "content": content,
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
-        result = await db.chat_history.insert_one(chat_doc)
-        return str(result.inserted_id)
+        result = await db.chat_history.update_one(
+            {"roadmap_id": roadmap_id},
+            {
+                "$push": {"messages": message},
+                "$setOnInsert": {
+                    "roadmap_id": roadmap_id,
+                    "created_at": datetime.now(timezone.utc)
+                }
+            },
+            upsert=True
+        )
+        return result.acknowledged
 
     @staticmethod
     async def get_by_roadmap(roadmap_id: str) -> Optional[Dict[str, Any]]:
@@ -201,20 +172,6 @@ class ChatHistoryRepository:
         if chat:
             chat["_id"] = str(chat["_id"])
         return chat
-
-    @staticmethod
-    async def add_message(roadmap_id: str, role: str, content: str) -> bool:
-        db = get_database()
-        message = {
-            "role": role,
-            "content": content,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        result = await db.chat_history.update_one(
-            {"roadmap_id": roadmap_id},
-            {"$push": {"messages": message}}
-        )
-        return result.modified_count > 0
 
     @staticmethod
     async def get_messages(roadmap_id: str) -> List[Dict[str, Any]]:

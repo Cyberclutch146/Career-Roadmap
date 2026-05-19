@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { Button } from '@/components/ui/Button'
@@ -10,8 +10,9 @@ import { Select } from '@/components/ui/Select'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
 import { useStore } from '@/store'
 import { api } from '@/lib/api'
-import { Sparkles, Clock, Target, BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { Sparkles, Clock, Target, BookOpen, ArrowRight } from 'lucide-react'
 import type { RoadmapFormData, SkillLevel, LearningStyle, Roadmap } from '@/types'
+import type { AxiosError } from 'axios'
 
 const skillLevelOptions = [
   { value: 'beginner', label: 'Beginner - No prior knowledge' },
@@ -47,7 +48,7 @@ const goalSuggestions = [
 
 export default function GeneratePage() {
   const router = useRouter()
-  const { setCurrentRoadmap, setLoading, isLoading, setError } = useStore()
+  const { setCurrentRoadmap } = useStore()
   const [formData, setFormData] = useState<RoadmapFormData>({
     goal: '',
     skill_level: 'beginner',
@@ -81,8 +82,9 @@ export default function GeneratePage() {
       setCurrentRoadmap(roadmap)
       localStorage.setItem('current_roadmap', JSON.stringify(roadmap))
       router.push(`/roadmap/${roadmap.id}`)
-    } catch (err: any) {
-      setLocalError(err.response?.data?.detail || 'Failed to generate roadmap. Please try again.')
+    } catch (err: unknown) {
+      const axiosErr = err as AxiosError<{ detail?: string }>
+      setLocalError(axiosErr.response?.data?.detail || 'Failed to generate roadmap. Please try again.')
     } finally {
       setIsGenerating(false)
     }
@@ -172,7 +174,7 @@ export default function GeneratePage() {
                   <input
                     type="range"
                     min="0.5"
-                    max="6"
+                    max="8"
                     step="0.5"
                     value={formData.daily_hours}
                     onChange={(e) => setFormData({ ...formData, daily_hours: parseFloat(e.target.value) })}
@@ -180,7 +182,7 @@ export default function GeneratePage() {
                   />
                   <div className="flex justify-between text-xs text-ink-300 mt-1">
                     <span>30 min</span>
-                    <span>6 hours</span>
+                    <span>8 hours</span>
                   </div>
                 </div>
 

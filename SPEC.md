@@ -88,7 +88,7 @@ Inspired by premium academic publications, digital textbooks, and Notion-style p
 **Input Form Fields:**
 - Goal (text input with suggestions)
 - Current Skill Level (dropdown: Beginner/Intermediate/Advanced)
-- Daily Study Time (slider: 15min - 4hrs)
+- Daily Study Time (slider: 30min - 8hrs)
 - Learning Style (select: Visual/Auditory/Reading/Active)
 - Target Duration (dropdown: 3/6/12/18/24 months)
 
@@ -206,12 +206,16 @@ Per topic:
 ### Backend (FastAPI)
 ```
 /backend
-├── main.py
-├── routers/
-├── models/
-├── schemas/
+├── main.py              # Routes, CORS, rate limiting, IDOR checks
+├── schemas.py           # Pydantic v2 models with validation
+├── models.py            # MongoDB repository layer (UUID-based lookups)
+├── database.py          # Motor connection + indexes
 ├── services/
-├── utils/
+│   ├── ai_service.py    # Gemini async integration + fallback templates
+│   └── auth.py          # JWT + bcrypt
+├── tests/
+│   └── test_api.py      # pytest suite
+└── requirements.txt
 ```
 
 ### API Design
@@ -237,7 +241,7 @@ Response: {
 **GET /api/roadmaps/{id}**
 - Returns saved roadmap
 
-**POST /api/roadmaps/{id}/progress**
+**PUT /api/roadmaps/{id}/progress**
 ```json
 {
   "lesson_id": "string",
@@ -273,17 +277,27 @@ Response: {
 - id, roadmap_id, messages[], created_at
 
 ### Authentication
-- JWT tokens
-- Protected routes
-- Guest mode for unauthenticated users (localStorage)
+- JWT tokens (mandatory `JWT_SECRET` env var — server refuses to start without it)
+- bcrypt password hashing via Passlib
+- IDOR protection on all resource endpoints
+- Rate limiting via SlowAPI (10/min auth, 5/min generate, 20/min chat)
+- Guest mode for unauthenticated users (optional auth on most endpoints)
+
+### Security Headers (Frontend)
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
 
 ### Environment Variables
 ```
-# Backend
-GEMINI_API_KEY=xxx
+# Backend (backend/.env)
+JWT_SECRET=<required, 64-char hex — generate with python -c "import secrets; print(secrets.token_hex(32))">
+GEMINI_API_KEY=<optional>
 MONGODB_URI=mongodb://localhost:27017
-JWT_SECRET=xxx
+DATABASE_NAME=roadmapai
+CORS_ORIGINS=http://localhost:3000
 
-# Frontend
+# Frontend (frontend/.env.local)
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```

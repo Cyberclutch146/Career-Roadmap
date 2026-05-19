@@ -27,7 +27,14 @@ npm install --silent --legacy-peer-deps
 
 # Create env files if missing
 if (-not (Test-Path "$PROJECT_ROOT\backend\.env")) {
-    "GEMINI_API_KEY=`nMONGODB_URI=mongodb://localhost:27017`nDATABASE_NAME=roadmapai`nJWT_SECRET=roadmapai-dev-key" | Out-File "$PROJECT_ROOT\backend\.env"
+    $jwtSecret = python -c "import secrets; print(secrets.token_hex(32))"
+    @"
+GEMINI_API_KEY=
+MONGODB_URI=mongodb://localhost:27017
+DATABASE_NAME=roadmapai
+JWT_SECRET=$jwtSecret
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+"@ | Out-File "$PROJECT_ROOT\backend\.env"
 }
 if (-not (Test-Path "$PROJECT_ROOT\frontend\.env.local")) {
     "NEXT_PUBLIC_API_URL=http://localhost:8000" | Out-File "$PROJECT_ROOT\frontend\.env.local"

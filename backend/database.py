@@ -29,10 +29,14 @@ class DatabaseConnection:
     async def create_indexes(cls):
         if cls.db is not None:
             await cls.db.users.create_index("email", unique=True)
+            # roadmaps.id is the public UUID used for all API lookups
+            await cls.db.roadmaps.create_index("id", unique=True)
             await cls.db.roadmaps.create_index("user_id")
             await cls.db.roadmaps.create_index("created_at")
-            await cls.db.progress.create_index([("roadmap_id", 1), ("lesson_id", 1)], unique=True)
-            await cls.db.chat_history.create_index("roadmap_id")
+            await cls.db.progress.create_index(
+                [("roadmap_id", 1), ("lesson_id", 1)], unique=True
+            )
+            await cls.db.chat_history.create_index("roadmap_id", unique=True)
 
     @classmethod
     def get_db(cls) -> Database:

@@ -37,12 +37,14 @@ Write-Host "  Python: $pythonVersion" -ForegroundColor Green
 Write-Host "`n[2/5] Setting up backend..." -ForegroundColor Yellow
 
 # Create .env file for backend
+$jwtSecret = python -c "import secrets; print(secrets.token_hex(32))"
 $envContent = @"
 # RoadmapAI Backend Environment Variables
 GEMINI_API_KEY=$GeminiApiKey
 MONGODB_URI=$MongoDBUri
 DATABASE_NAME=roadmapai
-JWT_SECRET=roadmapai-dev-secret-key-$(Get-Random -Maximum 99999)
+JWT_SECRET=$jwtSecret
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 "@
 
 Set-Content -Path (Join-Path $BACKEND_DIR ".env") -Value $envContent -Force

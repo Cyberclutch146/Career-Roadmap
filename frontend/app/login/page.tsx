@@ -11,6 +11,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Ca
 import { api } from '@/lib/api'
 import { useStore } from '@/store'
 import { BookOpen, Mail, Lock, User } from 'lucide-react'
+import type { AxiosError } from 'axios'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -40,8 +41,9 @@ export default function LoginPage() {
       localStorage.setItem('roadmapai_token', response.data.access_token)
       setUser(response.data.user)
       router.push('/generate')
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Authentication failed. Please try again.')
+    } catch (err: unknown) {
+      const axiosErr = err as AxiosError<{ detail?: string }>
+      setError(axiosErr.response?.data?.detail || 'Authentication failed. Please try again.')
     } finally {
       setIsLoading(false)
     }

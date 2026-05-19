@@ -25,11 +25,13 @@ cd ..
 echo.
 echo [3/3] Creating environment files...
 if not exist "backend\.env" (
+    for /f %%i in ('python -c "import secrets; print(secrets.token_hex(32))"') do set JWT_SECRET=%%i
     (
         echo GEMINI_API_KEY=
         echo MONGODB_URI=mongodb://localhost:27017
         echo DATABASE_NAME=roadmapai
-        echo JWT_SECRET=roadmapai-dev-secret-key
+        echo JWT_SECRET=%JWT_SECRET%
+        echo CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
     ) > backend\.env
 )
 if not exist "frontend\.env.local" (

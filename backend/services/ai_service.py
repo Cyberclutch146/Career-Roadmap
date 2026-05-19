@@ -16,7 +16,7 @@ class AIService:
     def __init__(self):
         self.model = None
         if GEMINI_API_KEY:
-            self.model = genai.GenerativeModel("gemini-pro")
+            self.model = genai.GenerativeModel("gemini-2.0-flash")
 
     def is_available(self) -> bool:
         return self.model is not None
@@ -35,7 +35,7 @@ class AIService:
 
         if self.model:
             try:
-                response = self.model.generate_content(prompt)
+                response = await self.model.generate_content_async(prompt)
                 roadmap_text = response.text
                 return self._parse_roadmap_response(roadmap_text)
             except Exception as e:
@@ -58,7 +58,7 @@ class AIService:
 
 Create a detailed structured roadmap for someone who wants to: {goal}
 Current skill level: {skill_level}
-Daily study time: {{daily_hours}} hours ({{total_hours_estimate}} total hours over {target_months} months)
+Daily study time: {daily_hours} hours ({total_hours_estimate} total hours over {target_months} months)
 Preferred learning style: {learning_style}
 Target duration: {target_months} months
 
@@ -1064,7 +1064,7 @@ If asking what to learn next, reference their roadmap phases and chapters.
 
         if self.model:
             try:
-                response = self.model.generate_content(prompt)
+                response = await self.model.generate_content_async(prompt)
                 reply = response.text
             except Exception as e:
                 reply = f"I'd be happy to help with your learning journey! Regarding your question about {user_message[:50]}... - could you tell me more about what specific aspect you'd like to explore? Based on your roadmap, we can identify the best resources and next steps."
