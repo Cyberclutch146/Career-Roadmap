@@ -38,20 +38,17 @@ if not exist "frontend\.env.local" (
 
 echo.
 echo ========================================
-echo   Installation Complete!
+echo   Installation Complete! Starting servers...
 echo ========================================
 echo.
-echo Next steps - run TWO separate terminals:
-echo.
-echo TERMINAL 1 - Start Backend:
-echo   cd backend
-echo   venv\Scripts\activate
-echo   uvicorn main:app --reload --port 8000
-echo.
-echo TERMINAL 2 - Start Frontend:
-echo   cd frontend
-echo   npm run dev
-echo.
-echo Then open: http://localhost:3000
-echo.
-pause
+echo [*] Starting backend server in background...
+start /B cmd /c "cd backend && call venv\Scripts\activate.bat && uvicorn main:app --reload --port 8000"
+
+echo [*] Opening browser...
+timeout /t 3 /nobreak > NUL
+start http://localhost:3000
+
+echo [*] Starting frontend server...
+echo Press Ctrl+C to stop both servers.
+cd frontend
+npm run dev

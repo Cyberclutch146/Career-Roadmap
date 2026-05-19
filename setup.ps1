@@ -110,10 +110,12 @@ Write-Host "========================================`n" -ForegroundColor Cyan
 
 # Start backend in background
 $backendJob = Start-Job -ScriptBlock {
-    param($dir, $envFile)
+    param($dir)
     Set-Location $dir
-    Import-Module (Join-Path $dir "venv\Scripts\modules.psd1") -ErrorAction SilentlyContinue
-    & python -m uvicorn main:app --reload --port 8000
+    if (Test-Path ".\venv\Scripts\Activate.ps1") {
+        & ".\venv\Scripts\Activate.ps1"
+    }
+    uvicorn main:app --reload --port 8000
 } -ArgumentList $BACKEND_DIR
 
 Write-Host "Backend starting in background (Job ID: $($backendJob.Id))" -ForegroundColor Green
@@ -124,15 +126,9 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  Starting Frontend Server (Port 3000)" -ForegroundColor Cyan
 Write-Host "========================================`n" -ForegroundColor Cyan
 
-# Start frontend in background
-$frontendJob = Start-Job -ScriptBlock {
-    param($dir)
-    Set-Location $dir
-    npm run dev
-} -ArgumentList $FRONTEND_DIR
-
-Write-Host "Frontend starting in background (Job ID: $($frontendJob.Id))" -ForegroundColor Green
-Write-Host "Frontend will be available at: http://localhost:3000`n" -ForegroundColor Cyan
+Write-Host "[*] Opening browser..." -ForegroundColor Yellow
+Start-Sleep -Seconds 3
+Start-Process "http://localhost:3000"
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "  RoadmapAI is starting up!" -ForegroundColor Cyan
@@ -147,22 +143,16 @@ Quick Start:
 
 For AI-generated roadmaps, add your Gemini API key to backend/.env
 
-To stop servers later:
-  Stop-Job -Id $backendJob.Id
-  Stop-Job -Id $frontendJob.Id
-  Remove-Job -Id $backendJob.Id, $frontendJob.Id
-
-Or simply close these terminal windows.
+Press Ctrl+C to stop both servers.
 
 "@ -ForegroundColor White
 
-# Wait a moment then show status
-Start-Sleep -Seconds 5
-
-Write-Host "`nBackend output (last few lines):" -ForegroundColor Yellow
-Receive-Job $backendJob | Select-Object -Last 5
-
-Write-Host "`nFrontend output (last few lines):" -ForegroundColor Yellow
-Receive-Job $frontendJob | Select-Object -Last 5
-
-Write-Host "`nDone! The servers are running in the background.`n" -ForegroundColor Green
+# Start frontend in foreground
+Set-Location $FRONTEND_DIR
+try {
+    npm run dev
+} finally {
+    Write-Host "`n[*] Stopping backend server..." -ForegroundColor Yellow
+    Stop-Job -Job $backendJob
+    Remove-Job -Job $backendJob
+}

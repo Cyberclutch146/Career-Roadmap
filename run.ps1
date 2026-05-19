@@ -37,23 +37,31 @@ if (-not (Test-Path "$PROJECT_ROOT\frontend\.env.local")) {
 
 
 
-# Start backend
-Write-Host "[*] Starting backend server..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location '$PROJECT_ROOT\backend'; & '.\venv\Scripts\Activate.ps1'; uvicorn main:app --reload --port 8000" -WindowStyle Normal
+# Start backend in background
+Write-Host "[*] Starting backend server in background..." -ForegroundColor Yellow
+$backendJob = Start-Job -ScriptBlock {
+    param($dir)
+    Set-Location $dir
+    if (Test-Path ".\venv\Scripts\Activate.ps1") {
+        & ".\venv\Scripts\Activate.ps1"
+    }
+    uvicorn main:app --reload --port 8000
+} -ArgumentList "$PROJECT_ROOT\backend"
 
-# Start frontend
-Write-Host "[*] Starting frontend server..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location '$PROJECT_ROOT\frontend'; npm run dev" -WindowStyle Normal
-
-# Open browser
 Write-Host "[*] Opening browser..." -ForegroundColor Yellow
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 3
 Start-Process "http://localhost:3000"
 
-Write-Host "`n========================================" -ForegroundColor Green
-Write-Host "  RoadmapAI is ready!" -ForegroundColor Green
-Write-Host "========================================" -ForegroundColor Green
-Write-Host "`n  Frontend: http://localhost:3000" -ForegroundColor White
-Write-Host "  Backend:  http://localhost:8000" -ForegroundColor White
-Write-Host "  API Docs: http://localhost:8000/docs`n" -ForegroundColor White
-Write-Host "  Close this window when done.`n" -ForegroundColor Gray
+# Start frontend in foreground
+Write-Host "[*] Starting frontend server..." -ForegroundColor Yellow
+Write-Host "`nPress Ctrl+C to stop both servers.`n" -ForegroundColor Gray
+Set-Location "$PROJECT_ROOT\frontend"
+try {
+    npm run dev
+} finally {
+    Write-Host "`n[*] Stopping backend server..." -ForegroundColor Yellow
+    Stop-Job -Job $backendJob
+    Remove-Job -Job $backendJob
+}
+
+
