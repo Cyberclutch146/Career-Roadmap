@@ -13,8 +13,8 @@ export function Card({ children, className, hover = false, onClick }: CardProps)
   return (
     <div
       className={cn(
-        'bg-white rounded-xl border border-paper-300 p-6 shadow-soft',
-        hover && 'hover:shadow-medium hover:border-paper-400 transition-all duration-200 cursor-pointer',
+        'glass-card p-6 transition-all duration-300',
+        hover && 'hover:border-primary/50 cursor-pointer',
         onClick && 'cursor-pointer',
         className
       )}
@@ -35,7 +35,7 @@ export function CardHeader({ children, className }: { children: React.ReactNode;
 
 export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <h3 className={cn('text-xl font-serif font-bold text-ink-900', className)}>
+    <h3 className={cn('text-headline-md font-headline font-semibold text-on-surface', className)}>
       {children}
     </h3>
   )
@@ -43,7 +43,7 @@ export function CardTitle({ children, className }: { children: React.ReactNode; 
 
 export function CardDescription({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <p className={cn('text-ink-500 mt-1', className)}>
+    <p className={cn('text-on-surface-variant mt-1', className)}>
       {children}
     </p>
   )

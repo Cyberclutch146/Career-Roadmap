@@ -166,24 +166,24 @@ export default function GeneratePage() {
   }
 
   return (
-    <div className="min-h-screen bg-paper-50">
+    <div className="min-h-screen relative">
       <Navbar />
 
-      <div className="pt-24 pb-16">
+      <div className="pt-24 pb-16 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/10 text-accent rounded-full text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 text-primary rounded-full text-sm font-medium mb-6 shadow-[0_0_15px_rgba(255,113,98,0.15)]">
               <Sparkles className="w-4 h-4" />
               AI-Powered
             </div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-ink-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-on-surface mb-4">
               Create Your Learning Roadmap
             </h1>
-            <p className="text-ink-500 text-lg max-w-2xl mx-auto">
+            <p className="text-on-surface-variant text-lg max-w-2xl mx-auto">
               Tell us about your learning goals and we&apos;ll generate a personalized
               roadmap just for you.
             </p>
@@ -194,17 +194,17 @@ export default function GeneratePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="max-w-2xl mx-auto">
-              <CardHeader>
-                <CardTitle>Learning Details</CardTitle>
-                <CardDescription>
+            <Card className="max-w-2xl mx-auto p-2">
+              <CardHeader className="text-center border-b border-outline-variant/50 pb-6 mb-6">
+                <CardTitle className="text-2xl">Learning Details</CardTitle>
+                <CardDescription className="text-on-surface-variant">
                   Fill in your information to get a customized learning path
                 </CardDescription>
               </CardHeader>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6 px-4 pb-4">
                 <div>
-                  <label className="block text-sm font-medium text-ink-700 mb-2">
+                  <label className="block text-sm font-medium text-on-surface-variant mb-2">
                     What&apos;s your learning goal?
                   </label>
                   <Input
@@ -212,13 +212,13 @@ export default function GeneratePage() {
                     onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                     placeholder="e.g., Become a Full Stack Developer"
                   />
-                  <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2">
                     {goalSuggestions.slice(0, 4).map((goal) => (
                       <button
                         key={goal}
                         type="button"
                         onClick={() => setFormData({ ...formData, goal })}
-                        className="text-xs px-2 py-1 bg-paper-100 text-ink-500 rounded hover:bg-paper-200 transition-colors"
+                        className="text-xs px-3 py-1.5 bg-surface-container border border-outline-variant text-on-surface-variant rounded-md hover:bg-surface-container-high hover:text-on-surface transition-colors"
                       >
                         {goal}
                       </button>
@@ -243,8 +243,8 @@ export default function GeneratePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-ink-700 mb-2">
-                    Daily Study Time: {formData.daily_hours} hours
+                  <label className="block text-sm font-medium text-on-surface-variant mb-2">
+                    Daily Study Time: <span className="text-primary font-bold">{formData.daily_hours}</span> hours
                   </label>
                   <input
                     type="range"
@@ -253,9 +253,9 @@ export default function GeneratePage() {
                     step="0.5"
                     value={formData.daily_hours}
                     onChange={(e) => setFormData({ ...formData, daily_hours: parseFloat(e.target.value) })}
-                    className="w-full h-2 bg-paper-200 rounded-lg appearance-none cursor-pointer accent-accent"
+                    className="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
                   />
-                  <div className="flex justify-between text-xs text-ink-300 mt-1">
+                  <div className="flex justify-between text-xs text-on-surface-variant mt-2 font-mono">
                     <span>30 min</span>
                     <span>8 hours</span>
                   </div>
@@ -269,15 +269,16 @@ export default function GeneratePage() {
                 />
 
                 {/* Pre-Assessment Card */}
-                <div className="bg-paper-100 border border-paper-300 rounded-xl p-4.5 space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-bold text-ink-900 flex items-center gap-1.5">
-                        <Award className="w-4 h-4 text-accent" />
-                        Skill Assessment (Optional)
+                <div className="bg-surface-container/50 backdrop-blur-md border border-outline-variant rounded-xl p-5 space-y-3 relative overflow-hidden group hover:border-primary/50 transition-colors duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative z-10">
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-bold text-on-surface flex items-center gap-2">
+                        <Award className="w-4 h-4 text-primary" />
+                        Skill Assessment <span className="text-[10px] font-normal uppercase tracking-wider text-on-surface-variant bg-surface-container-highest px-2 py-0.5 rounded-full">(Optional)</span>
                       </h4>
-                      <p className="text-xs text-ink-500 leading-relaxed">
-                        Take a quick 5-question AI quiz on your goal. If you score 70% or higher, we will customize your roadmap by pre-completing introductory topics for you!
+                      <p className="text-xs text-on-surface-variant leading-relaxed max-w-sm">
+                        Take a quick 5-question AI quiz on your goal. Score 70%+ and we will customize your roadmap by pre-completing introductory topics for you!
                       </p>
                     </div>
                     <Button
@@ -286,16 +287,16 @@ export default function GeneratePage() {
                       size="sm"
                       onClick={handleStartQuiz}
                       isLoading={isQuizLoading}
-                      className="text-xs py-2"
+                      className="text-xs py-2 whitespace-nowrap"
                     >
                       {assessmentScore !== null ? 'Retake Quiz' : 'Take Quiz'}
                     </Button>
                   </div>
                   {assessmentScore !== null && (
-                    <div className="bg-success/5 border border-success/20 rounded-lg p-3 text-xs text-success-dark flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                    <div className="bg-success/10 border border-success/20 rounded-lg p-3 text-xs text-success flex items-start sm:items-center gap-2 mt-4 relative z-10">
+                      <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5 sm:mt-0" />
                       <span>
-                        Assessment recorded: <strong>{quizScore}/5 ({Math.round(assessmentScore * 100)}%)</strong>.
+                        Assessment recorded: <strong className="text-on-surface">{quizScore}/5 ({Math.round(assessmentScore * 100)}%)</strong>.
                         {assessmentScore >= 0.7 
                           ? ' Introductory lessons will be marked completed so you can skip ahead!' 
                           : ' We will tailor your roadmap explanations to support your level.'}
@@ -305,7 +306,8 @@ export default function GeneratePage() {
                 </div>
 
                 {error && (
-                  <div className="p-4 bg-error/10 text-error rounded-lg text-sm">
+                  <div className="p-4 bg-error/10 border border-error/20 text-error rounded-lg text-sm flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-error mt-1.5 flex-shrink-0" />
                     {error}
                   </div>
                 )}
@@ -313,7 +315,7 @@ export default function GeneratePage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full group"
+                  className="w-full group mt-4 h-12 text-base font-semibold"
                   isLoading={isGenerating}
                 >
                   {isGenerating ? 'Generating your roadmap...' : 'Generate My Roadmap'}
@@ -329,33 +331,33 @@ export default function GeneratePage() {
             transition={{ delay: 0.2 }}
             className="mt-8 grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto"
           >
-            <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-paper-300">
-              <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                <Clock className="w-5 h-5 text-accent" />
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 p-4 bg-surface-container/30 backdrop-blur-md rounded-xl border border-outline-variant hover:border-outline transition-colors">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Clock className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <div className="font-medium text-ink-900">Personalized</div>
-                <div className="text-xs text-ink-500">Based on your schedule</div>
+                <div className="font-medium text-on-surface text-sm">Personalized</div>
+                <div className="text-xs text-on-surface-variant mt-0.5">Based on your schedule</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-paper-300">
-              <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                <Target className="w-5 h-5 text-accent" />
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 p-4 bg-surface-container/30 backdrop-blur-md rounded-xl border border-outline-variant hover:border-outline transition-colors">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Target className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <div className="font-medium text-ink-900">Goal-Oriented</div>
-                <div className="text-xs text-ink-500">Clear milestones</div>
+                <div className="font-medium text-on-surface text-sm">Goal-Oriented</div>
+                <div className="text-xs text-on-surface-variant mt-0.5">Clear milestones</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-paper-300">
-              <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-accent" />
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 p-4 bg-surface-container/30 backdrop-blur-md rounded-xl border border-outline-variant hover:border-outline transition-colors">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <BookOpen className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <div className="font-medium text-ink-900">Comprehensive</div>
-                <div className="text-xs text-ink-500">Resources included</div>
+                <div className="font-medium text-on-surface text-sm">Comprehensive</div>
+                <div className="text-xs text-on-surface-variant mt-0.5">Resources included</div>
               </div>
             </div>
           </motion.div>
@@ -364,21 +366,21 @@ export default function GeneratePage() {
 
       {/* Quiz Modal */}
       {showQuizModal && quizQuestions.length > 0 && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-xl z-50 flex items-center justify-center p-4">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl border border-paper-300 w-full max-w-lg shadow-2xl overflow-hidden flex flex-col"
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-surface-container-high rounded-2xl border border-outline w-full max-w-lg shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col"
           >
             {/* Modal Header */}
-            <div className="bg-paper-100 border-b border-paper-200 px-6 py-4 flex justify-between items-center">
-              <h3 className="font-serif font-bold text-lg text-ink-900 flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-accent" />
+            <div className="bg-surface-container border-b border-outline-variant px-6 py-5 flex justify-between items-center">
+              <h3 className="font-heading font-bold text-lg text-on-surface flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-primary" />
                 Assessment: {formData.goal}
               </h3>
               {quizScore === null && (
-                <span className="text-xs font-semibold text-ink-400 bg-white px-2.5 py-1 rounded-full border border-paper-200">
-                  Question {currentQuestionIndex + 1} of {quizQuestions.length}
+                <span className="text-xs font-mono text-on-surface-variant bg-surface-container-highest px-3 py-1 rounded-full border border-outline-variant">
+                  {currentQuestionIndex + 1} / {quizQuestions.length}
                 </span>
               )}
             </div>
@@ -386,45 +388,45 @@ export default function GeneratePage() {
             {/* Modal Content */}
             <div className="p-6 flex-1 overflow-y-auto min-h-[300px]">
               {quizScore === null ? (
-                <div className="space-y-4">
-                  <h4 className="font-medium text-ink-900 leading-relaxed text-base">
+                <div className="space-y-5">
+                  <h4 className="font-medium text-on-surface leading-relaxed text-base">
                     {quizQuestions[currentQuestionIndex].question}
                   </h4>
-                  <div className="space-y-2.5 pt-2">
+                  <div className="space-y-3 pt-2">
                     {quizQuestions[currentQuestionIndex].options.map((option, idx) => (
                       <button
                         key={idx}
                         type="button"
                         onClick={() => handleSelectOption(idx)}
-                        className={`w-full p-4 text-left text-sm rounded-xl border transition-all flex items-start gap-3 ${
+                        className={`w-full p-4 text-left text-sm rounded-xl border transition-all duration-200 flex items-start gap-3 group ${
                           selectedAnswers[currentQuestionIndex] === idx
-                            ? 'border-accent bg-accent/5 text-accent font-medium'
-                            : 'border-paper-200 hover:border-paper-300 bg-white text-ink-700'
+                            ? 'border-primary bg-primary/10 text-primary font-medium'
+                            : 'border-outline-variant hover:border-outline bg-surface-container text-on-surface hover:bg-surface-container-high'
                         }`}
                       >
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center border text-xs font-bold ${
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center border text-xs font-bold transition-colors ${
                           selectedAnswers[currentQuestionIndex] === idx
-                            ? 'border-accent bg-accent text-white'
-                            : 'border-paper-300 text-ink-400'
+                            ? 'border-primary bg-primary text-on-primary'
+                            : 'border-outline text-on-surface-variant group-hover:border-on-surface-variant group-hover:text-on-surface'
                         }`}>
                           {String.fromCharCode(65 + idx)}
                         </span>
-                        <span className="flex-1">{option}</span>
+                        <span className="flex-1 mt-0.5">{option}</span>
                       </button>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6 text-center py-4">
-                  <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto shadow-sm">
-                    <Award className="w-8 h-8" />
+                <div className="space-y-6 text-center py-8">
+                  <div className="w-20 h-20 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(40,167,69,0.2)]">
+                    <Award className="w-10 h-10" />
                   </div>
-                  <div className="space-y-2">
-                    <h4 className="font-serif font-bold text-xl text-ink-900">Quiz Completed!</h4>
-                    <p className="text-3xl font-extrabold text-accent">
-                      {quizScore} / {quizQuestions.length}
+                  <div className="space-y-3">
+                    <h4 className="font-heading font-bold text-2xl text-on-surface">Quiz Completed!</h4>
+                    <p className="text-4xl font-extrabold text-primary drop-shadow-[0_0_10px_rgba(255,113,98,0.3)]">
+                      {quizScore} <span className="text-2xl text-on-surface-variant">/ {quizQuestions.length}</span>
                     </p>
-                    <p className="text-sm text-ink-500 max-w-sm mx-auto">
+                    <p className="text-sm text-on-surface-variant max-w-sm mx-auto pt-2">
                       {assessmentScore !== null && assessmentScore >= 0.7
                         ? "Excellent job! You've shown solid competency. We'll automatically customize your roadmap by skipping basic topics."
                         : "Thanks for taking the assessment! We'll tailor your roadmap to ensure you cover all necessary fundamentals."}
@@ -435,11 +437,11 @@ export default function GeneratePage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-paper-100 border-t border-paper-200 px-6 py-4 flex justify-end gap-3">
+            <div className="bg-surface-container border-t border-outline-variant px-6 py-4 flex justify-end gap-3">
               {quizScore === null ? (
                 <>
                   <Button
-                    variant="secondary"
+                    variant="ghost"
                     onClick={() => setShowQuizModal(false)}
                     className="text-xs"
                   >
@@ -448,7 +450,7 @@ export default function GeneratePage() {
                   <Button
                     onClick={handleNextQuestion}
                     disabled={selectedAnswers[currentQuestionIndex] === undefined}
-                    className="text-xs"
+                    className="text-xs px-6"
                   >
                     {currentQuestionIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question'}
                   </Button>
@@ -456,7 +458,7 @@ export default function GeneratePage() {
               ) : (
                 <Button
                   onClick={() => setShowQuizModal(false)}
-                  className="text-xs"
+                  className="text-xs px-8"
                 >
                   Done
                 </Button>
@@ -468,3 +470,4 @@ export default function GeneratePage() {
     </div>
   )
 }
+

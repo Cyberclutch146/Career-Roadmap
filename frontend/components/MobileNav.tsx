@@ -22,7 +22,7 @@ export function MobileNav() {
   const visibleLinks = links.filter((link) => !link.requiresAuth || user)
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-paper-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] pb-safe">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-xl border-t border-surface-variant/20 shadow-[0_-4px_12px_rgba(0,0,0,0.3)] pb-safe">
       <nav className="flex items-center justify-around h-16 px-2">
         {visibleLinks.map((link) => {
           const Icon = link.icon
@@ -34,11 +34,11 @@ export function MobileNav() {
               href={link.href}
               className={cn(
                 'flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors',
-                isActive ? 'text-accent' : 'text-ink-400 hover:text-ink-600'
+                isActive ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'
               )}
             >
               <Icon className={cn("w-5 h-5", isActive && "stroke-[2.5px]")} />
-              <span className="text-[10px] font-medium">{link.label}</span>
+              <span className="text-[10px] font-label font-medium">{link.label}</span>
             </Link>
           )
         })}

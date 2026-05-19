@@ -10,96 +10,147 @@
   }
 
   body {
-    @apply bg-paper-50 text-ink-900 font-sans antialiased;
+    @apply bg-background text-on-surface font-sans antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-bold;
+    @apply font-headline font-bold;
   }
 
   ::selection {
-    @apply bg-accent/20;
+    background: rgba(255, 179, 174, 0.25);
+  }
+
+  /* Scrollbar styling for dark mode */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1e0f0f;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #43302f;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #5b403e;
   }
 }
 
 @layer components {
+  /* === Glass Card (Signature component) === */
+  .glass-card {
+    backdrop-filter: blur(32px);
+    box-shadow: inset 1px 1px 0px 0px rgba(255, 255, 255, 0.1);
+    @apply bg-surface-container/40 border border-outline-variant/30 rounded-xl;
+  }
+
+  .glass-card-hover {
+    @apply glass-card hover:border-primary/50 transition-colors duration-500;
+  }
+
+  /* === Buttons === */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 
-           bg-accent text-white font-medium rounded-lg
-           hover:bg-accent-dark transition-colors duration-200
-           focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
+    @apply inline-flex items-center justify-center px-6 py-3
+           bg-gradient-to-r from-primary to-secondary text-on-primary font-label font-medium rounded-full
+           transition-all duration-200 shadow-glow hover:brightness-110 active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 
-           bg-paper-100 text-ink-900 font-medium rounded-lg
-           border border-paper-300 hover:bg-paper-200 transition-colors duration-200
-           focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3
+           border border-white/20 text-on-surface font-label font-medium rounded-full
+           hover:bg-surface-container-high transition-colors duration-200 backdrop-blur-md
+           focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center px-4 py-2 
-           text-ink-500 font-medium rounded-lg
-           hover:bg-paper-100 hover:text-ink-900 transition-colors duration-200;
+    @apply inline-flex items-center justify-center px-4 py-2
+           text-on-surface-variant font-label font-medium rounded-lg
+           hover:bg-surface-container/50 hover:text-on-surface transition-colors duration-200;
   }
 
+  /* === Cards === */
   .card {
-    @apply bg-white rounded-xl border border-paper-300 p-6 
-           shadow-soft hover:shadow-medium transition-shadow duration-200;
+    @apply glass-card p-6 transition-all duration-300;
   }
 
   .card-elevated {
-    @apply bg-white rounded-xl border border-paper-200 p-6 
-           shadow-medium hover:shadow-lifted transition-shadow duration-200;
+    @apply glass-card p-6 shadow-lg transition-all duration-300;
   }
 
+  /* === Input Fields === */
   .input-field {
-    @apply w-full px-4 py-3 bg-white border border-paper-300 rounded-lg
-           text-ink-900 placeholder-ink-300
-           focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent
-           transition-all duration-200;
+    @apply w-full px-4 py-3 bg-surface-container/60 backdrop-blur-xl border border-outline-variant rounded-lg
+           text-on-surface placeholder-on-surface-variant
+           focus:outline-none focus:border-primary transition-colors duration-200;
   }
 
   .label {
-    @apply block text-sm font-medium text-ink-700 mb-2;
+    @apply block text-sm font-label font-medium text-on-surface mb-2;
   }
 
+  /* === Progress Bar === */
   .progress-bar {
-    @apply h-2 bg-paper-200 rounded-full overflow-hidden;
+    @apply h-1.5 bg-surface-container-highest rounded-full overflow-hidden;
   }
 
   .progress-fill {
-    @apply h-full bg-accent rounded-full transition-all duration-500 ease-out;
+    @apply h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500 ease-out;
   }
 
+  /* === Divider === */
   .divider {
-    @apply h-px bg-gradient-to-r from-transparent via-paper-400 to-transparent;
+    @apply h-px bg-gradient-to-r from-transparent via-outline-variant/50 to-transparent;
   }
 
+  /* === Section Heading === */
   .section-heading {
-    @apply text-3xl md:text-4xl font-serif font-bold text-ink-900;
+    @apply text-headline-lg-mobile md:text-headline-lg font-headline font-bold text-on-surface;
   }
 
+  /* === Chapter & Lesson Cards === */
   .chapter-card {
-    @apply bg-white rounded-lg border border-paper-300 overflow-hidden
-           transition-all duration-200 hover:shadow-soft;
+    @apply glass-card overflow-hidden transition-all duration-300 hover:border-primary/40;
   }
 
   .lesson-item {
     @apply flex items-center gap-4 p-4 rounded-lg
-           hover:bg-paper-100 transition-colors duration-150 cursor-pointer;
+           hover:bg-surface-container/60 transition-colors duration-150 cursor-pointer;
   }
 
   .resource-card {
-    @apply flex items-start gap-3 p-4 bg-paper-100 rounded-lg
-           hover:bg-paper-200 transition-colors duration-150;
+    @apply flex items-start gap-3 p-4 glass-card rounded-lg
+           hover:border-secondary/40 transition-colors duration-200;
+  }
+
+  /* === Glossy Button Hover === */
+  .glossy-btn-hover {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glossy-btn-hover:hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: inherit;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Gradient text helper */
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary;
   }
 
   .animate-stagger > * {

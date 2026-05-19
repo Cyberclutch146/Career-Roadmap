@@ -32,54 +32,55 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 bg-paper-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-2xl mx-auto mb-16"
-        >
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-ink-900 mb-4">
-            How It Works
-          </h2>
-          <p className="text-ink-500 text-lg">
-            From ambition to achievement in four simple steps
-          </p>
-        </motion.div>
+    <section id="how-it-works" className="py-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-center max-w-2xl mx-auto mb-16"
+      >
+        <h2 className="section-heading mb-4">
+          How It Works
+        </h2>
+        <p className="font-body text-body-lg text-on-surface-variant">
+          From ambition to achievement in four simple steps
+        </p>
+      </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.number}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="relative"
-            >
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-paper-300 -translate-x-1/2" />
-              )}
-              <div className="bg-white rounded-xl border border-paper-300 p-6 relative">
-                <div className="absolute -top-3 -left-3 w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                  <step.icon className="w-4 h-4 text-white" />
-                </div>
-                <div className="pt-4">
-                  <span className="text-4xl font-serif font-bold text-paper-300">
-                    {step.number}
-                  </span>
-                  <h3 className="text-xl font-serif font-bold text-ink-900 mt-2 mb-3">
-                    {step.title}
-                  </h3>
-                  <p className="text-ink-500 text-sm leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+        {steps.map((step, index) => (
+          <motion.div
+            key={step.number}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+            className="relative"
+          >
+            {index < steps.length - 1 && (
+              <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-outline-variant/50 to-transparent -translate-x-1/2" />
+            )}
+            <div className="glass-card p-6 relative group hover:border-primary/40 transition-colors duration-500">
+              {/* Ambient glow */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center shadow-glow">
+                <step.icon className="w-4 h-4 text-on-primary" />
               </div>
-            </motion.div>
-          ))}
-        </div>
+              <div className="pt-4">
+                <span className="text-4xl font-headline font-bold text-outline-variant/40">
+                  {step.number}
+                </span>
+                <h3 className="text-xl font-headline font-bold text-on-surface mt-2 mb-3">
+                  {step.title}
+                </h3>
+                <p className="font-body text-body-md text-on-surface-variant leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </section>
   )

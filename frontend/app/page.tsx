@@ -22,14 +22,14 @@ export default function Home() {
       <ExampleRoadmap />
       <Testimonials />
 
-      <section className="py-20 bg-accent">
+      <section className="py-20 bg-primary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white mb-4">
               Ready to Start Your Learning Journey?
             </h2>
             <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
@@ -39,7 +39,7 @@ export default function Home() {
             <Link href="/generate">
               <Button
                 size="lg"
-                className="bg-white text-accent hover:bg-paper-100 group"
+                className="bg-white text-primary hover:bg-surface-container group"
               >
                 Generate Your Roadmap
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />

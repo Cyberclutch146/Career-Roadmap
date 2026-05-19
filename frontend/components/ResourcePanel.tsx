@@ -30,7 +30,7 @@ export function ResourcePanel({ resources }: ResourcePanelProps) {
   if (!hasResources) {
     return (
       <div className="text-center py-8">
-        <p className="text-ink-500">Resources will be populated as you progress through lessons.</p>
+        <p className="text-on-surface-variant">Resources will be populated as you progress through lessons.</p>
       </div>
     )
   }
@@ -47,7 +47,7 @@ export function ResourcePanel({ resources }: ResourcePanelProps) {
               <div className={`w-8 h-8 ${color} rounded-lg flex items-center justify-center`}>
                 <Icon className="w-4 h-4 text-white" />
               </div>
-              <h4 className="font-serif font-bold text-ink-900">{label}</h4>
+              <h4 className="font-heading font-bold text-on-surface">{label}</h4>
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
               {categoryResources.slice(0, 6).map((resource, idx) => {
@@ -65,17 +65,17 @@ export function ResourcePanel({ resources }: ResourcePanelProps) {
                   href={url}
                   target={isString ? undefined : "_blank"}
                   rel={isString ? undefined : "noopener noreferrer"}
-                  className="flex items-start gap-3 p-4 bg-paper-50 rounded-lg hover:bg-paper-100 transition-colors group"
+                  className="flex items-start gap-3 p-4 bg-surface rounded-lg hover:bg-surface-container transition-colors group"
                 >
                   <div className="flex-shrink-0 mt-0.5">
-                    <ExternalLink className="w-4 h-4 text-ink-300 group-hover:text-accent transition-colors" />
+                    <ExternalLink className="w-4 h-4 text-on-surface-variant group-hover:text-primary transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-ink-900 group-hover:text-accent transition-colors">
+                    <div className="font-medium text-on-surface group-hover:text-primary transition-colors">
                       {title}
                     </div>
                     {description && (
-                      <div className="text-sm text-ink-500 mt-1 line-clamp-2">
+                      <div className="text-sm text-on-surface-variant mt-1 line-clamp-2">
                         {description}
                       </div>
                     )}
@@ -90,7 +90,7 @@ export function ResourcePanel({ resources }: ResourcePanelProps) {
                         </span>
                       )}
                       {rating && (
-                        <span className="text-xs text-ink-300">
+                        <span className="text-xs text-on-surface-variant">
                           Rating: {rating}/5
                         </span>
                       )}

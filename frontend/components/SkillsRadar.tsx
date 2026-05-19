@@ -66,7 +66,7 @@ export function SkillsRadar({ roadmap, completedLessons }: SkillsRadarProps) {
                 tickCount={6}
               />
               <Tooltip 
-                formatter={(value: number) => [`${value}%`, 'Mastery']}
+                formatter={(value: any) => [`${value}%`, 'Mastery']}
                 labelFormatter={(label, payload) => {
                   if (payload && payload.length > 0) {
                     return payload[0].payload.fullSubject

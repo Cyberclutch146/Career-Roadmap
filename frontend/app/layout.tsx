@@ -1,24 +1,35 @@
 import type { Metadata } from 'next'
-import { Inter, Merriweather, JetBrains_Mono } from 'next/font/google'
+import { DM_Sans, JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { MobileNav } from '@/components/MobileNav'
 
-const inter = Inter({ 
+const dmSans = DM_Sans({ 
   subsets: ['latin'],
-  variable: '--font-inter',
-})
-
-const merriweather = Merriweather({
-  weight: ['400', '700'],
-  subsets: ['latin'],
-  variable: '--font-merriweather',
+  variable: '--font-dm-sans',
+  weight: ['400', '500', '700'],
 })
 
 const jetbrainsMono = JetBrains_Mono({
   weight: ['400', '500'],
   subsets: ['latin'],
   variable: '--font-jetbrains',
+})
+
+// Plus Jakarta Sans loaded via Google Fonts
+import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google'
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta',
+  weight: ['600', '700', '800'],
+})
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+  weight: ['500', '700'],
 })
 
 export const metadata: Metadata = {
@@ -33,8 +44,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${merriweather.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen bg-paper-50 pb-16 md:pb-0">
+    <html lang="en" className={`dark ${dmSans.variable} ${plusJakarta.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+      <body className="min-h-screen bg-background text-on-surface pb-16 md:pb-0 overflow-x-hidden antialiased">
+        {/* Atmospheric Background Glow */}
+        <div className="fixed inset-0 pointer-events-none -z-10">
+          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] rounded-full bg-primary/20 blur-[120px]" />
+          <div className="absolute bottom-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-secondary/10 blur-[150px]" />
+        </div>
         <AuthProvider>
           {children}
           <MobileNav />

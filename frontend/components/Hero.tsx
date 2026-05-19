@@ -1,127 +1,127 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BookOpen, Sparkles, Clock, Target, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui/Button'
 
 export function Hero() {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-paper-100 to-paper-50" />
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-accent-light/10 rounded-full blur-3xl" />
-
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/10 text-accent rounded-full text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
-              AI-Powered Learning
-            </span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-ink-900 leading-tight mb-6"
-          >
-            Your Personal Learning Journey,{' '}
-            <span className="text-accent">Structured & Guided</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg sm:text-xl text-ink-500 mb-8 leading-relaxed"
-          >
-            Transform ambitious goals into achievable roadmaps. Get personalized
-            learning paths, curated resources, and AI mentorship tailored to your
-            schedule and learning style.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Link href="/generate">
-              <Button size="lg" className="group">
-                Create Your Roadmap
-                <ChevronRight className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <Link href="#examples">
-              <Button variant="secondary" size="lg">
-                View Examples
-              </Button>
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-12 flex items-center justify-center gap-8 text-sm text-ink-300"
-          >
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              <span>5 min setup</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4" />
-              <span>Personalized paths</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              <span>Expert curated</span>
-            </div>
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-16 relative"
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-paper-50 to-transparent z-10 pointer-events-none h-20 bottom-0 top-auto" />
-          <div className="bg-white rounded-2xl border border-paper-300 shadow-lifted p-6 max-w-4xl mx-auto">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-error/60" />
-              <div className="w-3 h-3 rounded-full bg-warning/60" />
-              <div className="w-3 h-3 rounded-full bg-success/60" />
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-paper-50 rounded-lg">
-                <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-accent" />
-                </div>
-                <div className="flex-1">
-                  <div className="h-3 bg-ink-900/10 rounded w-1/3 mb-2" />
-                  <div className="h-2 bg-paper-200 rounded w-2/3" />
-                </div>
-                <div className="text-success text-sm font-medium">85%</div>
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+          {/* Left: Text Content */}
+          <div className="lg:col-span-7 flex flex-col gap-stack-md z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/10 w-fit">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="font-label text-label-md text-primary tracking-widest uppercase">AI-Powered Learning</span>
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                {['Phase 1', 'Phase 2', 'Phase 3'].map((phase, i) => (
-                  <div key={phase} className="p-4 bg-paper-50 rounded-lg">
-                    <div className="h-2 bg-accent/20 rounded w-3/4 mb-2" />
-                    <div className="h-2 bg-paper-200 rounded w-1/2 mb-2" />
-                    <div className="h-2 bg-paper-200 rounded w-2/3" />
-                  </div>
-                ))}
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="font-headline text-headline-lg-mobile md:text-display-lg text-on-surface leading-tight"
+            >
+              Master any skill with <br />
+              <span className="gradient-text">adaptive pathways.</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="font-body text-body-lg text-on-surface-variant max-w-xl"
+            >
+              Input your end goal, and our intelligence engine maps out the exact steps, 
+              resources, and milestones needed to get there. Stop guessing, start learning.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="relative max-w-2xl mt-4"
+            >
+              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                <svg className="w-5 h-5 text-on-surface-variant" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
               </div>
-            </div>
+              <Link href="/generate">
+                <input
+                  readOnly
+                  className="w-full bg-surface-container/60 backdrop-blur-xl border border-outline-variant rounded-full py-5 pl-14 pr-40 text-on-surface focus:outline-none focus:border-primary transition-colors font-body text-body-lg placeholder:text-on-surface-variant shadow-lg shadow-background/50 cursor-pointer"
+                  placeholder="I want to become a full-stack developer..."
+                />
+              </Link>
+              <Link href="/generate" className="absolute right-2 top-2 bottom-2">
+                <button className="h-full bg-gradient-to-r from-primary to-secondary text-on-primary px-8 rounded-full font-label text-label-md transition-all shadow-glow hover:brightness-110 active:scale-95 glossy-btn-hover relative overflow-hidden">
+                  Generate
+                </button>
+              </Link>
+            </motion.div>
           </div>
-        </motion.div>
+
+          {/* Right: Abstract Glass Element */}
+          <div className="lg:col-span-5 relative hidden lg:block h-[500px] w-full">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, rotate: 0 }}
+              animate={{ opacity: 1, scale: 1, rotate: 3 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="absolute inset-0 bg-gradient-to-br from-surface-container-high/40 to-background/10 rounded-2xl glass-card border border-white/10 scale-105 shadow-2xl overflow-hidden"
+            >
+              {/* Background texture */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-60" />
+
+              {/* Faux UI Card - Completed Module */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="absolute top-8 left-8 right-8 bg-surface/80 backdrop-blur-md rounded-xl p-4 border border-outline-variant/50 shadow-lg -rotate-2"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="font-label text-label-md text-on-surface">React Fundamentals</span>
+                </div>
+                <div className="w-full bg-surface-container-highest rounded-full h-1.5 mt-2 overflow-hidden">
+                  <div className="bg-gradient-to-r from-primary to-secondary w-full h-full" />
+                </div>
+              </motion.div>
+
+              {/* Faux UI Card - AI Mentor */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 1.0 }}
+                className="absolute bottom-12 right-[-20px] bg-surface-container-high/90 backdrop-blur-xl rounded-xl p-4 border border-outline/30 shadow-2xl rotate-6 w-64"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+                    <svg className="w-5 h-5 text-on-secondary-container" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-label text-label-md text-on-surface">AI Mentor</p>
+                    <p className="font-body text-body-md text-on-surface-variant text-sm">Path optimized.</p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )

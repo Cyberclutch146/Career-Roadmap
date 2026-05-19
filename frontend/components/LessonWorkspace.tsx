@@ -263,10 +263,10 @@ export function LessonWorkspace({
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed top-16 right-0 bottom-0 w-full lg:w-[60%] bg-paper-50 shadow-2xl border-l border-paper-300 z-50 flex flex-col overflow-hidden"
+      className="fixed top-16 right-0 bottom-0 w-full lg:w-[60%] bg-surface shadow-2xl border-l border-border z-50 flex flex-col overflow-hidden"
     >
       {/* Header */}
-      <div className="bg-white border-b border-paper-300 p-5 flex items-center justify-between">
+      <div className="bg-white border-b border-border p-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={onToggleComplete}
@@ -275,14 +275,14 @@ export function LessonWorkspace({
             {isCompleted ? (
               <CheckCircle2 className="w-6 h-6 text-success" />
             ) : (
-              <Circle className="w-6 h-6 text-ink-300 hover:text-accent transition-colors" />
+              <Circle className="w-6 h-6 text-on-surface-variant hover:text-primary transition-colors" />
             )}
           </button>
           <div>
-            <h2 className="font-serif font-bold text-lg text-ink-900 leading-tight">
+            <h2 className="font-heading font-bold text-lg text-on-surface leading-tight">
               {lesson.title}
             </h2>
-            <p className="text-xs text-ink-400 mt-0.5">
+            <p className="text-xs text-on-surface-variant mt-0.5">
               Phase: {phaseName} • {lesson.duration_minutes} mins
             </p>
           </div>
@@ -296,7 +296,7 @@ export function LessonWorkspace({
             className={`p-1.5 rounded-lg transition-colors ${
               isBookmarked
                 ? 'text-amber-500 hover:text-amber-600 bg-amber-50'
-                : 'text-ink-300 hover:text-amber-400 hover:bg-amber-50'
+                : 'text-on-surface-variant hover:text-amber-400 hover:bg-amber-50'
             }`}
           >
             {isBookmarked ? (
@@ -309,7 +309,7 @@ export function LessonWorkspace({
           {/* Close */}
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-paper-100 rounded-lg text-ink-400 hover:text-ink-900 transition-colors"
+            className="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-on-surface transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -317,13 +317,13 @@ export function LessonWorkspace({
       </div>
 
       {/* Tabs list */}
-      <div className="bg-white border-b border-paper-200 px-5 flex gap-4 text-sm font-medium">
+      <div className="bg-white border-b border-border px-5 flex gap-4 text-sm font-medium">
         <button
           onClick={() => setActiveTab('content')}
           className={`py-3 border-b-2 transition-colors flex items-center gap-1.5 ${
             activeTab === 'content'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-ink-500 hover:text-ink-900'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-on-surface-variant hover:text-on-surface'
           }`}
         >
           <BookOpen className="w-4 h-4" />
@@ -333,8 +333,8 @@ export function LessonWorkspace({
           onClick={() => setActiveTab('code')}
           className={`py-3 border-b-2 transition-colors flex items-center gap-1.5 ${
             activeTab === 'code'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-ink-500 hover:text-ink-900'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-on-surface-variant hover:text-on-surface'
           }`}
         >
           <Code className="w-4 h-4" />
@@ -344,8 +344,8 @@ export function LessonWorkspace({
           onClick={() => setActiveTab('interview')}
           className={`py-3 border-b-2 transition-colors flex items-center gap-1.5 ${
             activeTab === 'interview'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-ink-500 hover:text-ink-900'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-on-surface-variant hover:text-on-surface'
           }`}
         >
           <MessageSquare className="w-4 h-4" />
@@ -355,8 +355,8 @@ export function LessonWorkspace({
           onClick={() => setActiveTab('notes')}
           className={`py-3 border-b-2 transition-colors flex items-center gap-1.5 ${
             activeTab === 'notes'
-              ? 'border-accent text-accent'
-              : 'border-transparent text-ink-500 hover:text-ink-900'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-on-surface-variant hover:text-on-surface'
           }`}
         >
           <FileText className="w-4 h-4" />
@@ -376,16 +376,16 @@ export function LessonWorkspace({
               className="space-y-6"
             >
               {/* Lesson Description */}
-              <div className="bg-white p-5 rounded-xl border border-paper-300">
-                <h3 className="text-sm font-semibold text-ink-400 uppercase tracking-wider mb-2">Lesson Overview</h3>
-                <p className="text-ink-700 leading-relaxed whitespace-pre-wrap">{lesson.description}</p>
+              <div className="bg-white p-5 rounded-xl border border-border">
+                <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Lesson Overview</h3>
+                <p className="text-on-surface-variant leading-relaxed whitespace-pre-wrap">{lesson.description}</p>
               </div>
 
               {/* YouTube split screen or integrated video player */}
               {youtubeId && (
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-ink-400 uppercase tracking-wider">Lesson Video</h3>
-                  <div className="aspect-video w-full bg-black rounded-xl overflow-hidden border border-paper-300 shadow-sm">
+                  <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Lesson Video</h3>
+                  <div className="aspect-video w-full bg-black rounded-xl overflow-hidden border border-border shadow-sm">
                     <iframe
                       className="w-full h-full"
                       src={`https://www.youtube.com/embed/${youtubeId}`}
@@ -394,23 +394,23 @@ export function LessonWorkspace({
                       title={mainVideo?.title || 'YouTube Player'}
                     />
                   </div>
-                  <p className="text-xs text-ink-500 italic">
-                    Source: <a href={mainVideo?.url} target="_blank" rel="noreferrer" className="text-accent underline">{mainVideo?.title}</a>
+                  <p className="text-xs text-on-surface-variant italic">
+                    Source: <a href={mainVideo?.url} target="_blank" rel="noreferrer" className="text-primary underline">{mainVideo?.title}</a>
                   </p>
                 </div>
               )}
 
               {/* Practice Exercises */}
               {lesson.practice_exercises && lesson.practice_exercises.length > 0 && (
-                <div className="bg-white p-5 rounded-xl border border-paper-300">
-                  <h3 className="text-sm font-semibold text-ink-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-accent" />
+                <div className="bg-white p-5 rounded-xl border border-border">
+                  <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-primary" />
                     Practice Exercises
                   </h3>
                   <ul className="space-y-2.5">
                     {lesson.practice_exercises.map((exercise, idx) => (
-                      <li key={idx} className="flex gap-2.5 items-start text-sm text-ink-700">
-                        <span className="w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center font-bold text-xs mt-0.5">
+                      <li key={idx} className="flex gap-2.5 items-start text-sm text-on-surface-variant">
+                        <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">
                           {idx + 1}
                         </span>
                         <span>{exercise}</span>
@@ -422,8 +422,8 @@ export function LessonWorkspace({
 
               {/* Additional Resources */}
               {otherResources.length > 0 && (
-                <div className="bg-white p-5 rounded-xl border border-paper-300">
-                  <h3 className="text-sm font-semibold text-ink-400 uppercase tracking-wider mb-3">Additional Readings & Resources</h3>
+                <div className="bg-white p-5 rounded-xl border border-border">
+                  <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-3">Additional Readings & Resources</h3>
                   <div className="grid gap-3">
                     {otherResources.map((res, idx) => (
                       <a
@@ -431,13 +431,13 @@ export function LessonWorkspace({
                         href={res.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-start justify-between p-3 border border-paper-200 rounded-lg hover:border-accent/30 hover:bg-accent/[0.02] transition-all"
+                        className="flex items-start justify-between p-3 border border-border rounded-lg hover:border-primary/30 hover:bg-primary/[0.02] transition-all"
                       >
                         <div>
-                          <h4 className="text-sm font-bold text-ink-900">{res.title}</h4>
-                          {res.description && <p className="text-xs text-ink-500 mt-1">{res.description}</p>}
+                          <h4 className="text-sm font-bold text-on-surface">{res.title}</h4>
+                          {res.description && <p className="text-xs text-on-surface-variant mt-1">{res.description}</p>}
                         </div>
-                        <span className="text-[10px] font-semibold text-accent uppercase tracking-wider bg-accent/10 px-2 py-0.5 rounded-full mt-0.5">
+                        <span className="text-[10px] font-semibold text-primary uppercase tracking-wider bg-primary/10 px-2 py-0.5 rounded-full mt-0.5">
                           {res.type}
                         </span>
                       </a>
@@ -456,9 +456,9 @@ export function LessonWorkspace({
               exit={{ opacity: 0, y: -10 }}
               className="h-full flex flex-col space-y-4"
             >
-              <div className="bg-white rounded-xl border border-paper-300 overflow-hidden flex flex-col flex-1 min-h-[300px]">
+              <div className="bg-white rounded-xl border border-border overflow-hidden flex flex-col flex-1 min-h-[300px]">
                 {/* Sandbox tabs */}
-                <div className="bg-paper-100 px-4 py-2 border-b border-paper-200 flex items-center justify-between">
+                <div className="bg-surface-container px-4 py-2 border-b border-border flex items-center justify-between">
                   <div className="flex gap-2">
                     {(['html', 'css', 'js'] as const).map(tab => (
                       <button
@@ -466,8 +466,8 @@ export function LessonWorkspace({
                         onClick={() => setSandboxTab(tab)}
                         className={`text-xs px-3 py-1.5 rounded-md font-semibold uppercase tracking-wider transition-colors ${
                           sandboxTab === tab
-                            ? 'bg-white text-ink-900 shadow-sm border border-paper-200'
-                            : 'text-ink-500 hover:text-ink-900'
+                            ? 'bg-white text-on-surface shadow-sm border border-border'
+                            : 'text-on-surface-variant hover:text-on-surface'
                         }`}
                       >
                         {tab}
@@ -490,29 +490,29 @@ export function LessonWorkspace({
                     <textarea
                       value={htmlCode}
                       onChange={e => setHtmlCode(e.target.value)}
-                      className="w-full h-full font-mono text-sm p-3 border border-paper-200 rounded-lg outline-none focus:border-accent resize-none bg-paper-50"
+                      className="w-full h-full font-mono text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface"
                     />
                   )}
                   {sandboxTab === 'css' && (
                     <textarea
                       value={cssCode}
                       onChange={e => setCssCode(e.target.value)}
-                      className="w-full h-full font-mono text-sm p-3 border border-paper-200 rounded-lg outline-none focus:border-accent resize-none bg-paper-50"
+                      className="w-full h-full font-mono text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface"
                     />
                   )}
                   {sandboxTab === 'js' && (
                     <textarea
                       value={jsCode}
                       onChange={e => setJsCode(e.target.value)}
-                      className="w-full h-full font-mono text-sm p-3 border border-paper-200 rounded-lg outline-none focus:border-accent resize-none bg-paper-50"
+                      className="w-full h-full font-mono text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface"
                     />
                   )}
                 </div>
               </div>
 
               {/* Output Preview */}
-              <div className="flex flex-col h-[280px] bg-white rounded-xl border border-paper-300 overflow-hidden shadow-sm">
-                <div className="bg-paper-100 px-4 py-2 border-b border-paper-200 flex items-center justify-between text-xs font-semibold text-ink-500 uppercase tracking-wider">
+              <div className="flex flex-col h-[280px] bg-white rounded-xl border border-border overflow-hidden shadow-sm">
+                <div className="bg-surface-container px-4 py-2 border-b border-border flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                   Live Preview Output
                 </div>
                 <div className="flex-1 bg-white">
@@ -524,7 +524,7 @@ export function LessonWorkspace({
                       className="w-full h-full border-none"
                     />
                   ) : (
-                    <div className="flex items-center justify-center h-full text-sm text-ink-400">
+                    <div className="flex items-center justify-center h-full text-sm text-on-surface-variant">
                       Click "Run Code" to preview changes
                     </div>
                   )}
@@ -542,12 +542,12 @@ export function LessonWorkspace({
               className="space-y-6"
             >
               {!interviewStarted ? (
-                <div className="bg-white p-6 rounded-xl border border-paper-300 text-center space-y-4 shadow-sm">
-                  <div className="w-12 h-12 bg-accent/10 text-accent rounded-full flex items-center justify-center mx-auto">
+                <div className="bg-white p-6 rounded-xl border border-border text-center space-y-4 shadow-sm">
+                  <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
                     <MessageSquare className="w-6 h-6" />
                   </div>
-                  <h3 className="font-serif font-bold text-lg text-ink-900">AI Mock Technical Interview</h3>
-                  <p className="text-sm text-ink-500 max-w-md mx-auto leading-relaxed">
+                  <h3 className="font-heading font-bold text-lg text-on-surface">AI Mock Technical Interview</h3>
+                  <p className="text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed">
                     Test your understanding of the concepts in <strong>{phaseName}</strong>. 
                     The AI will ask you 3 challenging conceptual questions one by one, evaluate your answers, 
                     and give you a final technical score.
@@ -568,27 +568,27 @@ export function LessonWorkspace({
                     {interviewHistory.map((item, idx) => (
                       <div key={idx} className="space-y-3">
                         {/* Question */}
-                        <div className="bg-accent/5 border border-accent/10 rounded-xl p-4">
-                          <p className="text-xs font-semibold text-accent uppercase tracking-wider mb-1">
+                        <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
+                          <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">
                             Question {idx + 1}
                           </p>
-                          <p className="text-sm font-medium text-ink-900">{item.question}</p>
+                          <p className="text-sm font-medium text-on-surface">{item.question}</p>
                         </div>
                         {/* Answer & Feedback */}
                         {item.answer && (
-                          <div className="bg-white border border-paper-300 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-semibold text-ink-400 uppercase tracking-wider">
+                          <div className="bg-white border border-border rounded-xl p-4 space-y-2">
+                            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                               Your Answer
                             </p>
-                            <p className="text-sm text-ink-700 italic">"{item.answer}"</p>
+                            <p className="text-sm text-on-surface-variant italic">"{item.answer}"</p>
 
                             {item.feedback && (
-                              <div className="mt-3 border-t border-paper-200 pt-2">
+                              <div className="mt-3 border-t border-border pt-2">
                                 <p className="text-xs font-semibold text-success-dark uppercase tracking-wider flex items-center gap-1 mb-1">
                                   <BookmarkCheck className="w-3.5 h-3.5" />
                                   Interviewer Feedback
                                 </p>
-                                <p className="text-sm text-ink-700 leading-relaxed">{item.feedback}</p>
+                                <p className="text-sm text-on-surface-variant leading-relaxed">{item.feedback}</p>
                               </div>
                             )}
                           </div>
@@ -599,11 +599,11 @@ export function LessonWorkspace({
 
                   {/* Current Active Question or Final Score */}
                   {currentQuestion ? (
-                    <Card className="p-4 border border-accent/20 bg-accent/[0.01] shadow-sm">
+                    <Card className="p-4 border border-primary/20 bg-primary/[0.01] shadow-sm">
                       <div className="flex items-start gap-3">
-                        <HelpCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                        <HelpCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <div className="space-y-3 flex-1">
-                          <p className="text-sm font-semibold text-ink-900 leading-relaxed">
+                          <p className="text-sm font-semibold text-on-surface leading-relaxed">
                             {currentQuestion}
                           </p>
                           <textarea
@@ -612,7 +612,7 @@ export function LessonWorkspace({
                             placeholder="Type your answer here..."
                             rows={3}
                             disabled={isInterviewLoading}
-                            className="w-full text-sm p-3 border border-paper-200 rounded-lg outline-none focus:border-accent resize-none bg-white shadow-inner"
+                            className="w-full text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-white shadow-inner"
                           />
                           <div className="flex justify-end">
                             <Button
@@ -638,9 +638,9 @@ export function LessonWorkspace({
                       <Card className="p-6 border border-success/20 bg-success/[0.01] shadow-sm space-y-4">
                         <div className="flex items-center gap-2.5 text-success-dark">
                           <Sparkles className="w-5 h-5" />
-                          <h4 className="font-serif font-bold text-lg">Interview Evaluation Completed!</h4>
+                          <h4 className="font-heading font-bold text-lg">Interview Evaluation Completed!</h4>
                         </div>
-                        <div className="text-sm text-ink-700 leading-relaxed prose max-w-none whitespace-pre-line">
+                        <div className="text-sm text-on-surface-variant leading-relaxed prose max-w-none whitespace-pre-line">
                           {finalEvaluation}
                         </div>
                         <div className="flex justify-center pt-2">
@@ -673,13 +673,13 @@ export function LessonWorkspace({
               exit={{ opacity: 0, y: -10 }}
               className="h-full flex flex-col space-y-4"
             >
-              <div className="flex-1 flex flex-col bg-white rounded-xl border border-paper-300 p-4 shadow-sm min-h-[350px]">
-                <div className="flex items-center justify-between text-xs font-semibold text-ink-400 uppercase tracking-wider mb-2">
+              <div className="flex-1 flex flex-col bg-white rounded-xl border border-border p-4 shadow-sm min-h-[350px]">
+                <div className="flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
                   <span>Take notes as you learn</span>
                   <span className="flex items-center gap-1 font-medium lowercase">
                     {noteStatus === 'saving' && (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin text-accent" />
+                        <Loader2 className="w-3 h-3 animate-spin text-primary" />
                         saving...
                       </>
                     )}
@@ -701,7 +701,7 @@ export function LessonWorkspace({
                   value={noteContent}
                   onChange={e => handleNoteChange(e.target.value)}
                   placeholder="Notes are automatically saved to your library..."
-                  className="w-full flex-1 p-3 border border-paper-200 rounded-lg outline-none focus:border-accent resize-none bg-paper-50 font-sans text-sm leading-relaxed"
+                  className="w-full flex-1 p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface font-sans text-sm leading-relaxed"
                 />
               </div>
             </motion.div>

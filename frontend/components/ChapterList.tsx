@@ -86,10 +86,10 @@ export function ChapterList({
         const isExpanded = expandedPhases.has(phase.id)
 
         return (
-          <div key={phase.id} className="bg-white rounded-xl border border-paper-300 overflow-hidden">
+          <div key={phase.id} className="bg-white rounded-xl border border-border overflow-hidden">
             <button
               onClick={() => togglePhase(phase.id)}
-              className="w-full p-6 flex items-center justify-between hover:bg-paper-50 transition-colors"
+              className="w-full p-6 flex items-center justify-between hover:bg-surface transition-colors"
             >
               <div className="flex items-center gap-4">
                 <div
@@ -97,8 +97,8 @@ export function ChapterList({
                     phaseProgress === 100
                       ? 'bg-success text-white'
                       : phaseProgress > 0
-                      ? 'bg-accent text-white'
-                      : 'bg-paper-200 text-ink-500'
+                      ? 'bg-primary text-white'
+                      : 'bg-surface text-on-surface-variant'
                   }`}
                 >
                   {phaseProgress === 100 ? (
@@ -108,15 +108,15 @@ export function ChapterList({
                   )}
                 </div>
                 <div className="text-left">
-                  <h3 className="font-serif font-bold text-lg text-ink-900">
+                  <h3 className="font-heading font-bold text-lg text-on-surface">
                     {phase.name}
                   </h3>
-                  <p className="text-sm text-ink-500">{phase.description}</p>
+                  <p className="text-sm text-on-surface-variant">{phase.description}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="hidden sm:block text-right">
-                  <div className="text-sm font-medium text-ink-700">
+                  <div className="text-sm font-medium text-on-surface-variant">
                     {completedCount}/{totalLessons} lessons
                   </div>
                   <div className="w-24">
@@ -124,9 +124,9 @@ export function ChapterList({
                   </div>
                 </div>
                 {isExpanded ? (
-                  <ChevronDown className="w-5 h-5 text-ink-400" />
+                  <ChevronDown className="w-5 h-5 text-on-surface-variant" />
                 ) : (
-                  <ChevronRight className="w-5 h-5 text-ink-400" />
+                  <ChevronRight className="w-5 h-5 text-on-surface-variant" />
                 )}
               </div>
             </button>
@@ -138,20 +138,20 @@ export function ChapterList({
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="border-t border-paper-200"
+                  className="border-t border-border"
                 >
                   <div className="p-6 space-y-4">
                     {phase.chapters.map((chapter) => (
-                      <div key={chapter.id} className="bg-paper-50 rounded-lg p-4">
+                      <div key={chapter.id} className="bg-surface rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-serif font-bold text-ink-900">
+                          <h4 className="font-heading font-bold text-on-surface">
                             {chapter.title}
                           </h4>
-                          <span className="text-xs text-ink-500">
+                          <span className="text-xs text-on-surface-variant">
                             {chapter.lessons.length} lessons
                           </span>
                         </div>
-                        <p className="text-sm text-ink-500 mb-4">{chapter.description}</p>
+                        <p className="text-sm text-on-surface-variant mb-4">{chapter.description}</p>
 
                         <div className="space-y-2">
                           {chapter.lessons.map((lesson) => {
@@ -163,7 +163,7 @@ export function ChapterList({
                                 className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${
                                   isCompleted
                                     ? 'bg-success/5 border border-success/20'
-                                    : 'bg-white border border-paper-200 hover:border-paper-300'
+                                    : 'bg-white border border-border hover:border-border'
                                 }`}
                               >
                                 {/* Completion toggle */}
@@ -175,7 +175,7 @@ export function ChapterList({
                                   {isCompleted ? (
                                     <CheckCircle2 className="w-5 h-5 text-success" />
                                   ) : (
-                                    <Circle className="w-5 h-5 text-ink-300 hover:text-accent transition-colors" />
+                                    <Circle className="w-5 h-5 text-on-surface-variant hover:text-primary transition-colors" />
                                   )}
                                 </button>
 
@@ -184,20 +184,20 @@ export function ChapterList({
                                   <div
                                     className={`font-medium cursor-pointer ${
                                       isCompleted
-                                        ? 'text-ink-500 line-through'
-                                        : 'text-ink-900 hover:text-accent'
+                                        ? 'text-on-surface-variant line-through'
+                                        : 'text-on-surface hover:text-primary'
                                     }`}
                                     onClick={() => onSelectLesson(lesson)}
                                   >
                                     {lesson.title}
                                   </div>
                                   <div className="flex items-center gap-3 mt-1">
-                                    <span className="text-xs text-ink-300 flex items-center gap-1">
+                                    <span className="text-xs text-on-surface-variant flex items-center gap-1">
                                       <Clock className="w-3 h-3" />
                                       {formatDuration(lesson.duration_minutes)}
                                     </span>
                                     {lesson.resources.length > 0 && (
-                                      <span className="text-xs text-ink-300">
+                                      <span className="text-xs text-on-surface-variant">
                                         {lesson.resources.length} resources
                                       </span>
                                     )}
@@ -218,7 +218,7 @@ export function ChapterList({
                                             href={resource.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-paper-100 rounded hover:bg-paper-200 transition-colors text-ink-500 hover:text-ink-900"
+                                            className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-surface-container rounded hover:bg-surface transition-colors text-on-surface-variant hover:text-on-surface"
                                             onClick={(e) => e.stopPropagation()}
                                           >
                                             <Icon className="w-3 h-3" />
@@ -240,7 +240,7 @@ export function ChapterList({
                                   className={`mt-0.5 flex-shrink-0 transition-colors ${
                                     isBookmarked
                                       ? 'text-amber-500 hover:text-amber-600'
-                                      : 'text-ink-200 hover:text-amber-400'
+                                      : 'text-border hover:text-amber-400'
                                   }`}
                                 >
                                   {isBookmarked ? (

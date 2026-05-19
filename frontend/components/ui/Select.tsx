@@ -23,7 +23,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={selectId} className="block text-sm font-medium text-ink-700 mb-2">
+          <label htmlFor={selectId} className="block text-sm font-label font-medium text-on-surface mb-2">
             {label}
           </label>
         )}
@@ -32,10 +32,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             id={selectId}
             className={cn(
-              'w-full px-4 py-3 bg-white border rounded-lg text-ink-900 appearance-none cursor-pointer',
-              'focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent',
-              'transition-all duration-200',
-              error ? 'border-error' : 'border-paper-300',
+              'w-full px-4 py-3 bg-surface-container/60 backdrop-blur-xl border rounded-lg text-on-surface appearance-none cursor-pointer',
+              'focus:outline-none focus:border-primary',
+              'transition-colors duration-200',
+              error ? 'border-error' : 'border-outline-variant',
               className
             )}
             {...props}
@@ -46,12 +46,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               </option>
             )}
             {options.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option key={option.value} value={option.value} className="bg-surface-container text-on-surface">
                 {option.label}
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300 pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
         </div>
         {error && (
           <p className="mt-1.5 text-sm text-error">{error}</p>

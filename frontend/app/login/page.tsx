@@ -108,7 +108,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-paper-50">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <div className="pt-24 pb-16 min-h-[calc(100vh-64px)] flex items-center">
@@ -118,15 +118,15 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-accent/10 rounded-2xl mb-4">
-              <BookOpen className="w-8 h-8 text-accent" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl mb-4">
+              <BookOpen className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-2xl font-serif font-bold text-ink-900 mb-2">
+            <h1 className="text-2xl font-headline font-bold text-on-surface mb-2">
               {mode === 'login' && 'Welcome Back'}
               {mode === 'signup' && 'Create Account'}
               {mode === 'magic-link' && 'Passwordless Login'}
             </h1>
-            <p className="text-ink-500">
+            <p className="text-on-surface-variant">
               {mode === 'login' && 'Sign in to access your roadmaps'}
               {mode === 'signup' && 'Start your learning journey today'}
               {mode === 'magic-link' && "We'll email you a direct sign-in link"}
@@ -141,12 +141,12 @@ export default function LoginPage() {
             <Card>
               {magicLinkSent ? (
                 <div className="text-center py-6 space-y-4">
-                  <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-6 h-6 text-success" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="font-bold text-ink-900">Check your email</h3>
-                  <p className="text-sm text-ink-500">
-                    We've sent a magic link to <span className="font-semibold text-ink-700">{formData.email}</span>. Click the link in the email to log in instantly.
+                  <h3 className="font-bold text-on-surface">Check your email</h3>
+                  <p className="text-sm text-on-surface-variant">
+                    We've sent a magic link to <span className="font-semibold text-on-surface">{formData.email}</span>. Click the link in the email to log in instantly.
                   </p>
                   <Button variant="secondary" size="sm" onClick={() => setMagicLinkSent(false)}>
                     Back to login
@@ -157,7 +157,7 @@ export default function LoginPage() {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {mode === 'signup' && (
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" />
                         <Input
                           type="text"
                           placeholder="Your name"
@@ -170,7 +170,7 @@ export default function LoginPage() {
                     )}
 
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" />
                       <Input
                         type="email"
                         placeholder="Email address"
@@ -183,7 +183,7 @@ export default function LoginPage() {
 
                     {mode !== 'magic-link' && (
                       <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-300" />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" />
                         <Input
                           type="password"
                           placeholder="Password"
@@ -196,7 +196,7 @@ export default function LoginPage() {
                     )}
 
                     {error && (
-                      <div className="p-3 bg-error/10 text-error rounded-lg text-sm">
+                      <div className="p-3 bg-error-container/10 text-error rounded-lg text-sm">
                         {error}
                       </div>
                     )}
@@ -211,10 +211,10 @@ export default function LoginPage() {
                   {/* Divider */}
                   <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-ink-100"></div>
+                      <div className="w-full border-t border-outline-variant/30"></div>
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-ink-300">Or continue with</span>
+                      <span className="bg-surface-container px-2 text-on-surface-variant">Or continue with</span>
                     </div>
                   </div>
 
@@ -224,7 +224,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={() => handleSocialSignIn('google')}
                       disabled={isLoading}
-                      className="flex items-center justify-center gap-2 py-2.5 px-4 border border-ink-200 rounded-xl text-sm font-medium text-ink-700 hover:bg-paper-50 active:bg-paper-100 transition-colors"
+                      className="flex items-center justify-center gap-2 py-2.5 px-4 border border-outline-variant rounded-xl text-sm font-medium text-on-surface hover:bg-surface-container-high active:bg-surface-container-highest transition-colors"
                     >
                       <svg className="w-4 h-4" viewBox="0 0 24 24">
                         <path
@@ -238,7 +238,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={() => handleSocialSignIn('github')}
                       disabled={isLoading}
-                      className="flex items-center justify-center gap-2 py-2.5 px-4 border border-ink-200 rounded-xl text-sm font-medium text-ink-700 hover:bg-paper-50 active:bg-paper-100 transition-colors"
+                      className="flex items-center justify-center gap-2 py-2.5 px-4 border border-outline-variant rounded-xl text-sm font-medium text-on-surface hover:bg-surface-container-high active:bg-surface-container-highest transition-colors"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                         <path
@@ -252,14 +252,14 @@ export default function LoginPage() {
                   </div>
 
                   <div className="mt-6 text-center space-y-2">
-                    <p className="text-ink-500 text-sm">
+                    <p className="text-on-surface-variant text-sm">
                       {mode === 'login' && (
                         <>
                           Don't have an account?{' '}
                           <button
                             type="button"
                             onClick={() => setMode('signup')}
-                            className="text-accent font-medium hover:underline"
+                            className="text-primary font-medium hover:underline"
                           >
                             Sign up
                           </button>
@@ -271,7 +271,7 @@ export default function LoginPage() {
                           <button
                             type="button"
                             onClick={() => setMode('login')}
-                            className="text-accent font-medium hover:underline"
+                            className="text-primary font-medium hover:underline"
                           >
                             Sign in
                           </button>
@@ -281,7 +281,7 @@ export default function LoginPage() {
                         <button
                           type="button"
                           onClick={() => setMode('login')}
-                          className="text-accent font-medium hover:underline"
+                          className="text-primary font-medium hover:underline"
                         >
                           Back to standard login
                         </button>
@@ -289,12 +289,12 @@ export default function LoginPage() {
                     </p>
 
                     {mode !== 'magic-link' && (
-                      <p className="text-xs text-ink-300">
+                      <p className="text-xs text-on-surface-variant">
                         Prefer passwordless?{' '}
                         <button
                           type="button"
                           onClick={() => setMode('magic-link')}
-                          className="text-accent font-medium hover:underline"
+                          className="text-primary font-medium hover:underline"
                         >
                           Sign in with Magic Link
                         </button>
@@ -312,7 +312,7 @@ export default function LoginPage() {
             transition={{ delay: 0.2 }}
             className="mt-8 text-center"
           >
-            <Link href="/generate" className="text-sm text-ink-500 hover:text-ink-900">
+            <Link href="/generate" className="text-sm text-on-surface-variant hover:text-on-surface">
               Continue as guest without account
             </Link>
           </motion.div>

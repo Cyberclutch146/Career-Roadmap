@@ -42,7 +42,7 @@ function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean
           inline ? (
             <code
               className={`px-1 py-0.5 rounded text-xs font-mono ${
-                isUser ? 'bg-white/20 text-white' : 'bg-ink-900/10 text-ink-800'
+                isUser ? 'bg-white/20 text-white' : 'bg-surface-container-high text-on-surface'
               }`}
             >
               {children}
@@ -50,7 +50,7 @@ function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean
           ) : (
             <pre
               className={`my-2 p-3 rounded-lg text-xs font-mono overflow-x-auto whitespace-pre-wrap ${
-                isUser ? 'bg-white/20 text-white' : 'bg-ink-900 text-green-300'
+                isUser ? 'bg-white/20 text-white' : 'bg-surface-container-high text-green-300'
               }`}
             >
               <code>{children}</code>
@@ -59,7 +59,7 @@ function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean
         blockquote: ({ children }) => (
           <blockquote
             className={`border-l-2 pl-3 my-1 italic text-sm ${
-              isUser ? 'border-white/40 text-white/80' : 'border-accent/40 text-ink-500'
+              isUser ? 'border-white/40 text-white/80' : 'border-primary/40 text-on-surface-variant'
             }`}
           >
             {children}
@@ -150,29 +150,29 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/50"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg h-[36rem] bg-white rounded-2xl shadow-lifted flex flex-col overflow-hidden"
+        className="w-full max-w-lg h-[36rem] bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-paper-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-accent" />
+            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h3 className="font-serif font-bold text-ink-900">AI Mentor</h3>
-              <p className="text-xs text-ink-500">Based on your roadmap · supports markdown</p>
+              <h3 className="font-heading font-bold text-on-surface">AI Mentor</h3>
+              <p className="text-xs text-on-surface-variant">Based on your roadmap · supports markdown</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-ink-400 hover:text-ink-600 transition-colors"
+            className="p-2 text-on-surface-variant hover:text-on-surface-variant transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -192,8 +192,8 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
                   message.role === 'user'
-                    ? 'bg-accent text-white'
-                    : 'bg-paper-100 text-ink-500'
+                    ? 'bg-primary text-white'
+                    : 'bg-surface-container text-on-surface-variant'
                 }`}
               >
                 {message.role === 'user' ? (
@@ -205,8 +205,8 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
               <div
                 className={`max-w-[80%] px-4 py-3 rounded-2xl ${
                   message.role === 'user'
-                    ? 'bg-accent text-white rounded-tr-sm'
-                    : 'bg-paper-100 text-ink-700 rounded-tl-sm'
+                    ? 'bg-primary text-white rounded-tr-sm'
+                    : 'bg-surface-container text-on-surface-variant rounded-tl-sm'
                 }`}
               >
                 <MarkdownMessage content={message.content} isUser={message.role === 'user'} />
@@ -216,14 +216,14 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
 
           {isLoading && (
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-paper-100 text-ink-500 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="bg-paper-100 px-4 py-3 rounded-2xl rounded-tl-sm">
+              <div className="bg-surface-container px-4 py-3 rounded-2xl rounded-tl-sm">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-ink-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-ink-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-ink-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 bg-on-surface-variant rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-on-surface-variant rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-on-surface-variant rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -233,13 +233,13 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
         </div>
 
         {/* Input area */}
-        <div className="border-t border-paper-200 p-4">
+        <div className="border-t border-border p-4">
           <div className="flex flex-wrap gap-2 mb-3">
             {suggestedQuestions.slice(0, 3).map((question, index) => (
               <button
                 key={index}
                 onClick={() => handleSend(question)}
-                className="text-xs px-3 py-1.5 bg-paper-50 text-ink-500 rounded-full hover:bg-paper-100 hover:text-ink-700 transition-colors"
+                className="text-xs px-3 py-1.5 bg-surface text-on-surface-variant rounded-full hover:bg-surface-container hover:text-on-surface-variant transition-colors"
               >
                 {question}
               </button>
@@ -251,7 +251,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask me anything about your learning..."
-              className="flex-1 px-4 py-2 bg-paper-50 border border-paper-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="flex-1 px-4 py-2 bg-surface border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               rows={1}
             />
             <Button

@@ -139,7 +139,7 @@ export default function GalleryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-paper-50 flex flex-col justify-between">
+    <div className="min-h-screen bg-surface flex flex-col justify-between">
       <Navbar />
 
       <div className="pt-24 pb-16 flex-grow">
@@ -149,14 +149,14 @@ export default function GalleryPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/10 text-accent rounded-full text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
               <Compass className="w-4 h-4" />
               Community Library
             </div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-ink-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-on-surface mb-4">
               Discover Learning Roadmaps
             </h1>
-            <p className="text-ink-500 text-lg max-w-2xl mx-auto">
+            <p className="text-on-surface-variant text-lg max-w-2xl mx-auto">
               Explore customized, AI-generated roadmaps shared by other learners. Add them to your library to track your own progress.
             </p>
           </motion.div>
@@ -166,12 +166,12 @@ export default function GalleryPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white border border-paper-300 rounded-2xl p-5 mb-8 shadow-sm grid md:grid-cols-12 gap-4 items-end"
+            className="bg-white border border-border rounded-2xl p-5 mb-8 shadow-sm grid md:grid-cols-12 gap-4 items-end"
           >
             <div className="md:col-span-6 space-y-2">
-              <label className="text-xs font-semibold text-ink-500 uppercase tracking-wider">Search Goals</label>
+              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Search Goals</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-300" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
                 <Input
                   className="pl-9"
                   placeholder="e.g. Full Stack Developer, React, DSA..."
@@ -182,7 +182,7 @@ export default function GalleryPage() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-xs font-semibold text-ink-500 uppercase tracking-wider">Difficulty</label>
+              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Difficulty</label>
               <Select
                 options={[
                   { value: 'all', label: 'All Levels' },
@@ -196,7 +196,7 @@ export default function GalleryPage() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-xs font-semibold text-ink-500 uppercase tracking-wider">Duration</label>
+              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Duration</label>
               <Select
                 options={[
                   { value: 'all', label: 'All Durations' },
@@ -213,16 +213,16 @@ export default function GalleryPage() {
           {/* Roadmap Grid */}
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-              <span className="text-ink-400 text-sm">Loading roadmaps...</span>
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <span className="text-on-surface-variant text-sm">Loading roadmaps...</span>
             </div>
           ) : filteredRoadmaps.length === 0 ? (
             <Card className="text-center py-16">
-              <div className="w-16 h-16 bg-paper-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-ink-300" />
+              <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-8 h-8 text-on-surface-variant" />
               </div>
-              <h3 className="text-lg font-serif font-bold text-ink-900 mb-2">No roadmaps found</h3>
-              <p className="text-ink-500 max-w-md mx-auto">
+              <h3 className="text-lg font-heading font-bold text-on-surface mb-2">No roadmaps found</h3>
+              <p className="text-on-surface-variant max-w-md mx-auto">
                 We couldn&apos;t find any public roadmaps matching your filters. Try adjusting your search query.
               </p>
             </Card>
@@ -238,37 +238,37 @@ export default function GalleryPage() {
                     <Card hover className="h-full flex flex-col justify-between p-6">
                       <div>
                         <div className="flex items-start justify-between gap-3 mb-4">
-                          <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                            <Target className="w-5 h-5 text-accent" />
+                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <Target className="w-5 h-5 text-primary" />
                           </div>
-                          <span className="text-xs text-ink-400 font-medium px-2 py-1 bg-paper-100 rounded border border-paper-200">
+                          <span className="text-xs text-on-surface-variant font-medium px-2 py-1 bg-surface-container rounded border border-border">
                             {roadmap.target_months} Months
                           </span>
                         </div>
 
-                        <h3 className="font-serif font-bold text-ink-900 mb-2 text-base line-clamp-2">
+                        <h3 className="font-heading font-bold text-on-surface mb-2 text-base line-clamp-2">
                           {roadmap.goal}
                         </h3>
 
-                        <p className="text-xs text-ink-500 line-clamp-3 mb-4 leading-relaxed">
+                        <p className="text-xs text-on-surface-variant line-clamp-3 mb-4 leading-relaxed">
                           {roadmap.generated_roadmap.overview.description}
                         </p>
 
                         <div className="flex flex-wrap gap-1.5 mb-5">
-                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-accent/5 text-accent border border-accent/10 rounded">
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-primary/5 text-primary border border-primary/10 rounded">
                             {roadmap.skill_level}
                           </span>
-                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-paper-100 text-ink-500 border border-paper-200 rounded">
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-surface-container text-on-surface-variant border border-border rounded">
                             {roadmap.learning_style}
                           </span>
-                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-paper-100 text-ink-500 border border-paper-200 rounded">
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-surface-container text-on-surface-variant border border-border rounded">
                             {roadmap.daily_hours}h/day
                           </span>
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t border-paper-200 flex items-center justify-between gap-4">
-                        <span className="text-xs text-ink-400 font-semibold">
+                      <div className="pt-4 border-t border-border flex items-center justify-between gap-4">
+                        <span className="text-xs text-on-surface-variant font-semibold">
                           {totalLessons} lessons &bull; {hours}h
                         </span>
 

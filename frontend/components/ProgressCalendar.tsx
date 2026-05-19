@@ -67,11 +67,11 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
   }
 
   const getHeatmapColor = (count: number) => {
-    if (count === 0) return 'bg-paper-100 dark:bg-paper-800 border-paper-200/50'
-    if (count === 1) return 'bg-accent-light/30 border-accent/20 hover:scale-110'
-    if (count === 2) return 'bg-accent-light/60 border-accent/40 hover:scale-110'
-    if (count === 3) return 'bg-accent/80 text-white border-accent/60 hover:scale-110'
-    return 'bg-accent text-white border-accent hover:scale-110'
+    if (count === 0) return 'bg-surface-container border-border/50'
+    if (count === 1) return 'bg-primary-light/30 border-primary/20 hover:scale-110'
+    if (count === 2) return 'bg-primary-light/60 border-primary/40 hover:scale-110'
+    if (count === 3) return 'bg-primary/80 text-white border-primary/60 hover:scale-110'
+    return 'bg-primary text-white border-primary hover:scale-110'
   }
 
   // Group dates by week (columns)
@@ -91,14 +91,14 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
   const selectedCompletions = selectedDateStr ? completionsByDate[selectedDateStr] || [] : []
 
   return (
-    <div className="bg-white border border-paper-200 rounded-2xl p-6 shadow-sm mb-8">
+    <div className="bg-white border border-border rounded-2xl p-6 shadow-sm mb-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h2 className="text-xl font-serif font-bold text-ink-900 flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5 text-accent" />
+          <h2 className="text-xl font-heading font-bold text-on-surface flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5 text-primary" />
             Progress & Consistency History
           </h2>
-          <p className="text-sm text-ink-500 mt-1">
+          <p className="text-sm text-on-surface-variant mt-1">
             Hover over dates to see completed lessons, click to view details.
           </p>
         </div>
@@ -106,15 +106,15 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-warning-light/10 border border-warning/20 px-3 py-1.5 rounded-full">
             <Flame className="w-5 h-5 text-warning fill-warning animate-pulse" />
-            <span className="text-sm font-medium text-ink-800">
+            <span className="text-sm font-medium text-on-surface">
               <strong className="text-warning-dark font-bold">{streak} Day</strong> Streak
             </span>
           </div>
 
-          <div className="flex items-center gap-2 bg-accent-light/10 border border-accent/20 px-3 py-1.5 rounded-full">
-            <Award className="w-5 h-5 text-accent" />
-            <span className="text-sm font-medium text-ink-800">
-              <strong className="text-accent font-bold">{completions.length}</strong> Total
+          <div className="flex items-center gap-2 bg-primary-light/10 border border-primary/20 px-3 py-1.5 rounded-full">
+            <Award className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium text-on-surface">
+              <strong className="text-primary font-bold">{completions.length}</strong> Total
             </span>
           </div>
         </div>
@@ -124,7 +124,7 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
       <div className="overflow-x-auto pb-2">
         <div className="min-w-[640px] flex gap-2 justify-center">
           {/* Weekday labels */}
-          <div className="flex flex-col justify-between text-[10px] text-ink-300 pr-2 pt-6 pb-2 h-[120px] select-none font-medium">
+          <div className="flex flex-col justify-between text-[10px] text-on-surface-variant pr-2 pt-6 pb-2 h-[120px] select-none font-medium">
             <span>Sun</span>
             <span>Tue</span>
             <span>Thu</span>
@@ -147,17 +147,17 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
                       <button
                         onClick={() => setSelectedDateStr(isSelected ? null : dateStr)}
                         className={`w-4.5 h-4.5 rounded-[4px] border transition-all duration-150 ${getHeatmapColor(count)} ${
-                          isSelected ? 'ring-2 ring-accent ring-offset-2' : ''
-                        } ${isToday ? 'border-accent-dark border-2' : 'border-paper-200'}`}
+                          isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
+                        } ${isToday ? 'border-primary-dark border-2' : 'border-border'}`}
                         title={`${count} lessons completed on ${formatDateFull(date)}`}
                       />
                       {/* Tooltip */}
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-20 pointer-events-none">
-                        <div className="bg-ink-950 text-white text-[11px] font-medium rounded-lg px-2.5 py-1.5 whitespace-nowrap shadow-lg border border-ink-800">
+                        <div className="bg-surface-container text-on-surface text-[11px] font-medium rounded-lg px-2.5 py-1.5 whitespace-nowrap shadow-lg border border-border">
                           <p className="font-bold">{formatDateFull(date)}</p>
-                          <p className="text-ink-400">{count} {count === 1 ? 'lesson' : 'lessons'} completed</p>
+                          <p className="text-on-surface-variant">{count} {count === 1 ? 'lesson' : 'lessons'} completed</p>
                         </div>
-                        <div className="w-2.5 h-2.5 bg-ink-950 rotate-45 absolute -bottom-1.25 left-1/2 -translate-x-1/2 border-r border-b border-ink-800" />
+                        <div className="w-2.5 h-2.5 bg-surface-container rotate-45 absolute -bottom-1.25 left-1/2 -translate-x-1/2 border-r border-b border-border" />
                       </div>
                     </div>
                   )
@@ -169,13 +169,13 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
       </div>
 
       {/* Legend */}
-      <div className="flex justify-end items-center gap-1.5 text-xs text-ink-400 mt-3 pr-4">
+      <div className="flex justify-end items-center gap-1.5 text-xs text-on-surface-variant mt-3 pr-4">
         <span>Less</span>
-        <div className="w-3 h-3 rounded-[3px] bg-paper-100 border border-paper-200" />
-        <div className="w-3 h-3 rounded-[3px] bg-accent-light/30 border border-accent/20" />
-        <div className="w-3 h-3 rounded-[3px] bg-accent-light/60 border border-accent/40" />
-        <div className="w-3 h-3 rounded-[3px] bg-accent/80 border border-accent/60" />
-        <div className="w-3 h-3 rounded-[3px] bg-accent border border-accent" />
+        <div className="w-3 h-3 rounded-[3px] bg-surface-container border border-border" />
+        <div className="w-3 h-3 rounded-[3px] bg-primary-light/30 border border-primary/20" />
+        <div className="w-3 h-3 rounded-[3px] bg-primary-light/60 border border-primary/40" />
+        <div className="w-3 h-3 rounded-[3px] bg-primary/80 border border-primary/60" />
+        <div className="w-3 h-3 rounded-[3px] bg-primary border border-primary" />
         <span>More</span>
       </div>
 
@@ -186,10 +186,10 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-6 border-t border-paper-100 pt-5"
+            className="mt-6 border-t border-border pt-5"
           >
             <div className="flex justify-between items-center mb-3">
-              <h3 className="font-bold text-sm text-ink-800">
+              <h3 className="font-bold text-sm text-on-surface">
                 Activity on {new Date(selectedDateStr + 'T12:00:00').toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
@@ -198,14 +198,14 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
               </h3>
               <button 
                 onClick={() => setSelectedDateStr(null)}
-                className="text-xs text-accent hover:underline font-medium"
+                className="text-xs text-primary hover:underline font-medium"
               >
                 Clear selection
               </button>
             </div>
 
             {selectedCompletions.length === 0 ? (
-              <p className="text-sm text-ink-400 py-2">No learning activity logged on this day.</p>
+              <p className="text-sm text-on-surface-variant py-2">No learning activity logged on this day.</p>
             ) : (
               <div className="space-y-2.5">
                 {selectedCompletions.map((item, idx) => (
@@ -214,15 +214,15 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="flex items-start gap-3 p-3 bg-paper-50 rounded-xl border border-paper-100 hover:border-accent-light/30 transition-all duration-150"
+                    className="flex items-start gap-3 p-3 bg-surface rounded-xl border border-border hover:border-primary-light/30 transition-all duration-150"
                   >
                     <CheckCircle2 className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-semibold text-sm text-ink-900 leading-snug">
+                      <h4 className="font-semibold text-sm text-on-surface leading-snug">
                         {item.lessonTitle}
                       </h4>
-                      <p className="text-xs text-ink-500 mt-0.5">
-                        Roadmap: <span className="font-medium text-accent">{item.roadmapTitle}</span>
+                      <p className="text-xs text-on-surface-variant mt-0.5">
+                        Roadmap: <span className="font-medium text-primary">{item.roadmapTitle}</span>
                       </p>
                     </div>
                   </motion.div>
