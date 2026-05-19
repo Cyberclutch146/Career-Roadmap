@@ -35,7 +35,7 @@ const exampleRoadmap = {
 
 export function ExampleRoadmap() {
   return (
-    <section id="examples" className="py-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <section id="examples" className="section-container">
       <div className="w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

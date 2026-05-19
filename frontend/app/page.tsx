@@ -22,7 +22,7 @@ export default function Home() {
       <ExampleRoadmap />
       <Testimonials />
 
-      <section className="py-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+      <section className="section-container">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

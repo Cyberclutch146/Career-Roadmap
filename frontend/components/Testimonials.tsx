@@ -29,7 +29,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <section className="section-container">
       <div className="w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

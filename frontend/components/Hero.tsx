@@ -8,7 +8,7 @@ import { Button } from './ui/Button'
 export function Hero() {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-12">
+      <div className="section-container py-0 pt-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
           {/* Left: Text Content */}
           <div className="lg:col-span-7 flex flex-col gap-stack-md z-10">
