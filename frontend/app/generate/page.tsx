@@ -48,7 +48,7 @@ const goalSuggestions = [
 
 export default function GeneratePage() {
   const router = useRouter()
-  const { setCurrentRoadmap } = useStore()
+  const { setCurrentRoadmap, user } = useStore()
   const [formData, setFormData] = useState<RoadmapFormData>({
     goal: '',
     skill_level: 'beginner',
@@ -79,6 +79,17 @@ export default function GeneratePage() {
       })
 
       const roadmap = response.data
+      
+      if (user) {
+        const { doc, setDoc } = await import('firebase/firestore')
+        const { db } = await import('@/lib/firebase')
+        const docRef = doc(db, 'users', user.id, 'roadmaps', roadmap.id)
+        roadmap.created_at = roadmap.created_at || new Date().toISOString()
+        roadmap.updated_at = roadmap.updated_at || new Date().toISOString()
+        roadmap.user_id = user.id
+        await setDoc(docRef, roadmap)
+      }
+
       setCurrentRoadmap(roadmap)
       localStorage.setItem('current_roadmap', JSON.stringify(roadmap))
       router.push(`/roadmap/${roadmap.id}`)

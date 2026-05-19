@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { auth } from './firebase'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -12,11 +13,17 @@ export const api = axios.create({
   },
 })
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('roadmapai_token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    if (auth.currentUser) {
+      try {
+        const token = await auth.currentUser.getIdToken(true)
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+      } catch (e) {
+        console.error("Error getting Firebase token", e)
+      }
     }
   }
   return config
@@ -26,8 +33,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('roadmapai_token')
-      // Only redirect if not already on a public page to avoid infinite loops
+      // With Firebase Auth, token refresh is handled automatically, 
+      // but if the backend still returns 401, we might need to redirect to login.
       if (!PUBLIC_PATHS.includes(window.location.pathname)) {
         window.location.href = '/login'
       }

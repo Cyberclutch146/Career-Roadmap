@@ -7,15 +7,13 @@ import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
-import { api } from '@/lib/api'
-import { useStore } from '@/store'
+import { Card } from '@/components/ui/Card'
 import { BookOpen, Mail, Lock, User } from 'lucide-react'
-import type { AxiosError } from 'axios'
+import { auth } from '@/lib/firebase'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { setUser } = useStore()
   const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,19 +29,18 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : { email: formData.email, password: formData.password, name: formData.name }
-
-      const response = await api.post(endpoint, payload)
-
-      localStorage.setItem('roadmapai_token', response.data.access_token)
-      setUser(response.data.user)
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, formData.email, formData.password)
+      } else {
+        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+        if (formData.name) {
+          await updateProfile(userCredential.user, { displayName: formData.name })
+        }
+      }
+      
       router.push('/generate')
-    } catch (err: unknown) {
-      const axiosErr = err as AxiosError<{ detail?: string }>
-      setError(axiosErr.response?.data?.detail || 'Authentication failed. Please try again.')
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed. Please try again.')
     } finally {
       setIsLoading(false)
     }

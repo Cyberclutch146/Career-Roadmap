@@ -14,10 +14,9 @@ Write-Host "========================================`n" -ForegroundColor Cyan
 # Install backend
 Write-Host "[*] Setting up backend..." -ForegroundColor Yellow
 Set-Location "$PROJECT_ROOT\backend"
-python -m venv venv --quiet
+python -m venv venv
 & ".\venv\Scripts\Activate.ps1" -Quiet
 pip install --quiet -r requirements.txt
-pip install pymongo motor --quiet
 & deactivate
 
 # Install frontend
@@ -27,12 +26,8 @@ npm install --silent --legacy-peer-deps
 
 # Create env files if missing
 if (-not (Test-Path "$PROJECT_ROOT\backend\.env")) {
-    $jwtSecret = python -c "import secrets; print(secrets.token_hex(32))"
     @"
 GEMINI_API_KEY=
-MONGODB_URI=mongodb://localhost:27017
-DATABASE_NAME=roadmapai
-JWT_SECRET=$jwtSecret
 CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 "@ | Out-File "$PROJECT_ROOT\backend\.env"
 }
@@ -40,14 +35,7 @@ if (-not (Test-Path "$PROJECT_ROOT\frontend\.env.local")) {
     "NEXT_PUBLIC_API_URL=http://localhost:8000" | Out-File "$PROJECT_ROOT\frontend\.env.local"
 }
 
-# Start MongoDB if not running
-Write-Host "[*] Checking MongoDB..." -ForegroundColor Yellow
-$mongod = Get-Process mongod -ErrorAction SilentlyContinue
-if (-not $mongod) {
-    Write-Host "    Starting MongoDB..." -ForegroundColor Gray
-    Start-Process mongod -WindowStyle Hidden -ErrorAction SilentlyContinue
-    Start-Sleep -Seconds 3
-}
+
 
 # Start backend
 Write-Host "[*] Starting backend server..." -ForegroundColor Yellow

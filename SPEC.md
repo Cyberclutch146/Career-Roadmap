@@ -206,13 +206,11 @@ Per topic:
 ### Backend (FastAPI)
 ```
 /backend
-├── main.py              # Routes, CORS, rate limiting, IDOR checks
+├── main.py              # Routes, CORS, rate limiting, Firebase ID token checks
 ├── schemas.py           # Pydantic v2 models with validation
-├── models.py            # MongoDB repository layer (UUID-based lookups)
-├── database.py          # Motor connection + indexes
 ├── services/
 │   ├── ai_service.py    # Gemini async integration + fallback templates
-│   └── auth.py          # JWT + bcrypt
+│   └── auth.py          # Firebase Admin Token verification
 ├── tests/
 │   └── test_api.py      # pytest suite
 └── requirements.txt
@@ -242,12 +240,7 @@ Response: {
 - Returns saved roadmap
 
 **PUT /api/roadmaps/{id}/progress**
-```json
-{
-  "lesson_id": "string",
-  "completed": true
-}
-```
+Progress is now managed directly on the frontend using Firebase Firestore.
 
 **POST /api/chat**
 ```json
@@ -261,27 +254,20 @@ Response: {
 }
 ```
 
-### Data Model
+### Data Model (Firestore)
 
-**User**
-- id, email, name, avatar, created_at
-
-**Roadmap**
-- id, user_id, goal, skill_level, daily_hours, learning_style, target_months
+**users/{userId}/roadmaps/{roadmapId}**
+- goal, skill_level, daily_hours, learning_style, target_months
 - generated_roadmap (JSON), created_at, updated_at
 
-**Progress**
-- id, roadmap_id, lesson_id, completed, completed_at
-
-**ChatHistory**
-- id, roadmap_id, messages[], created_at
+**users/{userId}/roadmaps/{roadmapId}/progress/{lessonId}**
+- completed, completed_at
 
 ### Authentication
-- JWT tokens (mandatory `JWT_SECRET` env var — server refuses to start without it)
-- bcrypt password hashing via Passlib
-- IDOR protection on all resource endpoints
-- Rate limiting via SlowAPI (10/min auth, 5/min generate, 20/min chat)
-- Guest mode for unauthenticated users (optional auth on most endpoints)
+- Firebase Authentication for seamless client-side auth.
+- Firebase Admin SDK on the backend to verify ID tokens.
+- Firestore Security Rules enforce strict per-user data isolation.
+- Rate limiting via SlowAPI (5/min generate, 20/min chat)
 
 ### Security Headers (Frontend)
 - `X-Frame-Options: DENY`
@@ -292,12 +278,16 @@ Response: {
 ### Environment Variables
 ```
 # Backend (backend/.env)
-JWT_SECRET=<required, 64-char hex — generate with python -c "import secrets; print(secrets.token_hex(32))">
 GEMINI_API_KEY=<optional>
-MONGODB_URI=mongodb://localhost:27017
-DATABASE_NAME=roadmapai
 CORS_ORIGINS=http://localhost:3000
+GOOGLE_APPLICATION_CREDENTIALS=<optional_path_to_firebase_admin_json>
 
 # Frontend (frontend/.env.local)
 NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
 ```

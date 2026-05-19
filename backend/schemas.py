@@ -126,7 +126,7 @@ class ChatMessage(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    roadmap_id: str
+    roadmap_context: Dict[str, Any]
     message: str = Field(..., min_length=1, max_length=2000)
 
 

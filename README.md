@@ -24,9 +24,9 @@ Full Stack Development · DSA for Placements · AI / Machine Learning · Cyberse
 | Layer | Technology |
 |-------|-----------|
 | **Frontend** | Next.js 14, TypeScript (strict mode), TailwindCSS, Framer Motion, Zustand, Axios, Lucide React |
-| **Backend** | FastAPI, Pydantic v2, Motor (async MongoDB), python-jose (JWT), Passlib (bcrypt), SlowAPI (rate limiting) |
+| **Backend** | FastAPI, Pydantic v2, SlowAPI (rate limiting), Firebase Admin SDK |
 | **AI** | Google Gemini 2.0 Flash (via `google-generativeai` SDK, async) |
-| **Database** | MongoDB |
+| **Auth & Database** | Firebase Authentication & Cloud Firestore (Serverless) |
 
 ---
 
@@ -38,7 +38,7 @@ Full Stack Development · DSA for Placements · AI / Machine Learning · Cyberse
 |-------------|---------|
 | Node.js | 18+ |
 | Python | 3.9+ |
-| MongoDB | 6+ (local install or [MongoDB Atlas](https://www.mongodb.com/atlas)) |
+| Firebase | Firebase project with Firestore and Authentication enabled |
 | Gemini API key | Optional — get one free at [aistudio.google.com](https://aistudio.google.com/app/apikey) |
 
 ### Quick Start (Windows)
@@ -74,9 +74,7 @@ pip install -r requirements.txt
 # Create environment file
 cp .env.example .env
 
-# IMPORTANT: Generate a real JWT secret
-python -c "import secrets; print(secrets.token_hex(32))"
-# Paste the output as the JWT_SECRET value in .env
+# Configure GOOGLE_APPLICATION_CREDENTIALS for Firebase Admin if necessary
 ```
 
 #### 2. Frontend
@@ -110,11 +108,9 @@ Open **http://localhost:3000** in your browser.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `JWT_SECRET` | **Yes** | — | 64-char hex string. Server refuses to start without it. Generate with `python -c "import secrets; print(secrets.token_hex(32))"` |
-| `MONGODB_URI` | No | `mongodb://localhost:27017` | MongoDB connection string |
-| `DATABASE_NAME` | No | `roadmapai` | Database name |
 | `GEMINI_API_KEY` | No | — | Google Gemini API key. Without it, roadmaps use built-in templates |
 | `CORS_ORIGINS` | No | `http://localhost:3000,http://127.0.0.1:3000` | Comma-separated list of allowed frontend origins |
+| `GOOGLE_APPLICATION_CREDENTIALS` | No | — | Path to Firebase Admin service account JSON |
 
 ### Frontend (`frontend/.env.local`)
 
@@ -135,37 +131,19 @@ All endpoints are also browsable at **http://localhost:8000/docs** (Swagger UI).
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | `GET` | `/` | No | API info + version |
-| `GET` | `/health` | No | Health check (pings MongoDB) |
+| `GET` | `/health` | No | Health check |
 
-### Authentication
-
-| Method | Endpoint | Auth | Rate Limit | Description |
-|--------|----------|------|------------|-------------|
-| `POST` | `/api/auth/register` | No | 10/min | Create account (email validated, password ≥ 8 chars) |
-| `POST` | `/api/auth/login` | No | 10/min | Sign in, returns JWT |
-
-### Roadmaps
+### Roadmaps (AI Microservice)
 
 | Method | Endpoint | Auth | Rate Limit | Description |
 |--------|----------|------|------------|-------------|
 | `POST` | `/api/roadmaps/generate` | Optional | 5/min | Generate a new AI roadmap |
-| `GET` | `/api/roadmaps/{id}` | Optional | — | Get roadmap by UUID (IDOR-protected) |
-| `GET` | `/api/roadmaps` | Required | — | List current user's roadmaps |
-| `DELETE` | `/api/roadmaps/{id}` | Required | — | Delete a roadmap (owner only) |
-
-### Progress
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `PUT` | `/api/roadmaps/{id}/progress` | Optional | Toggle lesson completion |
-| `GET` | `/api/roadmaps/{id}/progress` | Optional | Get all progress for a roadmap |
 
 ### AI Chat
 
 | Method | Endpoint | Auth | Rate Limit | Description |
 |--------|----------|------|------------|-------------|
 | `POST` | `/api/chat` | Optional | 20/min | Send message to AI mentor |
-| `GET` | `/api/chat/{roadmap_id}/history` | Optional | — | Get chat history |
 
 ---
 
@@ -174,13 +152,11 @@ All endpoints are also browsable at **http://localhost:8000/docs** (Swagger UI).
 ```
 roadmapai/
 ├── backend/
-│   ├── main.py                 # FastAPI app, routes, CORS, rate limiting
+│   ├── main.py                 # FastAPI app (AI microservice)
 │   ├── schemas.py              # Pydantic v2 request/response models
-│   ├── models.py               # MongoDB repository layer (async)
-│   ├── database.py             # Motor connection + index setup
 │   ├── services/
 │   │   ├── ai_service.py       # Gemini integration + fallback roadmaps
-│   │   └── auth.py             # JWT creation/verification, password hashing
+│   │   └── auth.py             # Firebase Admin Token verification
 │   ├── tests/
 │   │   └── test_api.py         # pytest suite (auth, IDOR, validation)
 │   ├── pytest.ini              # Test configuration
@@ -251,11 +227,9 @@ roadmapai/
 
 The following security measures are implemented:
 
-- **JWT Authentication** — Tokens signed with a mandatory environment secret (server won't start without it)
-- **Password Hashing** — bcrypt via Passlib
-- **Input Validation** — Pydantic v2 with `EmailStr`, password min-length, field constraints
-- **IDOR Protection** — All roadmap endpoints verify the requesting user owns the resource
-- **Rate Limiting** — SlowAPI limits on auth (10/min), generation (5/min), and chat (20/min)
+- **Firebase Authentication** — Secure user identity management and Token verification.
+- **Firestore Security Rules** — Robust per-user data isolation.
+- **Rate Limiting** — SlowAPI limits on generation (5/min) and chat (20/min).
 - **CORS** — Configurable allowed origins via `CORS_ORIGINS` env var
 - **Security Headers** — `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`
 - **No secrets in git** — `.env` files are git-ignored; `.env.example` files use placeholders
@@ -273,9 +247,8 @@ pytest -v
 ```
 
 The test suite covers:
-- Input validation (invalid email, short password, empty goal)
-- Authentication (wrong credentials → 401)
-- IDOR protection (accessing another user's roadmap → 403)
+- Input validation (empty goal)
+- Authentication
 - Health endpoint response
 
 ---
@@ -288,20 +261,20 @@ The test suite covers:
 2. Set root directory to `backend`
 3. Build command: `pip install -r requirements.txt`
 4. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Set environment variables: `JWT_SECRET`, `MONGODB_URI`, `GEMINI_API_KEY`, `CORS_ORIGINS`
+5. Set environment variables: `GEMINI_API_KEY`, `CORS_ORIGINS`, `GOOGLE_APPLICATION_CREDENTIALS` (optional JSON string)
 
-### Frontend (Vercel)
+### Frontend (Firebase Hosting / Vercel)
 
-1. Create a new Vercel project, connect the repository
+1. Create a new project and connect the repository
 2. Set root directory to `frontend`
-3. Set environment variable: `NEXT_PUBLIC_API_URL=https://your-backend-url.com`
+3. Set environment variables: `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_FIREBASE_*` variables
 
-### MongoDB Atlas
+### Database (Firebase)
 
-1. Create a free cluster at [mongodb.com/atlas](https://www.mongodb.com/atlas)
-2. Create a database user with read/write access
-3. Whitelist your deployment IPs (or `0.0.0.0/0` for development)
-4. Copy the connection string into your `MONGODB_URI` env var
+1. Setup Firebase Project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Enable Authentication (Email/Password)
+3. Enable Cloud Firestore
+4. Deploy rules: `firebase deploy --only firestore:rules`
 
 ---
 

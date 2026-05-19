@@ -32,7 +32,7 @@ import type { Roadmap, Phase, Chapter, Lesson } from '@/types'
 export default function RoadmapPage() {
   const params = useParams()
   const router = useRouter()
-  const { currentRoadmap, setCurrentRoadmap } = useStore()
+  const { currentRoadmap, setCurrentRoadmap, user } = useStore()
   const [isLoading, setIsLoading] = useState(true)
   const [showMentor, setShowMentor] = useState(false)
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null)
@@ -46,28 +46,40 @@ export default function RoadmapPage() {
 
       try {
         // Always fetch from API to get fresh data
-        let loadedRoadmap: Roadmap
+        let loadedRoadmap: Roadmap | null = null
         if (currentRoadmap && currentRoadmap.id === roadmapId) {
           loadedRoadmap = currentRoadmap
           setRoadmap(currentRoadmap)
-        } else {
-          const response = await api.get<Roadmap>(`/api/roadmaps/${roadmapId}`)
-          loadedRoadmap = response.data
-          setRoadmap(loadedRoadmap)
-          setCurrentRoadmap(loadedRoadmap)
+        } else if (user) {
+          const { doc, getDoc, collection, getDocs } = await import('firebase/firestore')
+          const { db } = await import('@/lib/firebase')
+          
+          const docRef = doc(db, 'users', user.id, 'roadmaps', roadmapId)
+          const docSnap = await getDoc(docRef)
+          if (docSnap.exists()) {
+            loadedRoadmap = { id: docSnap.id, ...docSnap.data() } as Roadmap
+            setRoadmap(loadedRoadmap)
+            setCurrentRoadmap(loadedRoadmap)
+          }
         }
 
+        if (!loadedRoadmap) throw new Error('Roadmap not found')
+
         // Fetch persisted progress from the backend
-        try {
-          const progressRes = await api.get(`/api/roadmaps/${roadmapId}/progress`)
-          const completed = new Set<string>(
-            (progressRes.data.progress as Array<{ lesson_id: string; completed: boolean }>)
-              .filter((p) => p.completed)
-              .map((p) => p.lesson_id)
-          )
-          setCompletedLessons(completed)
-        } catch {
-          // Progress fetch failed silently — start fresh
+        if (user) {
+          try {
+            const { collection, getDocs } = await import('firebase/firestore')
+            const { db } = await import('@/lib/firebase')
+            const progressRef = collection(db, 'users', user.id, 'roadmaps', roadmapId, 'progress')
+            const snapshot = await getDocs(progressRef)
+            const completed = new Set<string>()
+            snapshot.forEach(docSnap => {
+              if (docSnap.data().completed) completed.add(docSnap.id)
+            })
+            setCompletedLessons(completed)
+          } catch {
+            // Progress fetch failed silently — start fresh
+          }
         }
       } catch (error) {
         console.error('Failed to load roadmap:', error)
@@ -94,14 +106,16 @@ export default function RoadmapPage() {
     }
     setCompletedLessons(newCompleted)
 
-    try {
-      await api.put(`/api/roadmaps/${roadmap.id}/progress`, {
-        lesson_id: lessonId,
-        completed: !isCompleted
-      })
-    } catch (error) {
-      // Rollback to previous state on API failure
-      setCompletedLessons(previousCompleted)
+    if (user) {
+      try {
+        const { doc, setDoc } = await import('firebase/firestore')
+        const { db } = await import('@/lib/firebase')
+        const progressDoc = doc(db, 'users', user.id, 'roadmaps', roadmap.id, 'progress', lessonId)
+        await setDoc(progressDoc, { completed: !isCompleted }, { merge: true })
+      } catch (error) {
+        // Rollback to previous state on API failure
+        setCompletedLessons(previousCompleted)
+      }
     }
   }
 

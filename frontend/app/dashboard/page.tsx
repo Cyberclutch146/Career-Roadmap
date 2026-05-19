@@ -30,10 +30,27 @@ export default function DashboardPage() {
     if (!user) return
     const fetchRoadmaps = async () => {
       try {
-        const res = await api.get<Roadmap[]>('/api/roadmaps')
-        setSavedRoadmaps(res.data)
-      } catch {
-        // If fetch fails, keep whatever is already in state
+        const { collection, getDocs } = await import('firebase/firestore')
+        const { db } = await import('@/lib/firebase')
+        
+        const roadmapsRef = collection(db, 'users', user.id, 'roadmaps')
+        const querySnapshot = await getDocs(roadmapsRef)
+        const roadmaps: Roadmap[] = []
+        
+        querySnapshot.forEach((doc) => {
+          roadmaps.push({ id: doc.id, ...doc.data() } as Roadmap)
+        })
+        
+        // Sort by created_at descending (assuming they have a timestamp)
+        roadmaps.sort((a, b) => {
+          const timeA = new Date(a.created_at || 0).getTime()
+          const timeB = new Date(b.created_at || 0).getTime()
+          return timeB - timeA
+        })
+        
+        setSavedRoadmaps(roadmaps)
+      } catch (err) {
+        console.error("Failed to fetch roadmaps from Firestore", err)
       }
     }
     fetchRoadmaps()

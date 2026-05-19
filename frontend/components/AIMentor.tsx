@@ -56,7 +56,11 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
 
     try {
       const response = await api.post('/api/chat', {
-        roadmap_id: roadmap.id,
+        roadmap_context: {
+          goal: roadmap.goal,
+          progress: 'In progress',
+          phases: roadmap.generated_roadmap.phases
+        },
         message: textToSend,
       })
 
