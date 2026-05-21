@@ -38,27 +38,27 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="section-container flex flex-col gap-stack-md pt-stack-lg py-0">
+    <section id="features" className="relative py-24 max-w-7xl mx-auto px-6 flex flex-col gap-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         className="text-center max-w-2xl mx-auto"
       >
-        <h2 className="section-heading mb-4">
-          Intelligence at every step
+        <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
+          Intelligence at <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">every step.</span>
         </h2>
-        <p className="font-body text-body-lg text-on-surface-variant">
+        <p className="font-body text-zinc-400 text-lg max-w-xl mx-auto">
           The architecture of your success, built on deep learning models that understand educational progression.
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
         {features.map((feature, index) => {
           const Icon = feature.icon
-          const borderColor = feature.color === 'primary' ? 'hover:border-primary/50' : 'hover:border-secondary/50'
-          const glowColor = feature.color === 'primary' ? 'bg-primary/5' : 'bg-secondary/5'
-          const iconColor = feature.color === 'primary' ? 'text-primary' : 'text-secondary'
+          const borderColor = feature.color === 'primary' ? 'hover:border-amber-500/30' : 'hover:border-orange-500/30'
+          const glowColor = feature.color === 'primary' ? 'bg-amber-500/5' : 'bg-orange-500/5'
+          const iconColor = feature.color === 'primary' ? 'text-amber-400' : 'text-orange-400'
           
           return (
             <motion.div
@@ -69,7 +69,7 @@ export function Features() {
               transition={{ delay: index * 0.1 }}
               className={feature.span === 2 ? 'md:col-span-2' : ''}
             >
-              <div className={`glass-card p-8 flex flex-col ${feature.hasCTA ? 'md:flex-row md:items-center' : ''} justify-between relative overflow-hidden group ${borderColor} transition-colors duration-500 h-full`}>
+              <div className={`rounded-2xl bg-zinc-900/60 border border-zinc-800 p-8 flex flex-col ${feature.hasCTA ? 'md:flex-row md:items-center' : ''} justify-between relative overflow-hidden group ${borderColor} transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.05)] h-full`}>
                 {/* Ambient glow */}
                 <div className={`absolute ${feature.span === 2 && !feature.hasCTA ? 'top-0 right-0 -mr-20 -mt-20' : feature.hasCTA ? 'bottom-0 left-0' : 'bottom-0 right-0'} w-40 h-40 md:w-64 md:h-64 ${glowColor} rounded-full blur-[60px] md:blur-[80px] pointer-events-none`} />
 
@@ -77,33 +77,33 @@ export function Features() {
                   {feature.hasCTA ? (
                     <div className="flex items-center gap-3 mb-4">
                       <Icon className={`w-5 h-5 ${iconColor}`} />
-                      <span className="font-label text-label-md text-secondary tracking-widest uppercase">Community & Mentorship</span>
+                      <span className="font-label text-xs font-semibold text-orange-400 tracking-widest uppercase">Community & Mentorship</span>
                     </div>
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center mb-6 shadow-inner">
+                    <div className="w-12 h-12 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-center mb-6 shadow-inner group-hover:border-amber-500/30 transition-colors">
                       <Icon className={`w-6 h-6 ${iconColor}`} />
                     </div>
                   )}
 
-                  <h3 className="font-headline text-headline-md text-on-surface mb-2">
+                  <h3 className="font-headline text-2xl text-white font-semibold mb-2">
                     {feature.title}
                   </h3>
-                  <p className="font-body text-body-md text-on-surface-variant max-w-md">
+                  <p className="font-body text-zinc-400 text-base leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
 
                 {/* Faux chart for the first large card */}
                 {feature.hasChart && (
-                  <div className="mt-8 h-32 border border-outline-variant/20 rounded-lg bg-surface/30 flex items-end px-4 gap-2 pb-2 relative">
-                    <div className="w-full h-[40%] bg-gradient-to-t from-primary/40 to-transparent rounded-t-sm relative group-hover:h-[60%] transition-all duration-700 ease-out">
-                      <div className="absolute top-0 left-0 w-full h-[2px] bg-primary" />
+                  <div className="mt-8 h-32 border border-zinc-800/50 rounded-xl bg-zinc-950/40 flex items-end px-6 gap-3 pb-3 relative overflow-hidden">
+                    <div className="w-full h-[40%] bg-gradient-to-t from-amber-500/20 to-transparent rounded-t-lg relative group-hover:h-[60%] transition-all duration-700 ease-out">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-amber-500" />
                     </div>
-                    <div className="w-full h-[70%] bg-gradient-to-t from-secondary/40 to-transparent rounded-t-sm relative group-hover:h-[85%] transition-all duration-700 delay-75 ease-out">
-                      <div className="absolute top-0 left-0 w-full h-[2px] bg-secondary" />
+                    <div className="w-full h-[70%] bg-gradient-to-t from-orange-500/20 to-transparent rounded-t-lg relative group-hover:h-[85%] transition-all duration-700 delay-75 ease-out">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-orange-500" />
                     </div>
-                    <div className="w-full h-[50%] bg-gradient-to-t from-primary/40 to-transparent rounded-t-sm relative group-hover:h-[70%] transition-all duration-700 delay-150 ease-out">
-                      <div className="absolute top-0 left-0 w-full h-[2px] bg-primary" />
+                    <div className="w-full h-[50%] bg-gradient-to-t from-amber-500/20 to-transparent rounded-t-lg relative group-hover:h-[70%] transition-all duration-700 delay-150 ease-out">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-amber-500" />
                     </div>
                   </div>
                 )}
@@ -111,9 +111,9 @@ export function Features() {
                 {/* CTA button for the mentorship card */}
                 {feature.hasCTA && (
                   <div className="mt-6 md:mt-0 flex-shrink-0">
-                    <button className="px-6 py-3 rounded-full border border-white/20 text-on-surface font-label text-label-md hover:bg-surface-container-high transition-colors flex items-center gap-2 backdrop-blur-md">
+                    <button className="px-6 py-3 rounded-full border border-zinc-800 text-zinc-300 font-label text-sm hover:bg-zinc-800 hover:text-white transition-all flex items-center gap-2 backdrop-blur-md hover:border-amber-500/30">
                       Find a Mentor
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                     </button>

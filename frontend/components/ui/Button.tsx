@@ -15,9 +15,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseClasses = 'inline-flex items-center justify-center font-label font-medium rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed active:scale-95'
 
     const variantClasses = {
-      primary: 'bg-gradient-to-r from-primary to-secondary text-on-primary shadow-glow hover:brightness-110 glossy-btn-hover relative overflow-hidden',
-      secondary: 'border border-white/20 text-on-surface hover:bg-surface-container-high backdrop-blur-md',
-      ghost: 'text-on-surface-variant hover:bg-surface-container/50 hover:text-on-surface rounded-lg'
+      primary: 'bg-primary hover:bg-primary/90 text-on-primary font-semibold shadow-glow hover:shadow-glow-hover border border-transparent',
+      secondary: 'border border-outline-variant text-on-surface-variant hover:bg-surface-container hover:text-on-surface hover:border-outline backdrop-blur-md',
+      ghost: 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
     }
 
     const sizeClasses = {

@@ -166,7 +166,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
               <Sparkles className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h3 className="font-heading font-bold text-on-surface">AI Mentor</h3>
+              <h3 className="font-headline font-bold text-on-surface">AI Mentor</h3>
               <p className="text-xs text-on-surface-variant">Based on your roadmap · supports markdown</p>
             </div>
           </div>

@@ -13,8 +13,8 @@ export function Card({ children, className, hover = false, onClick }: CardProps)
   return (
     <div
       className={cn(
-        'glass-card p-6 transition-all duration-300',
-        hover && 'hover:border-primary/50 cursor-pointer',
+        'rounded-2xl bg-surface-container/60 border border-outline-variant backdrop-blur-sm p-6 transition-all duration-300',
+        hover && 'hover:border-primary/30 hover:-translate-y-1 hover:shadow-glow-hover cursor-pointer',
         onClick && 'cursor-pointer',
         className
       )}

@@ -176,7 +176,7 @@ export default function GeneratePage() {
               <Sparkles className="w-4 h-4" />
               AI-Powered
             </div>
-            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-on-surface mb-4">
+            <h1 className="text-3xl sm:text-4xl font-headline font-bold text-on-surface mb-4">
               Create Your Learning Roadmap
             </h1>
             <p className="text-on-surface-variant text-lg max-w-2xl mx-auto">
@@ -370,7 +370,7 @@ export default function GeneratePage() {
           >
             {/* Modal Header */}
             <div className="bg-surface-container border-b border-outline-variant px-6 py-5 flex justify-between items-center">
-              <h3 className="font-heading font-bold text-lg text-on-surface flex items-center gap-2">
+              <h3 className="font-headline font-bold text-lg text-on-surface flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-primary" />
                 Assessment: {formData.goal}
               </h3>
@@ -418,7 +418,7 @@ export default function GeneratePage() {
                     <Award className="w-10 h-10" />
                   </div>
                   <div className="space-y-3">
-                    <h4 className="font-heading font-bold text-2xl text-on-surface">Quiz Completed!</h4>
+                    <h4 className="font-headline font-bold text-2xl text-on-surface">Quiz Completed!</h4>
                     <p className="text-4xl font-extrabold text-primary drop-shadow-[0_0_10px_rgba(255,113,98,0.3)]">
                       {quizScore} <span className="text-2xl text-on-surface-variant">/ {quizQuestions.length}</span>
                     </p>

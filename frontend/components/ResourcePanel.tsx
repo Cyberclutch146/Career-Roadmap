@@ -47,7 +47,7 @@ export function ResourcePanel({ resources }: ResourcePanelProps) {
               <div className={`w-8 h-8 ${color} rounded-lg flex items-center justify-center`}>
                 <Icon className="w-4 h-4 text-white" />
               </div>
-              <h4 className="font-heading font-bold text-on-surface">{label}</h4>
+              <h4 className="font-headline font-bold text-on-surface">{label}</h4>
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
               {categoryResources.slice(0, 6).map((resource, idx) => {

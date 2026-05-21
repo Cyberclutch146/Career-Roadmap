@@ -281,7 +281,7 @@ export function LessonWorkspace({
             )}
           </button>
           <div>
-            <h2 className="font-heading font-bold text-lg text-on-surface leading-tight">
+            <h2 className="font-headline font-bold text-lg text-on-surface leading-tight">
               {lesson.title}
             </h2>
             <p className="text-xs text-on-surface-variant mt-0.5">
@@ -548,7 +548,7 @@ export function LessonWorkspace({
                   <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
                     <MessageSquare className="w-6 h-6" />
                   </div>
-                  <h3 className="font-heading font-bold text-lg text-on-surface">AI Mock Technical Interview</h3>
+                  <h3 className="font-headline font-bold text-lg text-on-surface">AI Mock Technical Interview</h3>
                   <p className="text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed">
                     Test your understanding of the concepts in <strong>{phaseName}</strong>. 
                     The AI will ask you 3 challenging conceptual questions one by one, evaluate your answers, 
@@ -640,7 +640,7 @@ export function LessonWorkspace({
                       <Card className="p-6 border border-success/20 bg-success/[0.01] shadow-sm space-y-4">
                         <div className="flex items-center gap-2.5 text-success-dark">
                           <Sparkles className="w-5 h-5" />
-                          <h4 className="font-heading font-bold text-lg">Interview Evaluation Completed!</h4>
+                          <h4 className="font-headline font-bold text-lg">Interview Evaluation Completed!</h4>
                         </div>
                         <div className="text-sm text-on-surface-variant leading-relaxed prose max-w-none whitespace-pre-line">
                           {finalEvaluation}

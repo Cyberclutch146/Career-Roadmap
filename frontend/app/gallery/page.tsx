@@ -153,7 +153,7 @@ export default function GalleryPage() {
               <Compass className="w-4 h-4" />
               Community Library
             </div>
-            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-on-surface mb-4">
+            <h1 className="text-3xl sm:text-4xl font-headline font-bold text-on-surface mb-4">
               Discover Learning Roadmaps
             </h1>
             <p className="text-on-surface-variant text-lg max-w-2xl mx-auto">
@@ -221,7 +221,7 @@ export default function GalleryPage() {
               <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-on-surface-variant" />
               </div>
-              <h3 className="text-lg font-heading font-bold text-on-surface mb-2">No roadmaps found</h3>
+              <h3 className="text-lg font-headline font-bold text-on-surface mb-2">No roadmaps found</h3>
               <p className="text-on-surface-variant max-w-md mx-auto">
                 We couldn&apos;t find any public roadmaps matching your filters. Try adjusting your search query.
               </p>
@@ -246,7 +246,7 @@ export default function GalleryPage() {
                           </span>
                         </div>
 
-                        <h3 className="font-heading font-bold text-on-surface mb-2 text-base line-clamp-2">
+                        <h3 className="font-headline font-bold text-on-surface mb-2 text-base line-clamp-2">
                           {roadmap.goal}
                         </h3>
 

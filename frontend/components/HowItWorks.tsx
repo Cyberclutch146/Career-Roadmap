@@ -8,7 +8,7 @@ const steps = [
     number: '01',
     icon: FileText,
     title: 'Describe Your Goal',
-    description: 'Tell us what you want to learn — whether it\'s becoming a full-stack developer, mastering DSA, or cracking GATE CSE.',
+    description: "Tell us what you want to learn — whether it's becoming a full-stack developer, mastering DSA, or cracking GATE CSE.",
   },
   {
     number: '02',
@@ -32,22 +32,22 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="section-container">
+    <section id="how-it-works" className="relative py-24 max-w-7xl mx-auto px-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         className="text-center max-w-2xl mx-auto mb-16"
       >
-        <h2 className="section-heading mb-4">
-          How It Works
+        <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
+          How it <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">works.</span>
         </h2>
-        <p className="font-body text-body-lg text-on-surface-variant">
+        <p className="font-body text-zinc-400 text-lg max-w-xl mx-auto">
           From ambition to achievement in four simple steps
         </p>
       </motion.div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {steps.map((step, index) => (
           <motion.div
             key={step.number}
@@ -58,23 +58,23 @@ export function HowItWorks() {
             className="relative"
           >
             {index < steps.length - 1 && (
-              <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-outline-variant/50 to-transparent -translate-x-1/2" />
+              <div className="hidden lg:block absolute top-12 left-full w-full h-[1px] bg-gradient-to-r from-amber-500/20 to-transparent -translate-x-1/2" />
             )}
-            <div className="glass-card p-6 relative group hover:border-primary/30 transition-colors duration-500">
+            <div className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-6 relative group hover:border-amber-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.03)] h-full">
               {/* Ambient glow */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/3 rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/[0.02] rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-full flex items-center justify-center text-primary group-hover:text-secondary transition-colors duration-300">
+              <div className="absolute -top-3 -left-3 w-8 h-8 bg-zinc-950 border border-zinc-800 rounded-full flex items-center justify-center text-amber-500 group-hover:border-amber-500/30 transition-colors duration-300">
                 <step.icon className="w-4 h-4" />
               </div>
               <div className="pt-4">
-                <span className="text-4xl font-headline font-bold text-outline-variant/40">
+                <span className="text-5xl font-serif italic font-bold text-zinc-800/60 group-hover:text-amber-500/20 transition-colors">
                   {step.number}
                 </span>
-                <h3 className="text-xl font-headline font-bold text-on-surface mt-2 mb-3">
+                <h3 className="text-xl font-headline font-semibold text-white mt-2 mb-3">
                   {step.title}
                 </h3>
-                <p className="font-body text-body-md text-on-surface-variant leading-relaxed">
+                <p className="font-body text-zinc-400 text-sm leading-relaxed">
                   {step.description}
                 </p>
               </div>

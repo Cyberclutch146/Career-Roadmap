@@ -108,7 +108,7 @@ export function ChapterList({
                   )}
                 </div>
                 <div className="text-left">
-                  <h3 className="font-heading font-bold text-lg text-on-surface">
+                  <h3 className="font-headline font-bold text-lg text-on-surface">
                     {phase.name}
                   </h3>
                   <p className="text-sm text-on-surface-variant">{phase.description}</p>
@@ -144,7 +144,7 @@ export function ChapterList({
                     {phase.chapters.map((chapter) => (
                       <div key={chapter.id} className="bg-surface rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-heading font-bold text-on-surface">
+                          <h4 className="font-headline font-bold text-on-surface">
                             {chapter.title}
                           </h4>
                           <span className="text-xs text-on-surface-variant">

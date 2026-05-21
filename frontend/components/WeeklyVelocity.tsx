@@ -72,25 +72,25 @@ export function WeeklyVelocity({ completions }: WeeklyVelocityProps) {
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#5b403e" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fill: '#e4bebb', fontSize: 11 }} 
-                  stroke="#5b403e"
+                  tick={{ fill: '#a1a1aa', fontSize: 11 }} 
+                  stroke="#27272a"
                 />
                 <YAxis 
-                  tick={{ fill: '#ab8986', fontSize: 11 }} 
-                  stroke="#5b403e"
+                  tick={{ fill: '#a1a1aa', fontSize: 11 }} 
+                  stroke="#27272a"
                   allowDecimals={false}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#2c1b1a',
-                    borderColor: '#5b403e',
+                    backgroundColor: '#141415',
+                    borderColor: '#27272a',
                     borderRadius: '0.75rem',
-                    color: '#f9dcd9',
+                    color: '#fafafa',
                   }}
-                  cursor={{ fill: 'rgba(255, 179, 174, 0.05)' }}
+                  cursor={{ fill: 'rgba(245, 158, 11, 0.05)' }}
                   labelFormatter={(_, items) => {
                     if (items && items.length > 0) {
                       return items[0].payload.rangeLabel
@@ -101,7 +101,7 @@ export function WeeklyVelocity({ completions }: WeeklyVelocityProps) {
                 />
                 <Bar 
                   dataKey="completions" 
-                  fill="#ffb3ae" 
+                  fill="#f59e0b" 
                   radius={[4, 4, 0, 0]}
                   maxBarSize={40}
                 />

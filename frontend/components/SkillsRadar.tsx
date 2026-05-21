@@ -54,26 +54,26 @@ export function SkillsRadar({ roadmap, completedLessons }: SkillsRadarProps) {
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-              <PolarGrid stroke="#5b403e" />
+              <PolarGrid stroke="#27272a" />
               <PolarAngleAxis 
                 dataKey="subject" 
-                tick={{ fill: '#e4bebb', fontSize: 11 }} 
+                tick={{ fill: '#a1a1aa', fontSize: 11 }} 
               />
               <PolarRadiusAxis 
                 angle={30} 
                 domain={[0, 100]} 
-                tick={{ fill: '#ab8986', fontSize: 9 }}
+                tick={{ fill: '#71717a', fontSize: 9 }}
                 tickCount={6}
-                stroke="#5b403e"
+                stroke="#27272a"
               />
               <Tooltip 
                 contentStyle={{
-                  backgroundColor: '#2c1b1a',
-                  borderColor: '#5b403e',
+                  backgroundColor: '#141415',
+                  borderColor: '#27272a',
                   borderRadius: '0.75rem',
-                  color: '#f9dcd9',
+                  color: '#fafafa',
                 }}
-                itemStyle={{ color: '#ffb3ae' }}
+                itemStyle={{ color: '#f59e0b' }}
                 formatter={(value: any) => [`${value}%`, 'Mastery']}
                 labelFormatter={(label, payload) => {
                   if (payload && payload.length > 0) {
@@ -85,8 +85,8 @@ export function SkillsRadar({ roadmap, completedLessons }: SkillsRadarProps) {
               <Radar
                 name="Mastery"
                 dataKey="A"
-                stroke="#ffb3ae"
-                fill="#ffb3ae"
+                stroke="#f59e0b"
+                fill="#f59e0b"
                 fillOpacity={0.25}
               />
             </RadarChart>

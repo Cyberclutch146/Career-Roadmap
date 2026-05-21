@@ -33,7 +33,7 @@ export default function Home() {
             {/* Ambient glow inside the card */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
             
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-on-surface mb-4 relative z-10">
+            <h2 className="text-3xl sm:text-4xl font-headline font-bold text-on-surface mb-4 relative z-10">
               Ready to Start Your Learning Journey?
             </h2>
             <p className="text-on-surface-variant text-lg mb-8 max-w-2xl mx-auto relative z-10">

@@ -603,7 +603,7 @@ export default function RoadmapPage() {
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-heading font-bold text-on-surface mb-2">Roadmap not found</h2>
+          <h2 className="text-2xl font-headline font-bold text-on-surface mb-2">Roadmap not found</h2>
           <p className="text-on-surface-variant mb-4">The roadmap you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/generate">
             <Button>Create New Roadmap</Button>
@@ -631,7 +631,7 @@ export default function RoadmapPage() {
             </Link>
 
             <div className="mb-6">
-              <h2 className="font-heading font-bold text-lg text-on-surface mb-2">
+              <h2 className="font-headline font-bold text-lg text-on-surface mb-2">
                 {generatedRoadmap.overview.title}
               </h2>
               <div className="flex items-center gap-2 text-sm text-on-surface-variant">
@@ -735,7 +735,7 @@ export default function RoadmapPage() {
               </div>
 
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-                <h1 className="text-3xl font-heading font-bold text-on-surface leading-tight">
+                <h1 className="text-3xl font-headline font-bold text-on-surface leading-tight">
                   {generatedRoadmap.overview.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 lg:hidden self-start">
@@ -848,7 +848,7 @@ export default function RoadmapPage() {
               transition={{ delay: 0.3 }}
               className="mb-12"
             >
-              <h2 className="text-2xl font-heading font-bold text-on-surface mb-6">Learning Phases</h2>
+              <h2 className="text-2xl font-headline font-bold text-on-surface mb-6">Learning Phases</h2>
               <ChapterList
                 phases={generatedRoadmap.phases}
                 completedLessons={completedLessons}
