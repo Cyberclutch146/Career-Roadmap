@@ -107,7 +107,7 @@ export function Navbar() {
   return (
     <>
       <div
-        className="fixed inset-x-0 z-50 top-3 mx-4 rounded-[24px] lg:inset-x-auto lg:left-1/2 lg:mx-0 lg:w-[min(calc(100vw-2rem),1200px)] lg:-translate-x-1/2"
+        className="fixed top-3 left-4 right-4 md:left-1/2 md:right-auto md:-translate-x-1/2 md:w-[min(calc(100vw-2rem),1200px)] z-50 rounded-[24px]"
         style={{
           background: themeVars.glassBg,
           backdropFilter: 'blur(28px) saturate(1.6)',

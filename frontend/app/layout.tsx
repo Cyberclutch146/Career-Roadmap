@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Playfair_Display, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
@@ -30,14 +30,20 @@ export const metadata: Metadata = {
   keywords: ['learning', 'education', 'roadmap', 'AI', 'study planner', 'courses'],
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen bg-background text-on-surface pb-16 md:pb-0 overflow-x-hidden antialiased">
+    <html lang="en" className={`dark ${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} overflow-x-hidden max-w-full`}>
+      <body className="min-h-screen bg-background text-on-surface pb-16 md:pb-0 overflow-x-hidden max-w-full antialiased">
         {/* Atmospheric Background Glow */}
         <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
           <div className="absolute top-[-15%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-500/[0.05] blur-[180px]" />

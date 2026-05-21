@@ -14,7 +14,7 @@ import { ArrowRight } from 'lucide-react'
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full">
+    <main className="min-h-screen w-full overflow-x-hidden">
       <Navbar />
       <Hero />
       <Features />
