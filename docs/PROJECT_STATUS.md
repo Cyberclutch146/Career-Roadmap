@@ -34,70 +34,105 @@ RoadmapAI is an AI-powered educational platform that transforms career and learn
 ## 📁 Codebase Architecture
 
 ```
-roadmapai/
+Career-Roadmap/
+├── README.md
+│
 ├── backend/
 │   ├── main.py                    # FastAPI app — routes, CORS, rate limiting
 │   ├── schemas.py                 # Pydantic v2 request/response models
 │   ├── services/
-│   │   ├── ai_service.py          # Gemini integration + fallback templates
+│   │   ├── __init__.py
+│   │   ├── ai_service.py          # Gemini integration + fallback templates (65KB)
 │   │   └── auth.py                # Firebase Admin token verification
 │   ├── tests/
 │   │   └── test_api.py            # pytest suite
+│   ├── roadmap.ps1                # One-command start script (PowerShell)
+│   ├── roadmap.bat                # One-command start script (Batch)
+│   ├── setup.ps1                  # Guided setup wizard
+│   ├── firebase.json              # Firebase project config
+│   ├── firestore.rules            # Firestore security rules
 │   ├── requirements.txt
-│   └── .env.example
+│   ├── .env / .env.example
+│   └── .gitignore
 │
 ├── frontend/
 │   ├── app/
-│   │   ├── layout.tsx             # Root layout (fonts, metadata, providers)
+│   │   ├── layout.tsx             # Root layout (fonts, metadata, AuthProvider, ChatWidget)
 │   │   ├── page.tsx               # Landing page (snap sections, accordions, carousels)
 │   │   ├── globals.css            # Tailwind dark theme tokens + glassmorphism utilities
 │   │   ├── error.tsx              # Global error boundary
 │   │   ├── loading.tsx            # Global animated loading skeleton
-│   │   ├── generate/page.tsx      # Roadmap generator form + skill assessment
-│   │   ├── roadmap/[id]/page.tsx  # Interactive roadmap workspace viewer
-│   │   ├── dashboard/page.tsx     # User dashboard + analytics
-│   │   ├── gallery/page.tsx       # Public roadmap gallery (stub)
-│   │   └── login/page.tsx         # Firebase Auth (Email/Password + Google SSO)
+│   │   ├── generate/
+│   │   │   └── page.tsx           # Roadmap generator form + skill assessment
+│   │   ├── roadmap/
+│   │   │   └── [id]/
+│   │   │       └── page.tsx       # Interactive roadmap workspace viewer
+│   │   ├── dashboard/
+│   │   │   └── page.tsx           # User dashboard + analytics
+│   │   ├── gallery/
+│   │   │   └── page.tsx           # Public roadmap gallery
+│   │   ├── login/
+│   │   │   └── page.tsx           # Firebase Auth (Email/Password + Google SSO)
+│   │   └── api/                   # Next.js API routes (if any)
+│   │
 │   ├── components/
-│   │   ├── ui/                    # Button, Card, Input, Select, ProgressBar
+│   │   ├── ui/                    # Primitives
+│   │   │   ├── Button.tsx
+│   │   │   ├── Card.tsx
+│   │   │   ├── Input.tsx
+│   │   │   ├── Select.tsx
+│   │   │   └── ProgressBar.tsx
 │   │   ├── Navbar.tsx             # Floating glassmorphic pill navbar + mobile sidebar
 │   │   ├── MobileNav.tsx          # Bottom tab bar (mobile)
+│   │   ├── MobileSidebar.tsx      # Framer Motion slide-out drawer
 │   │   ├── Footer.tsx             # Site footer
 │   │   ├── Hero.tsx               # Landing hero (min-h-[100dvh], centered, animated)
 │   │   ├── Features.tsx           # Desktop grid + mobile accordion (AnimatePresence)
 │   │   ├── HowItWorks.tsx         # Desktop grid + mobile horizontal carousel
 │   │   ├── ExampleRoadmap.tsx     # Interactive demo roadmap on landing
 │   │   ├── Testimonials.tsx       # Desktop grid + mobile horizontal carousel
-│   │   ├── ChapterList.tsx        # Roadmap phase/chapter renderer
+│   │   ├── ChapterList.tsx        # Roadmap phase/chapter renderer (dark theme)
 │   │   ├── ResourcePanel.tsx      # Resource cards by type
 │   │   ├── LessonWorkspace.tsx    # Tabbed workspace (Content, Code, Interview, Notes)
-│   │   ├── AIMentor.tsx           # Chat interface for AI mentor
+│   │   ├── AIMentor.tsx           # Chat interface + global ChatWidget FAB
+│   │   ├── RichTextEditor.tsx     # TipTap editor wrapper
 │   │   ├── ProgressCalendar.tsx   # GitHub-style heatmap + streak
 │   │   ├── SkillsRadar.tsx        # Recharts radar chart
+│   │   ├── WeeklyVelocity.tsx     # Recharts weekly lesson velocity chart
 │   │   └── AuthProvider.tsx       # Firebase auth context + route protection
+│   │
 │   ├── lib/
 │   │   ├── api.ts                 # Axios instance + 401 interceptor
 │   │   ├── firebase.ts            # Firebase client initialization
+│   │   ├── firebase-admin.ts      # Firebase Admin SDK (server-side)
+│   │   ├── sampleRoadmaps.ts     # Pre-built fallback roadmap data (35KB)
 │   │   └── utils.ts               # Formatting helpers
-│   ├── store/index.ts             # Zustand state management
-│   ├── types/index.ts             # TypeScript interfaces
-│   └── .env.example
+│   │
+│   ├── store/
+│   │   └── index.ts               # Zustand state management
+│   │
+│   ├── types/
+│   │   └── index.ts               # TypeScript interfaces (Roadmap, Phase, Chapter, Lesson, etc.)
+│   │
+│   ├── tailwind.config.ts         # Custom theme tokens (zinc, amber, glassmorphism)
+│   ├── postcss.config.js
+│   ├── next.config.js
+│   ├── tsconfig.json
+│   ├── package.json
+│   └── .env.local / .env.example
 │
-├── docs/
-│   ├── SPEC.md                    # Design specification document
-│   ├── PROJECT_STATUS.md          # ← You are here
-│   ├── TODO.md                    # Development task tracker
-│   ├── FEATURE_ROADMAP.md         # Core 10 feature specs
-│   ├── FUTURE_FEATURES.md         # 50 AI/ML future features
-│   ├── IMPLEMENTATION_PLAN.md     # Sprint execution guide
-│   └── UI_OVERHAUL_PLAN.md        # UI/UX improvement strategy
-│
-└── config / scripts
-    ├── roadmap.ps1 / roadmap.bat  # One-command start scripts
-    ├── setup.ps1                  # Guided setup wizard
-    ├── firebase.json              # Firebase project config
-    ├── firestore.rules            # Firestore security rules
-    └── .gitignore
+└── docs/
+    ├── SPEC.md                    # Design specification (colors, typography, motion, APIs)
+    ├── PROJECT_STATUS.md          # ← You are here
+    ├── TODO.md                    # Development task tracker
+    ├── FEATURE_ROADMAP.md         # Core 10 feature specs
+    ├── FUTURE_FEATURES.md         # 50 AI/ML future features
+    ├── IMPLEMENTATION_PLAN.md     # Sprint execution guide
+    ├── UI_OVERHAUL_PLAN.md        # UI/UX improvement strategy
+    ├── IMPL_P0_CRITICAL.md        # P0 implementation plan (8 features, ~120h)
+    ├── IMPL_P1_HIGH.md            # P1 implementation plan (14 features, ~180h)
+    ├── IMPL_P2_MEDIUM.md          # P2 implementation plan (16 features, ~200h)
+    └── IMPL_P3_EXPLORATORY.md     # P3 implementation plan (12 features, ~160h)
 ```
 
 ---
@@ -175,6 +210,13 @@ roadmapai/
 | May 2026 | Monaco Editor integration | `LessonWorkspace.tsx` |
 | May 2026 | TipTap Rich Text Notes | `LessonWorkspace.tsx` |
 | May 2026 | Documentation overhaul (50 AI features) | `docs/FUTURE_FEATURES.md`, all docs |
+| May 2026 | ChapterList dark theme overhaul | `ChapterList.tsx` |
+| May 2026 | Roadmap detail page UI redesign | `roadmap/[id]/page.tsx` |
+| May 2026 | Gallery page dark theme rewrite | `gallery/page.tsx` |
+| May 2026 | Dashboard redesign (stats strip, row-based roadmaps, SVG progress rings) | `dashboard/page.tsx` |
+| May 2026 | Global AI Mentor ChatWidget (FAB on every page) | `AIMentor.tsx`, `layout.tsx`, `roadmap/[id]/page.tsx` |
+| May 2026 | P0–P3 implementation plan documents | `IMPL_P0_CRITICAL.md`, `IMPL_P1_HIGH.md`, `IMPL_P2_MEDIUM.md`, `IMPL_P3_EXPLORATORY.md` |
+| May 2026 | PROJECT_STATUS.md folder structure audit + update | `PROJECT_STATUS.md` |
 
 ---
 
@@ -182,18 +224,19 @@ roadmapai/
 
 | Metric | Value |
 |---|---|
-| **Frontend Components** | ~20 |
+| **Frontend Components** | 20 (5 UI primitives + 15 feature components) |
 | **Pages / Routes** | 6 (Landing, Generate, Roadmap, Dashboard, Gallery, Login) |
 | **Backend Endpoints** | 5 (Health, Generate, Chat, Assessment, Interview) |
 | **TypeScript Strict** | ✅ Enabled |
 | **ESLint** | ✅ Configured (Strict) |
 | **Dependencies (Frontend)** | ~15 production |
 | **Dependencies (Backend)** | ~8 production |
+| **Documentation Files** | 11 (in `/docs`) |
 
 ---
 
 ## 🎯 Next Immediate Goals
 
-1. **Sprint 1 (Dashboard Glow-Up)**: Mount `SkillsRadar` on dashboard, add weekly velocity chart, calculate time invested, and show completion forecast.
+1. **Sprint 1 (Dashboard Glow-Up)**: ~~Mount `SkillsRadar` on dashboard~~ ✅, ~~add weekly velocity chart~~ ✅, ~~show completion forecast~~ ✅.
 2. **Sprint 2 (Active Learning)**: Implement `/api/quiz/chapter` backend endpoint and build the quiz modal UI. Establish badge catalog and unlock triggers.
-3. **Phase 5 Planning**: Begin architecture design for the first batch of AI/ML features (Spaced Repetition, Flashcards, Voice Interviews).
+3. **Phase 5 Planning**: ✅ Detailed P0–P3 implementation plans created (see `IMPL_P0_CRITICAL.md` through `IMPL_P3_EXPLORATORY.md`).

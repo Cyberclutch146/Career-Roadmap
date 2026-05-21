@@ -3,13 +3,11 @@
 # ==============================
 .env
 .env.*
-.env.local
 !.env.example
 *.pem
 *.key
 *.p12
 service-account-key.json
-serviceAccountKey.json
 
 # ==============================
 # Dependencies
@@ -19,14 +17,12 @@ node_modules/
 .pnp.js
 
 # ==============================
-# Next.js Build & Output
+# Build & Output
 # ==============================
 .next/
 out/
 build/
 dist/
-next-env.d.ts
-*.tsbuildinfo
 
 # ==============================
 # Python
@@ -75,6 +71,12 @@ Thumbs.db
 Desktop.ini
 
 # ==============================
+# TypeScript
+# ==============================
+*.tsbuildinfo
+next-env.d.ts
+
+# ==============================
 # Logs
 # ==============================
 logs/
@@ -85,15 +87,13 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # ==============================
-# Firebase (keep rules/config in backend/)
-# ==============================
-.firebaserc
-
-# ==============================
-# Misc
+# MongoDB local data
 # ==============================
 data/
-.cache/
-.tmp/
-tmp/
-.sass-cache/
+
+# ==============================
+# Generated startup scripts
+# ==============================
+start-backend.bat
+start-frontend.bat
+serviceAccountKey.json
