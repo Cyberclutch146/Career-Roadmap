@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Editor from '@monaco-editor/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useStore } from '@/store'
 import { Button } from './ui/Button'
 import { Card } from './ui/Card'
+import { RichTextEditor } from './RichTextEditor'
 import { api } from '@/lib/api'
 import {
   X,
@@ -63,6 +65,7 @@ export function LessonWorkspace({
   const [jsCode, setJsCode] = useState('document.getElementById("btn").addEventListener("click", () => {\n  alert("Button clicked!");\n});')
   const [sandboxTab, setSandboxTab] = useState<'html' | 'css' | 'js'>('html')
   const [srcDoc, setSrcDoc] = useState('')
+  const [isExecutingCode, setIsExecutingCode] = useState(false)
 
   // Interview state
   const [interviewStarted, setInterviewStarted] = useState(false)
@@ -188,24 +191,28 @@ export function LessonWorkspace({
 
   // Run Code logic
   const runCode = () => {
-    setSrcDoc(`
-      <html>
-        <head>
-          <style>${cssCode}</style>
-        </head>
-        <body>
-          ${htmlCode}
-          <script>
-            try {
-              ${jsCode}
-            } catch (err) {
-              console.error(err);
-              document.body.innerHTML += '<div style="color:red; margin-top:15px; font-weight:bold;">Error: ' + err.message + '</div>';
-            }
-          </script>
-        </body>
-      </html>
-    `)
+    setIsExecutingCode(true)
+    setTimeout(() => {
+      setSrcDoc(`
+        <html>
+          <head>
+            <style>${cssCode}</style>
+          </head>
+          <body>
+            ${htmlCode}
+            <script>
+              try {
+                ${jsCode}
+              } catch (err) {
+                console.error(err);
+                document.body.innerHTML += '<div style="color:red; margin-top:15px; font-weight:bold;">Error: ' + err.message + '</div>';
+              }
+            </script>
+          </body>
+        </html>
+      `)
+      setTimeout(() => setIsExecutingCode(false), 200)
+    }, 100)
   }
 
   // Mock Interview Handlers
@@ -375,12 +382,12 @@ export function LessonWorkspace({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="space-y-6"
+              className="space-y-8"
             >
               {/* Lesson Description */}
               <div className="bg-white p-5 rounded-xl border border-border">
                 <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Lesson Overview</h3>
-                <p className="text-on-surface-variant leading-relaxed whitespace-pre-wrap">{lesson.description}</p>
+                <p className="text-on-surface-variant leading-relaxed whitespace-pre-wrap max-w-prose">{lesson.description}</p>
               </div>
 
               {/* YouTube split screen or integrated video player */}
@@ -487,37 +494,54 @@ export function LessonWorkspace({
                 </div>
 
                 {/* Editors */}
-                <div className="flex-1 flex flex-col p-4">
+                <div className="flex-1 flex flex-col p-4 bg-[#1e1e1e]">
                   {sandboxTab === 'html' && (
-                    <textarea
+                    <Editor
+                      height="100%"
+                      defaultLanguage="html"
+                      theme="vs-dark"
                       value={htmlCode}
-                      onChange={e => setHtmlCode(e.target.value)}
-                      className="w-full h-full font-mono text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface"
+                      onChange={(val) => setHtmlCode(val || '')}
+                      options={{ minimap: { enabled: false }, fontSize: 13, scrollBeyondLastLine: false }}
                     />
                   )}
                   {sandboxTab === 'css' && (
-                    <textarea
+                    <Editor
+                      height="100%"
+                      defaultLanguage="css"
+                      theme="vs-dark"
                       value={cssCode}
-                      onChange={e => setCssCode(e.target.value)}
-                      className="w-full h-full font-mono text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface"
+                      onChange={(val) => setCssCode(val || '')}
+                      options={{ minimap: { enabled: false }, fontSize: 13, scrollBeyondLastLine: false }}
                     />
                   )}
                   {sandboxTab === 'js' && (
-                    <textarea
+                    <Editor
+                      height="100%"
+                      defaultLanguage="javascript"
+                      theme="vs-dark"
                       value={jsCode}
-                      onChange={e => setJsCode(e.target.value)}
-                      className="w-full h-full font-mono text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface"
+                      onChange={(val) => setJsCode(val || '')}
+                      options={{ minimap: { enabled: false }, fontSize: 13, scrollBeyondLastLine: false }}
                     />
                   )}
                 </div>
               </div>
 
               {/* Output Preview */}
-              <div className="flex flex-col h-[280px] bg-white rounded-xl border border-border overflow-hidden shadow-sm">
+              <div className="flex flex-col h-[280px] bg-white rounded-xl border border-border overflow-hidden shadow-sm relative">
                 <div className="bg-surface-container px-4 py-2 border-b border-border flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                   Live Preview Output
                 </div>
-                <div className="flex-1 bg-white">
+                <div className="flex-1 bg-white relative">
+                  {isExecutingCode && (
+                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mb-2">
+                        <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                      </div>
+                      <span className="text-xs font-medium text-primary uppercase tracking-wider">Compiling...</span>
+                    </div>
+                  )}
                   {srcDoc ? (
                     <iframe
                       srcDoc={srcDoc}
@@ -526,8 +550,11 @@ export function LessonWorkspace({
                       className="w-full h-full border-none"
                     />
                   ) : (
-                    <div className="flex items-center justify-center h-full text-sm text-on-surface-variant">
-                      Click "Run Code" to preview changes
+                    <div className="flex flex-col items-center justify-center h-full text-sm text-on-surface-variant">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 animate-pulse">
+                        <Code className="w-6 h-6 text-primary" />
+                      </div>
+                      <p>Click <span className="font-semibold text-primary">Run Code</span> to preview changes</p>
                     </div>
                   )}
                 </div>
@@ -676,35 +703,49 @@ export function LessonWorkspace({
               className="h-full flex flex-col space-y-4"
             >
               <div className="flex-1 flex flex-col bg-white rounded-xl border border-border p-4 shadow-sm min-h-[350px]">
-                <div className="flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
                   <span>Take notes as you learn</span>
-                  <span className="flex items-center gap-1 font-medium lowercase">
-                    {noteStatus === 'saving' && (
-                      <>
-                        <Loader2 className="w-3 h-3 animate-spin text-primary" />
-                        saving...
-                      </>
+                  <AnimatePresence>
+                    {noteStatus !== 'idle' && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium lowercase shadow-sm ${
+                          noteStatus === 'saving' ? 'bg-primary/10 text-primary' :
+                          noteStatus === 'saved' ? 'bg-success/10 text-success-dark' :
+                          'bg-error/10 text-error'
+                        }`}
+                      >
+                        {noteStatus === 'saving' && (
+                          <>
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            saving...
+                          </>
+                        )}
+                        {noteStatus === 'saved' && (
+                          <>
+                            <CheckCircle2 className="w-3 h-3" />
+                            saved
+                          </>
+                        )}
+                        {noteStatus === 'error' && (
+                          <>
+                            <AlertCircle className="w-3 h-3" />
+                            error saving
+                          </>
+                        )}
+                      </motion.div>
                     )}
-                    {noteStatus === 'saved' && (
-                      <>
-                        <CheckCircle2 className="w-3 h-3 text-success" />
-                        saved
-                      </>
-                    )}
-                    {noteStatus === 'error' && (
-                      <>
-                        <AlertCircle className="w-3 h-3 text-danger" />
-                        error saving
-                      </>
-                    )}
-                  </span>
+                  </AnimatePresence>
                 </div>
-                <textarea
-                  value={noteContent}
-                  onChange={e => handleNoteChange(e.target.value)}
-                  placeholder="Notes are automatically saved to your library..."
-                  className="w-full flex-1 p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-surface font-sans text-sm leading-relaxed"
-                />
+                <div className="flex-1 min-h-[400px]">
+                  <RichTextEditor
+                    content={noteContent}
+                    onChange={handleNoteChange}
+                    placeholder="Notes are automatically saved to your library..."
+                  />
+                </div>
               </div>
             </motion.div>
           )}

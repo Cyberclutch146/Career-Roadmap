@@ -15,6 +15,7 @@ import { AIMentor } from '@/components/AIMentor'
 import { LessonWorkspace } from '@/components/LessonWorkspace'
 import { SkillsRadar } from '@/components/SkillsRadar'
 import { Navbar } from '@/components/Navbar'
+import { MobileSidebar } from '@/components/MobileSidebar'
 import {
   ArrowLeft,
   BookOpen,
@@ -28,7 +29,8 @@ import {
   Share2,
   CheckCircle2,
   Bookmark,
-  FileText
+  FileText,
+  Menu
 } from 'lucide-react'
 import type { Roadmap, Phase, Chapter, Lesson } from '@/types'
 
@@ -43,6 +45,7 @@ export default function RoadmapPage() {
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set())
   const [bookmarkedLessons, setBookmarkedLessons] = useState<Set<string>>(new Set())
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   const [isSharing, setIsSharing] = useState(false)
 
@@ -618,108 +621,116 @@ export default function RoadmapPage() {
   const completedCount = completedLessons.size
   const progressPercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0
 
+  const SidebarContent = () => (
+    <div className="p-6">
+      <Link href="/generate" className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface mb-6">
+        <ArrowLeft className="w-4 h-4" />
+        Back to Generator
+      </Link>
+
+      <div className="mb-6">
+        <h2 className="font-headline font-bold text-lg text-on-surface mb-2">
+          {generatedRoadmap.overview.title}
+        </h2>
+        <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+          <Target className="w-4 h-4" />
+          <span>{roadmap.target_months} months</span>
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <div className="flex justify-between text-sm mb-2">
+          <span className="text-on-surface-variant">Progress</span>
+          <span className="font-medium text-on-surface">{progressPercent}%</span>
+        </div>
+        <ProgressBar value={progressPercent} size="md" />
+      </div>
+
+      {user && roadmap.user_id === user.id ? (
+        <div className="mb-6">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full flex items-center justify-center gap-2"
+            onClick={handleShareToggle}
+            isLoading={isSharing}
+          >
+            <Share2 className="w-4 h-4" />
+            {roadmap.is_public ? 'Shared (Copy Link)' : 'Share Roadmap'}
+          </Button>
+          {roadmap.is_public && (
+            <p className="text-[10px] text-success-dark mt-1 text-center font-medium">
+              Public link copied!
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="mb-6 p-2.5 bg-primary/10 border border-primary/20 rounded-xl">
+          <p className="text-xs text-on-surface text-center font-medium flex items-center justify-center gap-1.5">
+            <Share2 className="w-3.5 h-3.5 text-primary" />
+            Viewing Shared Roadmap
+          </p>
+        </div>
+      )}
+
+      <div className="mb-6 border-t border-border pt-4">
+        <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-2">
+          Export Options
+        </span>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex items-center justify-center gap-1.5 text-xs py-2 px-1"
+            onClick={exportToMarkdown}
+          >
+            <FileText className="w-3.5 h-3.5 text-primary" />
+            Markdown
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex items-center justify-center gap-1.5 text-xs py-2 px-1"
+            onClick={exportToPDF}
+          >
+            <Download className="w-3.5 h-3.5 text-primary" />
+            PDF / Print
+          </Button>
+        </div>
+      </div>
+
+      <nav className="space-y-2 mb-6">
+        <a href="#overview" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
+          Overview
+        </a>
+        <a href="#phases" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
+          Learning Phases
+        </a>
+        <a href="#resources" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
+          Resources
+        </a>
+        <a href="#revision" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
+          Revision Strategy
+        </a>
+        <a href="#interview" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
+          Interview Prep
+        </a>
+      </nav>
+    </div>
+  )
+
   return (
     <div className="min-h-screen bg-surface">
       <Navbar />
 
       <div className="pt-16 flex">
         <aside className="fixed left-0 top-16 bottom-0 w-72 bg-surface-container border-r border-border overflow-y-auto hidden lg:block">
-          <div className="p-6">
-            <Link href="/generate" className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface mb-6">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Generator
-            </Link>
-
-            <div className="mb-6">
-              <h2 className="font-headline font-bold text-lg text-on-surface mb-2">
-                {generatedRoadmap.overview.title}
-              </h2>
-              <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-                <Target className="w-4 h-4" />
-                <span>{roadmap.target_months} months</span>
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-on-surface-variant">Progress</span>
-                <span className="font-medium text-on-surface">{progressPercent}%</span>
-              </div>
-              <ProgressBar value={progressPercent} size="md" />
-            </div>
-
-            {user && roadmap.user_id === user.id ? (
-              <div className="mb-6">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full flex items-center justify-center gap-2"
-                  onClick={handleShareToggle}
-                  isLoading={isSharing}
-                >
-                  <Share2 className="w-4 h-4" />
-                  {roadmap.is_public ? 'Shared (Copy Link)' : 'Share Roadmap'}
-                </Button>
-                {roadmap.is_public && (
-                  <p className="text-[10px] text-success-dark mt-1 text-center font-medium">
-                    Public link copied!
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div className="mb-6 p-2.5 bg-primary/10 border border-primary/20 rounded-xl">
-                <p className="text-xs text-on-surface text-center font-medium flex items-center justify-center gap-1.5">
-                  <Share2 className="w-3.5 h-3.5 text-primary" />
-                  Viewing Shared Roadmap
-                </p>
-              </div>
-            )}
-
-            <div className="mb-6 border-t border-border pt-4">
-              <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-2">
-                Export Options
-              </span>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="flex items-center justify-center gap-1.5 text-xs py-2 px-1"
-                  onClick={exportToMarkdown}
-                >
-                  <FileText className="w-3.5 h-3.5 text-primary" />
-                  Markdown
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="flex items-center justify-center gap-1.5 text-xs py-2 px-1"
-                  onClick={exportToPDF}
-                >
-                  <Download className="w-3.5 h-3.5 text-primary" />
-                  PDF / Print
-                </Button>
-              </div>
-            </div>
-
-            <nav className="space-y-2 mb-6">
-              <a href="#overview" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-                Overview
-              </a>
-              <a href="#phases" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-                Learning Phases
-              </a>
-              <a href="#resources" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-                Resources
-              </a>
-              <a href="#revision" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-                Revision Strategy
-              </a>
-              <a href="#interview" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-                Interview Prep
-              </a>
-            </nav>
-          </div>
+          <SidebarContent />
         </aside>
+        
+        <MobileSidebar isOpen={isMobileSidebarOpen} onClose={() => setIsMobileSidebarOpen(false)}>
+          <SidebarContent />
+        </MobileSidebar>
 
         <main className="flex-1 lg:ml-72">
           <div className="max-w-reading mx-auto px-4 sm:px-6 py-8">
@@ -735,9 +746,14 @@ export default function RoadmapPage() {
               </div>
 
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-                <h1 className="text-3xl font-headline font-bold text-on-surface leading-tight">
-                  {generatedRoadmap.overview.title}
-                </h1>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setIsMobileSidebarOpen(true)} className="lg:hidden p-2 -ml-2 text-on-surface-variant hover:text-on-surface bg-surface-container hover:bg-surface-container-high rounded-lg transition-colors">
+                    <Menu className="w-5 h-5" />
+                  </button>
+                  <h1 className="text-3xl font-headline font-bold text-on-surface leading-tight">
+                    {generatedRoadmap.overview.title}
+                  </h1>
+                </div>
                 <div className="flex flex-wrap items-center gap-2 lg:hidden self-start">
                   {user && roadmap.user_id === user.id ? (
                     <Button
@@ -778,7 +794,7 @@ export default function RoadmapPage() {
                   </Button>
                 </div>
               </div>
-              <p className="text-on-surface-variant text-lg leading-relaxed">
+              <p className="text-on-surface-variant text-lg leading-relaxed max-w-prose">
                 {generatedRoadmap.overview.description}
               </p>
             </motion.div>
