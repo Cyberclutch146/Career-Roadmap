@@ -28,7 +28,7 @@
 | Feature | Description |
 |---|---|
 | **Interactive Lesson View** | Navigate Phases → Chapters → Lessons. Expand/collapse sections, mark lessons complete, and track progress in real-time. |
-| **Lesson Workspace** | Tabbed environment with **Content** (resources, key concepts), **Code Playground** (live sandbox), **AI Mock Interview**, and **Notes** (auto-saved). |
+| **Lesson Workspace** | Tabbed environment with **Content** (resources, key concepts), **Monaco Code Playground** (full syntax highlighting, autocomplete), **AI Mock Interview**, and **TipTap Rich Text Notes** (auto-saved with formatting toolbar). |
 | **Curated Resources** | Each lesson links to docs, videos, articles, courses, GitHub repos, and exercises — categorized with type badges. |
 | **Bookmarking** | Pin important lessons for quick access from the dashboard. |
 
@@ -39,15 +39,25 @@
 | **Dashboard** | Central hub showing active roadmaps, total lessons completed, current day streak, and quick-access cards. |
 | **Progress Calendar** | GitHub-style heatmap showing daily lesson completion activity over the past year. |
 | **Streak Tracking** | Consecutive-day streak counter with visual indicators to build consistency habits. |
-| **Skills Radar** | Recharts-powered radar chart visualizing mastery across roadmap phases *(built, pending dashboard integration)*. |
+| **Skills Radar** | Recharts-powered radar chart visualizing mastery across roadmap phases. |
+
+### 🎨 Premium Dark-Mode UI
+
+| Feature | Description |
+|---|---|
+| **Glassmorphic Navbar** | Permanently floating pill-shaped navbar with frosted glass blur and ambient glow effects. |
+| **Mobile-First Design** | Staggered sidebar menu, horizontal swipe carousels, and tap-to-expand accordions on mobile. |
+| **Full-Viewport Sections** | Every landing page section fills the screen (`min-h-[100dvh]`) with smooth scroll and subtle border separators. |
+| **Amber/Zinc Theme** | Deep zinc backgrounds with warm amber accents, gradient highlights, and ambient glow effects. |
 
 ### 🔐 Infrastructure
 
 | Feature | Description |
 |---|---|
-| **Firebase Auth** | Email/password authentication with secure session management. |
+| **Firebase Auth** | Email/Password + Google SSO authentication with secure session management via `onAuthStateChanged`. |
+| **Route Protection** | Unauthenticated users are redirected to login for private routes. |
 | **Cloud Firestore** | Server-side progress persistence, note storage, and roadmap data — synced on every load. |
-| **Guest Mode** | Full functionality without login using `localStorage`. Progress is preserved across sessions. |
+| **Guest Mode** | Full functionality without login using `localStorage`. Progress preserved across sessions. |
 | **Optimistic UI** | Instant feedback on actions with server-side rollback on failure. |
 | **Offline Templates** | When Gemini is unavailable, the generator serves pre-built roadmaps for popular topics. |
 
@@ -61,10 +71,10 @@
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | Next.js 14, TypeScript (strict), TailwindCSS, Framer Motion, Zustand, Recharts, Axios, Lucide React, react-markdown |
+| **Frontend** | Next.js 14, TypeScript (strict), TailwindCSS, Framer Motion, Zustand, Recharts, Monaco Editor, TipTap, Axios, Lucide React |
 | **Backend** | FastAPI, Pydantic v2, SlowAPI (rate limiting), Firebase Admin SDK |
 | **AI** | Google Gemini 2.0 Flash (via `google-generativeai` SDK, async) |
-| **Auth & Database** | Firebase Authentication + Cloud Firestore (Serverless) |
+| **Auth & Database** | Firebase Authentication (Email/Password + Google SSO) + Cloud Firestore |
 | **Fonts** | Merriweather (headings), Inter (body), JetBrains Mono (code) — via `next/font` |
 
 ---
@@ -211,32 +221,31 @@ roadmapai/
 ├── frontend/
 │   ├── app/
 │   │   ├── layout.tsx             # Root layout (fonts, metadata, providers)
-│   │   ├── page.tsx               # Landing page
-│   │   ├── globals.css            # Tailwind base + design system tokens
+│   │   ├── page.tsx               # Landing page (full-viewport sections)
+│   │   ├── globals.css            # Tailwind dark theme + design tokens
 │   │   ├── error.tsx              # Global error boundary
-│   │   ├── loading.tsx            # Global loading skeleton
-│   │   ├── generate/page.tsx      # Roadmap generator form + assessment
-│   │   ├── roadmap/[id]/page.tsx  # Interactive roadmap viewer
+│   │   ├── loading.tsx            # Animated loading skeleton
+│   │   ├── generate/page.tsx      # Roadmap generator + assessment
+│   │   ├── roadmap/[id]/page.tsx  # Interactive roadmap workspace
 │   │   ├── dashboard/page.tsx     # User dashboard + analytics
 │   │   ├── gallery/page.tsx       # Public roadmap gallery (stub)
-│   │   └── login/page.tsx         # Login / Register
+│   │   └── login/page.tsx         # Auth (Email/Password + Google SSO)
 │   ├── components/
 │   │   ├── ui/                    # Button, Card, Input, Select, ProgressBar
-│   │   ├── Navbar.tsx             # Navigation with mobile menu
-│   │   ├── MobileNav.tsx          # Bottom tab bar (mobile)
+│   │   ├── Navbar.tsx             # Floating glassmorphic pill + mobile sidebar
 │   │   ├── Footer.tsx             # Site footer
 │   │   ├── Hero.tsx               # Landing hero section
-│   │   ├── Features.tsx           # Feature showcase cards
-│   │   ├── HowItWorks.tsx         # Step-by-step guide
+│   │   ├── Features.tsx           # Feature grid (desktop) / accordion (mobile)
+│   │   ├── HowItWorks.tsx         # Step grid (desktop) / carousel (mobile)
 │   │   ├── ExampleRoadmap.tsx     # Interactive demo on landing
-│   │   ├── Testimonials.tsx       # User testimonials carousel
+│   │   ├── Testimonials.tsx       # Testimonials grid / carousel
 │   │   ├── ChapterList.tsx        # Roadmap phase/chapter renderer
 │   │   ├── ResourcePanel.tsx      # Resource cards by type
 │   │   ├── LessonWorkspace.tsx    # Tabbed workspace (Content, Code, Interview, Notes)
-│   │   ├── AIMentor.tsx           # Chat interface for AI mentor
+│   │   ├── AIMentor.tsx           # AI mentor chat interface
 │   │   ├── ProgressCalendar.tsx   # GitHub-style heatmap + streak
-│   │   ├── SkillsRadar.tsx        # Recharts radar chart (ready for integration)
-│   │   └── AuthProvider.tsx       # Firebase auth context provider
+│   │   ├── SkillsRadar.tsx        # Recharts radar chart
+│   │   └── AuthProvider.tsx       # Firebase auth + route protection
 │   ├── lib/
 │   │   ├── api.ts                 # Axios instance + 401 interceptor
 │   │   ├── firebase.ts            # Firebase client initialization
@@ -246,14 +255,18 @@ roadmapai/
 │   └── .env.example
 │
 ├── docs/
-│   └── FEATURE_ROADMAP.md         # Detailed feature expansion plan
+│   ├── SPEC.md                    # Design specification & visual system
+│   ├── PROJECT_STATUS.md          # Current project state & feature breakdown
+│   ├── TODO.md                    # Development task tracker (all sprints)
+│   ├── FEATURE_ROADMAP.md         # Core 10 feature specifications
+│   ├── FUTURE_FEATURES.md         # 50 AI/ML future features strategy
+│   ├── IMPLEMENTATION_PLAN.md     # Sprint execution guide
+│   └── UI_OVERHAUL_PLAN.md        # UI/UX improvement strategy
 │
-├── roadmap.ps1                    # One-command start (PowerShell)
-├── roadmap.bat                    # One-command start (CMD)
-├── setup.ps1                      # Guided setup (PowerShell)
+├── roadmap.ps1 / roadmap.bat     # One-command start scripts
+├── setup.ps1                      # Guided setup wizard
 ├── firebase.json                  # Firebase project config
 ├── firestore.rules                # Firestore security rules
-├── SPEC.md                        # Design specification document
 ├── .gitignore
 └── README.md                      # ← You are here
 ```
@@ -262,21 +275,18 @@ roadmapai/
 
 ## 🎨 Design System
 
-### Color Palette
+### Color Palette (Dark Theme)
 
 | Token | Hex | Usage |
 |---|---|---|
-| `paper-50` | `#FAF9F7` | Page background |
-| `paper-100` | `#F5F3EF` | Card / section backgrounds |
-| `paper-200` | `#EEEBE4` | Hover / tertiary backgrounds |
-| `ink-900` | `#1A1A1A` | Primary text |
-| `ink-500` | `#5C5C5C` | Secondary text |
-| `ink-300` | `#8B8680` | Muted / placeholder text |
-| `accent` | `#3B5BDB` | Primary actions, links, active states |
-| `accent-light` | `#5C7CFA` | Hover states |
-| `success` | `#2F9E44` | Completion, positive feedback |
-| `warning` | `#E67700` | Caution indicators |
-| `error` | `#C92A2A` | Errors, destructive actions |
+| `background` | `#0a0a0b` | Page background |
+| `surface` | `#18181b` | Card / section backgrounds |
+| `surface-container` | `#27272a` | Elevated containers |
+| `on-surface` | `#fafafa` | Primary text |
+| `on-surface-variant` | `#a1a1aa` | Secondary text |
+| `primary` | `#f59e0b` | Primary actions, links, active states |
+| `secondary` | `#f97316` | Gradient accents |
+| `outline` | `#52525b` | Borders, dividers |
 
 ### Typography
 
@@ -291,11 +301,12 @@ roadmapai/
 | Element | Animation | Duration |
 |---|---|---|
 | Page transitions | Fade + upward slide | 300ms ease-out |
-| Hover states | Scale 1.02 + soft shadow | 200ms |
-| Progress updates | Smooth number transition | 500ms |
-| Chapter accordion | Expand/collapse | 250ms ease |
+| Section reveal | `whileInView` fade+slide | 600ms |
+| Hover states | Border glow + shadow | 300–500ms |
+| Accordion expand | Height auto + opacity | 300ms |
+| Mobile sidebar | Spring slide from right | spring(300, 30) |
 
-> **Philosophy:** Subtle, purposeful animations. Nothing jarring. The experience should feel calm and scholarly.
+> **Philosophy:** Subtle, purposeful animations. The experience should feel premium, fluid, and alive.
 
 ---
 
@@ -321,7 +332,8 @@ users/{userId}/
 
 | Measure | Details |
 |---|---|
-| **Firebase Authentication** | Secure identity management and token verification |
+| **Firebase Authentication** | Email/Password + Google SSO with `onAuthStateChanged` session management |
+| **Route Protection** | `AuthProvider.tsx` redirects unauthenticated users on private routes |
 | **Firestore Security Rules** | Per-user data isolation — users can only read/write their own documents |
 | **Rate Limiting** | SlowAPI: 5/min on generation, 20/min on chat endpoints |
 | **CORS** | Configurable allowed origins via `CORS_ORIGINS` environment variable |
@@ -346,6 +358,14 @@ The test suite covers:
 - Health endpoint responses
 - Rate limiting behavior
 
+### Frontend
+
+```bash
+cd frontend
+npm run typecheck  # TypeScript strict mode check
+npm run lint       # ESLint (strict config)
+```
+
 ---
 
 ## 🚢 Deployment
@@ -368,7 +388,7 @@ The test suite covers:
 ### Database (Firebase)
 
 1. Create a Firebase Project at [console.firebase.google.com](https://console.firebase.google.com)
-2. Enable **Authentication** (Email/Password provider)
+2. Enable **Authentication** (Email/Password + Google providers)
 3. Enable **Cloud Firestore**
 4. Deploy security rules: `firebase deploy --only firestore:rules`
 
@@ -376,52 +396,55 @@ The test suite covers:
 
 ## 📄 Project Documentation
 
-Explore the detailed architecture, guides, status reports, and task lists:
+All documentation lives in the [`docs/`](docs/) directory:
 
-- **[Project Status Document](docs/PROJECT_STATUS.md)**: A complete diagnostic summary of the current project state, built/pending features, and tech stack mapping.
-- **[Detailed Development Task List (TODO.md)](docs/TODO.md)**: A checkable development tracker mapping out direct tasks, sub-tasks, and acceptance criteria across all sprints.
-- **[Future AI Feature Strategy (40 New Features)](docs/FUTURE_FEATURES.md)**: Comprehensive descriptions, use cases, and educational impacts for 40 new AI features focused on intelligent learning.
-- **[Design Specification (SPEC.md)](SPEC.md)**: Design language, typographic scales, spatial systems, and UX flows.
-- **[Core Feature Roadmap](docs/FEATURE_ROADMAP.md)**: Strategic plan outlining the specifications and rationale for the core 10 features.
-- **[Step-by-Step Implementation Plan](docs/IMPLEMENTATION_PLAN.md)**: Execution steps, dependencies, and file change maps for the sprint roadmap.
+| Document | Description |
+|---|---|
+| **[Design Specification](docs/SPEC.md)** | Complete design language, color tokens, typography, motion system, and component inventory. |
+| **[Project Status](docs/PROJECT_STATUS.md)** | Comprehensive diagnostic of current state, architecture, and feature breakdown. |
+| **[Development Tasks](docs/TODO.md)** | Checkable task tracker across all sprints with acceptance criteria. |
+| **[Core Feature Roadmap](docs/FEATURE_ROADMAP.md)** | Strategic plan for the core 10 features across 4 sprints. |
+| **[50 AI/ML Future Features](docs/FUTURE_FEATURES.md)** | Detailed descriptions, ML models, use cases, and impact for 50 AI-powered features. |
+| **[Implementation Plan](docs/IMPLEMENTATION_PLAN.md)** | Execution steps, dependencies, and file change maps. |
+| **[UI Overhaul Plan](docs/UI_OVERHAUL_PLAN.md)** | UI/UX improvement strategy and design decisions. |
 
 ---
 
 ## 🗺️ Roadmap
 
-Development is organized into **4 sprints** covering 10 planned core features, followed by a **Future Expansion Phase** focusing on 40 new AI-powered learning systems.
+Development is organized into **4 sprints** covering 10 planned core features, followed by a **Future Expansion Phase** focusing on 50 AI/ML-powered learning systems.
 
 | Sprint / Phase | Theme | Key Features | Effort | Status |
 |---|---|---|---|---|
+| **Sprint 0** | UI/UX & Auth Overhaul | Glassmorphic navbar, mobile layouts, Firebase Auth, Monaco/TipTap | ~40h | ✅ Complete |
 | **Sprint 1** | Dashboard Glow-Up | Skills Radar Integration, Progress Analytics | 6–8h | ⏳ Pending |
 | **Sprint 2** | Active Learning | AI Chapter Quizzes, Achievement Badge System | 14–18h | ⏳ Pending |
-| **Sprint 3** | Power Tools | Rich Markdown Notes, PDF Export, Offline-to-Cloud Sync | 12–15h | ⏳ Pending |
-| **Sprint 4** | Polish | Resource Bookmarking, Calendar Sync, Dark Mode | 8–11h | ⏳ Pending |
-| **Phase 5** | AI-First Expansion | 40 AI Personalization, Sandbox, & Career Features | Long-term | 🧠 Planning |
+| **Sprint 3** | Power Tools | PDF Export, Offline-to-Cloud Sync | 8–10h | ⏳ Pending |
+| **Sprint 4** | Polish | Resource Bookmarking, Calendar Sync, Light Mode | 8–11h | ⏳ Pending |
+| **Phase 5** | AI-First Expansion | 50 AI/ML Features (see [FUTURE_FEATURES.md](docs/FUTURE_FEATURES.md)) | Long-term | 🧠 Planning |
 
 ### Current Development Status
 
 - [x] AI Roadmap Generation (Gemini 2.0 Flash)
-- [x] Interactive Lesson Workspace (4-tab view)
+- [x] Interactive Lesson Workspace (4-tab view with Monaco + TipTap)
 - [x] AI Mentor Chat
 - [x] AI Mock Interviews
 - [x] Skill Assessment Quizzes
-- [x] Firebase Auth + Firestore Persistence
+- [x] Firebase Auth (Email/Password + Google SSO) + Route Protection
+- [x] Cloud Firestore Persistence
 - [x] Guest Mode (localStorage fallback)
-- [x] Progress Calendar Heatmap
-- [x] Streak Tracking
-- [x] Skills Radar Component (built, not yet integrated)
+- [x] Progress Calendar Heatmap + Streak Tracking
+- [x] Premium Dark-Mode UI (glassmorphic navbar, mobile carousels, accordions)
 - [ ] Skills Radar Dashboard Integration *(Sprint 1)*
 - [ ] Progress Analytics Widgets *(Sprint 1)*
 - [ ] AI Chapter Quizzes *(Sprint 2)*
 - [ ] Achievement Badge System *(Sprint 2)*
-- [ ] Rich Markdown Notes *(Sprint 3)*
 - [ ] PDF Export *(Sprint 3)*
 - [ ] Offline-to-Cloud Sync *(Sprint 3)*
 - [ ] Resource Bookmarking *(Sprint 4)*
 - [ ] Calendar Sync (iCal) *(Sprint 4)*
-- [ ] Dark Mode *(Sprint 4)*
-- [ ] 40 AI-First Future Features *(Phase 5 - see [FUTURE_FEATURES.md](docs/FUTURE_FEATURES.md))*
+- [ ] Light Mode *(Sprint 4)*
+- [ ] 50 AI/ML Future Features *(Phase 5 — see [FUTURE_FEATURES.md](docs/FUTURE_FEATURES.md))*
 
 ---
 
@@ -433,7 +456,7 @@ Development is organized into **4 sprints** covering 10 planned core features, f
 4. Push to the branch: `git push origin feature/your-feature`
 5. Open a Pull Request
 
-> Please reference the relevant feature ID (e.g., `A1`, `B2`) from `docs/FEATURE_ROADMAP.md` in your PR description.
+> Please reference the relevant feature ID (e.g., `A1`, `B2`) from `docs/FEATURE_ROADMAP.md` or the feature number from `docs/FUTURE_FEATURES.md` in your PR description.
 
 ---
 

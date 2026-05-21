@@ -1,6 +1,39 @@
 # Task List: RoadmapAI Development
 
-This file tracks the immediate, mid-term, and future tasks required to complete and expand the **RoadmapAI** platform.
+> Comprehensive development tracker organized by sprint with acceptance criteria.
+> Last updated: **May 2026**
+
+---
+
+## ✅ Completed Work
+
+### UI/UX Overhaul (Done)
+- [x] Replace `<textarea>` with Monaco Editor in Code Playground
+- [x] Replace basic Notes textarea with TipTap Rich Text Editor
+- [x] Add formatting toolbar (Bold, Italic, Lists, Code blocks)
+- [x] Implement animated auto-save toast feedback
+- [x] Constrain long-form text with `max-w-prose` for readability
+- [x] Increase `LessonWorkspace` internal spacing
+- [x] Build swappable `MobileSidebar` component (Drawer vs Bottom Sheet)
+- [x] Rewrite `Navbar.tsx` as floating glassmorphic pill
+- [x] Add Framer Motion profile dropdown menu
+- [x] Map all colors to amber/zinc design tokens
+- [x] Implement staggered mobile sidebar menu
+- [x] Remove hero promotional badges
+- [x] Add `border-white/5` section dividers across landing page
+- [x] Make all sections `min-h-[100dvh]` for full-viewport experience
+- [x] Build mobile accordion for Features section
+- [x] Build mobile horizontal carousels for HowItWorks & Testimonials
+- [x] Style minute scrollbar indicators on mobile carousels
+
+### Authentication Overhaul (Done)
+- [x] Wire Firebase `onAuthStateChanged` in `AuthProvider.tsx`
+- [x] Implement route protection (redirect unauthenticated users)
+- [x] Connect Google SSO via `signInWithPopup`
+- [x] Wire Email/Password sign-up via `createUserWithEmailAndPassword`
+- [x] Wire Email/Password sign-in via `signInWithEmailAndPassword`
+- [x] Implement secure logout with `signOut(auth)` in Navbar
+- [x] Remove legacy mock OTP flow
 
 ---
 
@@ -8,152 +41,155 @@ This file tracks the immediate, mid-term, and future tasks required to complete 
 *Goal: Transform the user dashboard into a rich visual analytics workspace.*
 
 - [ ] **Task 1.1: Skills Radar Integration `[A1]`**
-  - [ ] Add imports for `SkillsRadar` component in `frontend/app/dashboard/page.tsx`
-  - [ ] Initialize `selectedRadarRoadmap` state to track selected roadmap in dropdown.
-  - [ ] Fetch the completed lessons list and convert it to a `Set<string>` matching `SkillsRadar` props.
-  - [ ] Design and render the 2-column container section below standard statistics.
-  - [ ] Import and format the dropdown toggle using the custom UI `Select` component.
-  - [ ] Refactor `frontend/components/SkillsRadar.tsx` hardcoded fill colors to use CSS custom properties.
-  - [ ] Implement empty-state UI for users with 0 active roadmaps.
+  - [ ] Import `SkillsRadar` component in `dashboard/page.tsx`
+  - [ ] Add `selectedRadarRoadmap` state with dropdown toggle
+  - [ ] Fetch completed lessons list, convert to `Set<string>` for `SkillsRadar` props
+  - [ ] Design 2-column layout section below statistics
+  - [ ] Refactor `SkillsRadar.tsx` fill colors to CSS custom properties
+  - [ ] Implement empty-state UI for 0 active roadmaps
 - [ ] **Task 1.2: Weekly Velocity Chart `[A3a]`**
-  - [ ] Create `frontend/components/WeeklyVelocity.tsx` using Recharts `BarChart`.
-  - [ ] Map ISO week dates from completed lessons list, grouping counts by week.
-  - [ ] Style the active/current week differently (accent glow).
-  - [ ] Mount the chart inside a card container under the Skills Radar.
+  - [ ] Create `WeeklyVelocity.tsx` using Recharts `BarChart`
+  - [ ] Map ISO week dates from completed lessons, group counts by week
+  - [ ] Style current week with accent glow
+  - [ ] Mount chart in card container under Skills Radar
 - [ ] **Task 1.3: Time Invested Estimator `[A3b]`**
-  - [ ] Calculate summation of `duration_minutes` for all finished lessons.
-  - [ ] Add "Hours Invested" card to dashboard stats.
-  - [ ] Implement Framer Motion number-counting transition on dashboard loading.
+  - [ ] Calculate sum of `duration_minutes` for all completed lessons
+  - [ ] Add "Hours Invested" card to dashboard stats
+  - [ ] Implement Framer Motion number-counting animation on load
 - [ ] **Task 1.4: Completion Forecast `[A3c]`**
-  - [ ] Calculate running completion averages over active weeks.
-  - [ ] Divide remaining lesson counts by velocity to estimate completion timelines.
-  - [ ] Create forecast message panel (e.g., "Finish in ~X weeks").
-  - [ ] Add empty states for zero-activity roadmaps.
+  - [ ] Calculate running completion averages over active weeks
+  - [ ] Divide remaining lessons by velocity for estimated completion date
+  - [ ] Create forecast message panel ("Finish in ~X weeks")
+  - [ ] Handle empty states for zero-activity roadmaps
 
 ---
 
 ## 📘 Sprint 2: Active Learning
-*Goal: Build chapter testing mechanisms and motivational achievement layers.*
+*Goal: Build chapter testing and motivational achievement layers.*
 
-- [ ] **Task 2.1: Chapter Quiz Backend Endpoint `[B1-backend]`**
-  - [ ] Define `ChapterQuizRequest` validation model in `backend/schemas.py`.
-  - [ ] Define `ChapterQuizResponse` and `QuizQuestion` schemas in `backend/schemas.py`.
-  - [ ] Implement async handler `generate_chapter_quiz` in `backend/services/ai_service.py`.
-  - [ ] Add prompt template inside `ai_service.py` to extract 5 MCQs covering chapter details.
-  - [ ] Create `/api/quiz/chapter` route in `backend/main.py` with 5/min SlowAPI rate limiting.
-  - [ ] Build safety fallback mock response for network connection issues.
-  - [ ] Write integration test cases in `backend/tests/test_api.py`.
-- [ ] **Task 2.2: Chapter Quiz Frontend UI `[B1-frontend]`**
-  - [ ] Create `frontend/components/ChapterQuiz.tsx` with states: `idle`, `loading`, `active`, `results`.
-  - [ ] Implement quiz-triggering Axios POST call fetching details from backend endpoint.
-  - [ ] Design question-answering layout (Radio buttons, choice validation, explanation modals).
-  - [ ] Build scoring results board showing pass/fail status (>=80% baseline).
-  - [ ] Create 5th workspace tab ("Chapter Quiz") in `frontend/components/LessonWorkspace.tsx`.
-  - [ ] Integrate Firestore transaction syncing scores to sub-collection `users/{uid}/roadmaps/{rid}/quizzes/{chapterId}`.
-  - [ ] Write auto-completion triggers marking all chapter lessons complete upon quiz pass.
-- [ ] **Task 2.3: Badge Schema and Definitions `[A2a]`**
-  - [ ] Create `frontend/types/badges.ts` defining `Badge` interface & list catalog of 8 main badges.
-  - [ ] Set up Firestore type representations for earned badges.
+- [ ] **Task 2.1: Chapter Quiz Backend `[B1-backend]`**
+  - [ ] Define `ChapterQuizRequest` / `ChapterQuizResponse` / `QuizQuestion` in `schemas.py`
+  - [ ] Implement async `generate_chapter_quiz` in `ai_service.py`
+  - [ ] Add prompt template extracting 5 MCQs from chapter content
+  - [ ] Create `/api/quiz/chapter` route with 5/min rate limiting
+  - [ ] Build safety fallback mock response
+  - [ ] Write integration tests in `test_api.py`
+- [ ] **Task 2.2: Chapter Quiz Frontend `[B1-frontend]`**
+  - [ ] Create `ChapterQuiz.tsx` with states: `idle`, `loading`, `active`, `results`
+  - [ ] Implement quiz-triggering Axios POST call
+  - [ ] Design question layout (radio buttons, validation, explanation modals)
+  - [ ] Build scoring results board (≥80% pass baseline)
+  - [ ] Add 5th "Chapter Quiz" tab in `LessonWorkspace.tsx`
+  - [ ] Sync scores to Firestore `users/{uid}/roadmaps/{rid}/quizzes/{chapterId}`
+  - [ ] Auto-complete chapter lessons upon quiz pass
+- [ ] **Task 2.3: Badge Schema `[A2a]`**
+  - [ ] Create `types/badges.ts` with `Badge` interface and 8-badge catalog
+  - [ ] Define Firestore schema for earned badges
 - [ ] **Task 2.4: Badge Unlock Engine `[A2b]`**
-  - [ ] Create helper `frontend/lib/badges.ts` matching user statistics against badge criteria.
-  - [ ] Write Firestore fetchers pulling completed badges list and writers inserting unlocked items.
-  - [ ] Bind listeners inside lesson completion state changes to check badge status.
-- [ ] **Task 2.5: Badge Showcase Component `[A2c]`**
-  - [ ] Build `frontend/components/BadgeShowcase.tsx` rendering unlocked vs locked badges.
-  - [ ] Build `frontend/components/BadgeUnlockToast.tsx` displaying floating achievement cards.
-  - [ ] Mount Showcase component on the dashboard page.
+  - [ ] Create `lib/badges.ts` matching stats against badge criteria
+  - [ ] Write Firestore fetchers/writers for badge state
+  - [ ] Bind listeners on lesson completion to check badge status
+- [ ] **Task 2.5: Badge Showcase `[A2c]`**
+  - [ ] Build `BadgeShowcase.tsx` (unlocked vs locked display)
+  - [ ] Build `BadgeUnlockToast.tsx` (floating achievement card)
+  - [ ] Mount on dashboard page
 
 ---
 
 ## 🔧 Sprint 3: Power Tools
-*Goal: Enable notes editing enhancements, local storage migration, and PDF compiler tools.*
+*Goal: PDF export, offline-to-cloud sync, and advanced notes.*
 
-- [ ] **Task 3.1: Rich Markdown Notes Editor `[B2]`**
-  - [ ] Install package `react-textarea-autosize`.
-  - [ ] Create `frontend/components/NotesToolbar.tsx` with Markdown hotkeys (Bold, Italic, Header, Links).
-  - [ ] Integrate split-pane layout (Markdown textarea left, `ReactMarkdown` compiler preview right) inside workspace notes tab.
-  - [ ] Implement search field scanning text patterns across all notes of active roadmaps.
-  - [ ] Write export utility downloading notes as `.md` file buffers.
-- [ ] **Task 3.2: PDF Export utility `[C1]`**
-  - [ ] Install packages `jspdf` and `jspdf-autotable`.
-  - [ ] Build client generator `frontend/lib/exportPdf.ts` mapping roadmap phases, chapters, and completion checklists.
-  - [ ] Include curated resources appendix sorted by media type.
-  - [ ] Add "Export PDF" CTA buttons to the main header of the `/roadmap/[id]` page.
-- [ ] **Task 3.3: Offline-to-Cloud Sync `[C3]`**
-  - [ ] Create `frontend/lib/syncDetector.ts` scanning `localStorage` keys for guest sessions.
-  - [ ] Build `frontend/components/SyncBanner.tsx` prompting logged-in users to import guest details.
-  - [ ] Add integration hooks inside `AuthProvider.tsx` to toggle sync check flags.
-  - [ ] Write Firestore merging algorithms preserving and grouping progress sets.
+- [ ] **Task 3.1: PDF Export `[C1]`**
+  - [ ] Install `jspdf` + `jspdf-autotable`
+  - [ ] Build `lib/exportPdf.ts` mapping phases, chapters, and completion checklists
+  - [ ] Include curated resources appendix sorted by type
+  - [ ] Add "Export PDF" button to `/roadmap/[id]` page header
+- [ ] **Task 3.2: Offline-to-Cloud Sync `[C3]`**
+  - [ ] Create `lib/syncDetector.ts` scanning `localStorage` for guest sessions
+  - [ ] Build `SyncBanner.tsx` prompting logged-in users to import guest data
+  - [ ] Add integration hooks in `AuthProvider.tsx` for sync check
+  - [ ] Write Firestore merging algorithms preserving progress sets
 
 ---
 
 ## 💅 Sprint 4: Polish
-*Goal: Implement bookmarks, calendar syncing, and full dark-theme settings.*
+*Goal: Bookmarks, calendar sync, and light mode.*
 
-- [ ] **Task 4.1: Resource Bookmarking & Rating `[B3]`**
-  - [ ] Add 5-star ranking buttons and bookmark tags on elements in `ResourcePanel.tsx`.
-  - [ ] Sync bookmark indices to Firestore sub-collection `users/{uid}/bookmarked_resources`.
-  - [ ] Design "Bookmarked Resources" list filter component in the dashboard layout.
+- [ ] **Task 4.1: Resource Bookmarking `[B3]`**
+  - [ ] Add bookmark toggle + 5-star ratings on `ResourcePanel.tsx`
+  - [ ] Sync bookmarks to Firestore `users/{uid}/bookmarked_resources`
+  - [ ] Build "Bookmarked Resources" filter on dashboard
 - [ ] **Task 4.2: iCal Schedule Export `[C2]`**
-  - [ ] Create calendar compiler `frontend/lib/exportCalendar.ts` converting study hours to `.ics` events.
-  - [ ] Write iCal task mapper offsetting calendar blocks by week lengths.
-  - [ ] Add "Sync to Calendar" CTA buttons in `/roadmap/[id]` actions header.
-- [ ] **Task 4.3: Dark Mode Accessibility `[C4]`**
-  - [ ] Write `.dark` class overrides in `frontend/app/globals.css` with appropriate palettes.
-  - [ ] Build Navbar Sun/Moon toggle buttons modifying HTML document node classes.
-  - [ ] Audit all components (Progress Calendar, Skills Radar, Lesson Workspace) to support dynamic themes.
+  - [ ] Create `lib/exportCalendar.ts` converting study hours to `.ics` events
+  - [ ] Map calendar blocks by week lengths
+  - [ ] Add "Sync to Calendar" button in roadmap actions
+- [ ] **Task 4.3: Light Mode / Theme Toggle `[C4]`**
+  - [ ] Write light-mode CSS overrides in `globals.css`
+  - [ ] Build functional Sun/Moon toggle in Navbar
+  - [ ] Audit all components for dynamic theme support
+  - [ ] Persist preference in localStorage
 
 ---
 
-## 🔮 Phase 5: Future AI features (Expansion)
-*Goal: Integrate advanced AI features to enhance personalization, coding support, and career preparation.*
+## 🔮 Phase 5: AI-First Expansion (50 Features)
+*Goal: Integrate advanced AI/ML features. See [FUTURE_FEATURES.md](FUTURE_FEATURES.md) for full details.*
 
-### AI Personalization & Tutoring
-- [ ] Implement **AI Lesson Summarizer & Cheat-Sheet Generator** (1)
-- [ ] Build **AI Adaptive Spaced Repetition Scheduler** (2)
-- [ ] Add **AI Learning Style Calibrator** (3)
-- [ ] Create **AI Prerequisite Auditor & Gap-Filler** (4)
-- [ ] Implement **AI Cognitive Load Monitor** (5)
-- [ ] Add **AI Socratic Method Toggle** in chat settings (6)
-- [ ] Set up **AI Translation & Cultural Localization Tutor** (7)
-- [ ] Integrate **AI Goal Refiner & Scope Advisor** (8)
-- [ ] Implement **AI Study Mood Assistant** (9)
-- [ ] Create **AI Knowledge Map Graph Generator** (10)
+### Phase A — Core Intelligence (Months 1–3)
+- [ ] AI Adaptive Spaced Repetition Engine (1)
+- [ ] AI Learning Style Calibrator (2)
+- [ ] AI Prerequisite Auditor & Gap-Filler (3)
+- [ ] AI Goal Refiner & Scope Advisor (6)
+- [ ] AI Lesson Summarizer & Cheat-Sheet Generator (10)
+- [ ] AI Inline Code Debugger (13)
+- [ ] AI Voice-Enabled Mock Interviews (23)
+- [ ] AI Flashcard Generator (33)
+- [ ] AI Study Planner & Calendar Optimizer (43)
 
-### AI Code Playground & Technical Enhancements
-- [ ] Build **AI Inline Code Sandbox Assistant & Debugger** in editor (11)
-- [ ] Integrate **AI Code Explainer & Code-to-English Translator** (12)
-- [ ] Add **AI Automated Code Challenge Grader** (13)
-- [ ] Integrate **AI Syntax Auto-Complete & Copilot** (14)
-- [ ] Implement **AI Refactoring Coach** (15)
-- [ ] Build **AI System Architecture Designer** (16)
-- [ ] Add **AI Mock Peer Review Simulator** (17)
-- [ ] Set up **AI API Sandbox Generator** (18)
+### Phase B — Developer Power Tools (Months 3–6)
+- [ ] AI Code Explainer (14)
+- [ ] AI Code Challenge Grader (15)
+- [ ] AI API Sandbox Generator (19)
+- [ ] AI Resume Auditor (24)
+- [ ] AI Behavioral Interview Coach (26)
+- [ ] AI Portfolio Project Advisor (27)
+- [ ] AI Video Content Summarizer (35)
+- [ ] AI Resource Relevance Scorer (38)
+- [ ] AI Smart Search & Semantic Finder (39)
+- [ ] AI Daily Micro-Quiz Recall (45)
+- [ ] AI Weekly Progress Review (47)
 
-### AI Mock Interviews & Career Advising
-- [ ] Implement **AI Voice-Enabled Mock Interviews** (19)
-- [ ] Build **AI Resume Auditor & Roadmap Matcher** (20)
-- [ ] Integrate **AI Career Path Navigator & Salary Advisor** (21)
-- [ ] Create **AI Behavioral Interview Coach (STAR Method)** (22)
-- [ ] Design **AI Portfolio Project Advisor** (23)
-- [ ] Add **AI Salary Negotiation Simulator** (24)
-- [ ] Set up **AI Technical Writing Assistant** (25)
-- [ ] Integrate **AI LinkedIn Profile Optimizer** (26)
+### Phase C — Advanced Personalization (Months 6–9)
+- [ ] AI Cognitive Load Monitor (4)
+- [ ] AI Socratic Method Toggle (5)
+- [ ] AI Study Mood Assistant (7)
+- [ ] AI Translation & Localization (9)
+- [ ] AI Difficulty Auto-Scaler (12)
+- [ ] AI Refactoring Coach (16)
+- [ ] AI Complexity Analyzer (22)
+- [ ] AI Technical Writing Assistant (29)
+- [ ] AI Interactive Case Study Simulator (37)
+- [ ] AI Diagram & Visual Explanation Generator (41)
+- [ ] AI Note Enhancer & Auto-Linker (42)
+- [ ] AI Trend Analyzer & Roadmap Updater (48)
 
-### AI-Enhanced Content & Study Materials
-- [ ] Build **AI Flashcard Generator (Anki-style)** (27)
-- [ ] Add **AI Real-World Analogy Generator** (28)
-- [ ] Implement **AI Subtitle & Video Content Summarizer** (29)
-- [ ] Set up **AI Audio Lesson Podcast Generator** (30)
-- [ ] Create **AI Interactive Case Study Simulator** (31)
-- [ ] Integrate **AI Resource Relevance Scorer** (32)
-- [ ] Build **AI Smart Search & Semantic Finder** (33)
-- [ ] Add **AI Dynamic Custom Textbooks** compiler (34)
+### Phase D — Career & Social (Months 9–12)
+- [ ] AI Career Path Navigator (25)
+- [ ] AI Salary Negotiation Simulator (28)
+- [ ] AI LinkedIn Optimizer (30)
+- [ ] AI Interview Question Predictor (31)
+- [ ] AI Certification Path Advisor (32)
+- [ ] AI Gamified Quest & Lore Generator (44)
+- [ ] AI Peer Study Circle Matchmaker (46)
+- [ ] AI Learning Burndown Chart (49)
+- [ ] AI Collaborative Roadmap Builder (50)
 
-### Gamification & Intelligent Scheduling
-- [ ] Implement **AI Study Planner Scheduler & Optimizer** (35)
-- [ ] Create **AI Gamified Quest & Lore Generator** (36)
-- [ ] Add **AI Daily Micro-Quiz Recall Test** (37)
-- [ ] Build **AI Peer Study Circle Matchmaker** (38)
-- [ ] Implement **AI Weekly Goal Progress Reviews** (39)
-- [ ] Set up **AI Trend Analyzer & Roadmap Updater** (40)
+### Phase E — Frontier Innovation (Months 12–18)
+- [ ] AI Knowledge Map Graph Generator (8)
+- [ ] AI Multi-Roadmap Cross-Pollination (11)
+- [ ] AI System Architecture Designer (17)
+- [ ] AI Mock Peer Review Simulator (18)
+- [ ] AI Syntax Auto-Complete & Copilot (20)
+- [ ] AI Commit Message Writer (21)
+- [ ] AI Real-World Analogy Generator (34)
+- [ ] AI Audio Lesson Podcast Generator (36)
+- [ ] AI Dynamic Custom Textbook Compiler (40)

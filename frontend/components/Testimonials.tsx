@@ -45,23 +45,67 @@ export function Testimonials() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={testimonial.author}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-6 hover:border-amber-500/30 hover:shadow-[0_0_30px_rgba(245,158,11,0.03)] transition-all duration-300 relative group h-full flex flex-col justify-between"
-            >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/[0.02] rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
+      {/* Desktop Grid */}
+      <div className="hidden md:grid grid-cols-3 gap-6">
+        {testimonials.map((testimonial, index) => (
+          <motion.div
+            key={testimonial.author}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+            className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-6 hover:border-amber-500/30 hover:shadow-[0_0_30px_rgba(245,158,11,0.03)] transition-all duration-300 relative group h-full flex flex-col justify-between"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/[0.02] rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <div>
+              <Quote className="w-8 h-8 text-amber-500/10 mb-4" />
+              <div className="flex gap-1 mb-4">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
+                ))}
+              </div>
+              <p className="font-body text-zinc-400 text-sm leading-relaxed mb-6">
+                &ldquo;{testimonial.quote}&rdquo;
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                <span className="text-sm font-label font-bold text-amber-400">{testimonial.avatar}</span>
+              </div>
+              <div>
+                <div className="font-headline font-semibold text-white text-base">{testimonial.author}</div>
+                <div className="font-body text-xs text-zinc-500">{testimonial.role}</div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Mobile Horizontal Carousel */}
+      <div 
+        className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 pt-4 px-1
+          [&::-webkit-scrollbar]:h-1
+          [&::-webkit-scrollbar-track]:bg-zinc-900/40
+          [&::-webkit-scrollbar-track]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-amber-500/30
+          [&::-webkit-scrollbar-thumb]:rounded-full"
+      >
+        {testimonials.map((testimonial, index) => (
+          <motion.div
+            key={`mobile-${testimonial.author}`}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="relative min-w-[85vw] snap-center shrink-0"
+          >
+            <div className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-6 relative group h-full flex flex-col justify-between">
               <div>
                 <Quote className="w-8 h-8 text-amber-500/10 mb-4" />
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    <Star key={`mobile-star-${i}`} className="w-4 h-4 text-amber-500 fill-amber-500" />
                   ))}
                 </div>
                 <p className="font-body text-zinc-400 text-sm leading-relaxed mb-6">
@@ -78,9 +122,10 @@ export function Testimonials() {
                   <div className="font-body text-xs text-zinc-500">{testimonial.role}</div>
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
       </div>
     </section>
   )

@@ -48,7 +48,8 @@ export function HowItWorks() {
           </p>
         </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Desktop Grid */}
+      <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
         {steps.map((step, index) => (
           <motion.div
             key={step.number}
@@ -82,7 +83,44 @@ export function HowItWorks() {
             </div>
           </motion.div>
         ))}
-        </div>
+      </div>
+
+      {/* Mobile Horizontal Carousel */}
+      <div 
+        className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 pt-4 px-1
+          [&::-webkit-scrollbar]:h-1
+          [&::-webkit-scrollbar-track]:bg-zinc-900/40
+          [&::-webkit-scrollbar-track]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-amber-500/30
+          [&::-webkit-scrollbar-thumb]:rounded-full"
+      >
+        {steps.map((step, index) => (
+          <motion.div
+            key={`mobile-${step.number}`}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="relative min-w-[85vw] snap-center shrink-0"
+          >
+            <div className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-6 relative group h-full">
+              <div className="absolute -top-3 -left-3 w-8 h-8 bg-zinc-950 border border-zinc-800 rounded-full flex items-center justify-center text-amber-500">
+                <step.icon className="w-4 h-4" />
+              </div>
+              <div className="pt-4">
+                <span className="text-5xl font-serif italic font-bold text-zinc-800/60">
+                  {step.number}
+                </span>
+                <h3 className="text-xl font-headline font-semibold text-white mt-2 mb-3">
+                  {step.title}
+                </h3>
+                <p className="font-body text-zinc-400 text-sm leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
       </div>
     </section>
   )

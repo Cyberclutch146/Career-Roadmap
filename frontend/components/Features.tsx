@@ -1,7 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Brain, BookMarked, MessageSquare, Calendar, BarChart3, Download } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Brain, BookMarked, MessageSquare, Calendar, BarChart3, Download, ChevronDown } from 'lucide-react'
 
 const features = [
   {
@@ -37,6 +38,8 @@ const features = [
 ]
 
 export function Features() {
+  const [activeFeature, setActiveFeature] = useState<number | null>(0)
+
   return (
     <section id="features" className="relative min-h-[100dvh] w-full flex flex-col justify-center border-b border-white/5 py-24">
       <div className="max-w-7xl mx-auto px-6 flex flex-col gap-12">
@@ -54,7 +57,7 @@ export function Features() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      <div className="hidden md:grid grid-cols-3 gap-6 mt-8">
         {features.map((feature, index) => {
           const Icon = feature.icon
           const borderColor = feature.color === 'primary' ? 'hover:border-amber-500/30' : 'hover:border-orange-500/30'
@@ -124,7 +127,65 @@ export function Features() {
             </motion.div>
           )
         })}
-        </div>
+      </div>
+
+      {/* Mobile Accordion */}
+      <div className="flex flex-col gap-4 md:hidden mt-8 w-full">
+        {features.map((feature, index) => {
+          const Icon = feature.icon
+          const isActive = activeFeature === index
+          const borderColor = feature.color === 'primary' ? 'border-amber-500/30' : 'border-orange-500/30'
+          const iconColor = feature.color === 'primary' ? 'text-amber-400' : 'text-orange-400'
+          const glowColor = feature.color === 'primary' ? 'bg-amber-500/5' : 'bg-orange-500/5'
+
+          return (
+            <div 
+              key={feature.title} 
+              className={`rounded-2xl bg-zinc-900/60 border ${isActive ? borderColor : 'border-zinc-800'} overflow-hidden transition-colors duration-300 relative`}
+            >
+              {isActive && (
+                <div className={`absolute top-0 right-0 w-32 h-32 ${glowColor} rounded-full blur-[40px] pointer-events-none`} />
+              )}
+              
+              <button 
+                onClick={() => setActiveFeature(isActive ? null : index)}
+                className="w-full flex items-center justify-between p-6 text-left relative z-10"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl bg-zinc-950 border ${isActive ? borderColor : 'border-zinc-800'} flex items-center justify-center transition-colors duration-300`}>
+                    <Icon className={`w-5 h-5 ${iconColor}`} />
+                  </div>
+                  <h3 className="font-headline text-lg text-white font-semibold">{feature.title}</h3>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-zinc-500 transition-transform duration-300 ${isActive ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {isActive && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="p-6 pt-0 relative z-10">
+                      <p className="font-body text-zinc-400 text-sm leading-relaxed mb-6">
+                        {feature.description}
+                      </p>
+                      
+                      {feature.hasCTA && (
+                        <button className="w-full px-6 py-3 rounded-xl border border-amber-500/30 text-amber-400 font-label text-sm hover:bg-amber-500/10 transition-all flex items-center justify-center gap-2">
+                          Find a Mentor
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )
+        })}
+      </div>
       </div>
     </section>
   )
