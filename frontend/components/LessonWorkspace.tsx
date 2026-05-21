@@ -77,7 +77,8 @@ export function LessonWorkspace({
   useEffect(() => {
     const fetchNote = async () => {
       setNoteStatus('idle')
-      if (false && user) {
+      const syncWithFirestore = false
+      if (user && syncWithFirestore) {
         try {
           const { doc, getDoc } = await import('firebase/firestore')
           const { db } = await import('@/lib/firebase')
@@ -147,7 +148,8 @@ export function LessonWorkspace({
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
 
     saveTimeoutRef.current = setTimeout(async () => {
-      if (false && user) {
+      const syncWithFirestore = false
+      if (user && syncWithFirestore) {
         try {
           const { doc, setDoc } = await import('firebase/firestore')
           const { db } = await import('@/lib/firebase')

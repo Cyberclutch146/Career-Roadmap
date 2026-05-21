@@ -35,7 +35,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchRoadmaps = async () => {
-      if (false && user) {
+      let syncWithFirestore = false;
+      if (user && syncWithFirestore) {
         try {
           const { collection, getDocs } = await import('firebase/firestore')
           const { db } = await import('@/lib/firebase')
@@ -110,99 +111,100 @@ export default function DashboardPage() {
           // Sort completions descending by date
           allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
           setCompletions(allCompletions)
+          return;
         } catch (err) {
           console.error("Failed to fetch roadmaps from Firestore", err)
         }
-      } else {
-        // Handle guest/offline mode from localStorage
-        if (typeof window !== 'undefined') {
-          try {
-            const allCompletions: CompletionItem[] = []
-            const roadmaps: Roadmap[] = []
-            const completedByRm: Record<string, Set<string>> = {}
-            
-            const keys = Object.keys(window.localStorage)
-            
-            for (const key of keys) {
-              if (key.startsWith('progress_dates_')) {
-                const roadmapId = key.replace('progress_dates_', '')
-                const savedDatesRaw = window.localStorage.getItem(key)
-                const savedRoadmapRaw = window.localStorage.getItem(`roadmap_${roadmapId}`)
+      }
+
+      // Handle guest/offline mode from localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const allCompletions: CompletionItem[] = []
+          const roadmaps: Roadmap[] = []
+          const completedByRm: Record<string, Set<string>> = {}
+          
+          const keys = Object.keys(window.localStorage)
+          
+          for (const key of keys) {
+            if (key.startsWith('progress_dates_')) {
+              const roadmapId = key.replace('progress_dates_', '')
+              const savedDatesRaw = window.localStorage.getItem(key)
+              const savedRoadmapRaw = window.localStorage.getItem(`roadmap_${roadmapId}`)
+              
+              if (savedDatesRaw && savedRoadmapRaw) {
+                const savedDates = JSON.parse(savedDatesRaw) as { [lessonId: string]: string }
+                const rData = JSON.parse(savedRoadmapRaw) as Roadmap
+                const completedSet = new Set<string>()
                 
-                if (savedDatesRaw && savedRoadmapRaw) {
-                  const savedDates = JSON.parse(savedDatesRaw) as { [lessonId: string]: string }
-                  const rData = JSON.parse(savedRoadmapRaw) as Roadmap
-                  const completedSet = new Set<string>()
+                Object.entries(savedDates).forEach(([lessonId, completedAt]) => {
+                  completedSet.add(lessonId)
                   
-                  Object.entries(savedDates).forEach(([lessonId, completedAt]) => {
-                    completedSet.add(lessonId)
-                    
-                    let lessonTitle = 'Completed Lesson'
-                    let durationMinutes = 30 // default fallback
-                    for (const phase of rData.generated_roadmap.phases) {
-                      for (const chapter of phase.chapters) {
-                        for (const lesson of chapter.lessons) {
-                          if (lesson.id === lessonId) {
-                            lessonTitle = lesson.title
-                            durationMinutes = lesson.duration_minutes || 30
-                            break
-                          }
+                  let lessonTitle = 'Completed Lesson'
+                  let durationMinutes = 30 // default fallback
+                  for (const phase of rData.generated_roadmap.phases) {
+                    for (const chapter of phase.chapters) {
+                      for (const lesson of chapter.lessons) {
+                        if (lesson.id === lessonId) {
+                          lessonTitle = lesson.title
+                          durationMinutes = lesson.duration_minutes || 30
+                          break
                         }
                       }
                     }
-                    
-                    allCompletions.push({
-                      roadmapId,
-                      roadmapTitle: rData.generated_roadmap.overview.title,
-                      lessonId,
-                      lessonTitle,
-                      completedAt,
-                      durationMinutes
-                    })
-                  })
-
-                  completedByRm[roadmapId] = completedSet
+                  }
                   
+                  allCompletions.push({
+                    roadmapId,
+                    roadmapTitle: rData.generated_roadmap.overview.title,
+                    lessonId,
+                    lessonTitle,
+                    completedAt,
+                    durationMinutes
+                  })
+                })
+
+                completedByRm[roadmapId] = completedSet
+                
+                roadmaps.push({
+                  ...rData,
+                  id: roadmapId,
+                  completed_lessons_count: completedSet.size
+                } as Roadmap)
+              }
+            } else if (key.startsWith('roadmap_')) {
+              const roadmapId = key.replace('roadmap_', '')
+              if (!roadmaps.some(r => r.id === roadmapId)) {
+                const savedRoadmapRaw = window.localStorage.getItem(key)
+                if (savedRoadmapRaw) {
+                  const rData = JSON.parse(savedRoadmapRaw) as Roadmap
                   roadmaps.push({
                     ...rData,
                     id: roadmapId,
-                    completed_lessons_count: completedSet.size
+                    completed_lessons_count: 0
                   } as Roadmap)
-                }
-              } else if (key.startsWith('roadmap_')) {
-                const roadmapId = key.replace('roadmap_', '')
-                if (!roadmaps.some(r => r.id === roadmapId)) {
-                  const savedRoadmapRaw = window.localStorage.getItem(key)
-                  if (savedRoadmapRaw) {
-                    const rData = JSON.parse(savedRoadmapRaw) as Roadmap
-                    roadmaps.push({
-                      ...rData,
-                      id: roadmapId,
-                      completed_lessons_count: 0
-                    } as Roadmap)
-                    completedByRm[roadmapId] = new Set<string>()
-                  }
+                  completedByRm[roadmapId] = new Set<string>()
                 }
               }
             }
-
-            roadmaps.sort((a, b) => {
-              const timeA = new Date(a.created_at || 0).getTime()
-              const timeB = new Date(b.created_at || 0).getTime()
-              return timeB - timeA
-            })
-            
-            setSavedRoadmaps(roadmaps)
-            setCompletedLessonsByRoadmap(completedByRm)
-            if (roadmaps.length > 0) {
-              setSelectedRoadmapId(roadmaps[0].id)
-            }
-
-            allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
-            setCompletions(allCompletions)
-          } catch (e) {
-            console.error("Failed to fetch guest completions:", e)
           }
+
+          roadmaps.sort((a, b) => {
+            const timeA = new Date(a.created_at || 0).getTime()
+            const timeB = new Date(b.created_at || 0).getTime()
+            return timeB - timeA
+          })
+          
+          setSavedRoadmaps(roadmaps)
+          setCompletedLessonsByRoadmap(completedByRm)
+          if (roadmaps.length > 0) {
+            setSelectedRoadmapId(roadmaps[0].id)
+          }
+
+          allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+          setCompletions(allCompletions)
+        } catch (e) {
+          console.error("Failed to fetch guest completions:", e)
         }
       }
     }

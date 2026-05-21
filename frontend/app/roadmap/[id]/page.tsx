@@ -77,7 +77,8 @@ export default function RoadmapPage() {
         }
 
         // 1. Try owner collection if user is logged in (disabled for offline mode)
-        if (!loadedRoadmap && false && user) {
+        const syncWithFirestore = false
+        if (!loadedRoadmap && user && syncWithFirestore) {
           try {
             const { doc, getDoc } = await import('firebase/firestore')
             const { db } = await import('@/lib/firebase')
@@ -112,9 +113,10 @@ export default function RoadmapPage() {
         setCurrentRoadmap(loadedRoadmap)
 
         // 3. Fetch progress: owner uses Firestore, others use localStorage (always use localStorage in offline/mock mode)
-        if (false && user && loadedRoadmap.user_id === user.id) {
+        if (user && syncWithFirestore && loadedRoadmap.user_id === user.id) {
           try {
             const { collection, getDocs, setDoc, doc: fsDoc } = await import('firebase/firestore')
+            const { db } = await import('@/lib/firebase')
             const progressRef = collection(db, 'users', user.id, 'roadmaps', roadmapId, 'progress')
             const snapshot = await getDocs(progressRef)
             const completed = new Set<string>()
@@ -211,7 +213,8 @@ export default function RoadmapPage() {
     }
     setCompletedLessons(newCompleted)
 
-    if (false && user && roadmap.user_id === user.id) {
+    const syncWithFirestore = false
+    if (user && syncWithFirestore && roadmap.user_id === user.id) {
       try {
         const { doc, setDoc } = await import('firebase/firestore')
         const { db } = await import('@/lib/firebase')
@@ -261,7 +264,8 @@ export default function RoadmapPage() {
     }
     setBookmarkedLessons(newBookmarks)
 
-    if (false && user && roadmap.user_id === user.id) {
+    const syncWithFirestore = false
+    if (user && syncWithFirestore && roadmap.user_id === user.id) {
       try {
         const { doc, setDoc, deleteDoc } = await import('firebase/firestore')
         const { db } = await import('@/lib/firebase')
