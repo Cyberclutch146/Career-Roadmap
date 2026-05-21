@@ -32,96 +32,75 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative min-h-0 md:min-h-[100dvh] w-full flex flex-col justify-center border-b border-white/5 py-16 md:py-24">
-      <div className="max-w-7xl mx-auto px-5 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-2xl mx-auto mb-10 md:mb-16"
-        >
-          <h2 className="font-headline text-2xl md:text-5xl text-white font-bold leading-tight mb-3 md:mb-4">
-            How it <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">works.</span>
-          </h2>
-          <p className="font-body text-zinc-400 text-base md:text-lg max-w-xl mx-auto">
-            From ambition to achievement in four simple steps
-          </p>
-        </motion.div>
+    <section id="how-it-works" className="relative min-h-0 w-full flex flex-col justify-center border-b border-white/5 py-16 md:py-28 overflow-hidden">
+      {/* Subtle ambient glows in background */}
+      <div className="absolute top-1/2 right-0 w-[400px] h-[400px] bg-orange-500/[0.01] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-0 w-[300px] h-[300px] bg-amber-500/[0.015] rounded-full blur-[100px] pointer-events-none" />
 
-        {/* Desktop Grid */}
-        <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.number}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="relative"
-            >
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-full w-full h-[1px] bg-gradient-to-r from-amber-500/20 to-transparent -translate-x-1/2" />
-              )}
-              <div className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-6 relative group hover:border-amber-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.03)] h-full">
-                {/* Ambient glow */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/[0.02] rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="max-w-7xl mx-auto px-5 md:px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          
+          {/* Left Column: Sticky Title Block */}
+          <div className="lg:col-span-5 flex flex-col justify-start lg:sticky lg:top-28 h-fit">
+            <span className="font-label text-xs font-semibold text-amber-500 tracking-widest uppercase mb-3 block">
+              The Process
+            </span>
+            <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
+              How it <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">works.</span>
+            </h2>
+            <p className="font-body text-zinc-400 text-base md:text-lg leading-relaxed max-w-lg">
+              From ambition to achievement in four simple steps. We take the complexity out of learning, creating a fully personalized, guided curriculum designed for your success.
+            </p>
+          </div>
 
-                <div className="absolute -top-3 -left-3 w-8 h-8 bg-zinc-950 border border-zinc-800 rounded-full flex items-center justify-center text-amber-500 group-hover:border-amber-500/30 transition-colors duration-300">
-                  <step.icon className="w-4 h-4" />
-                </div>
-                <div className="pt-4">
-                  <span className="text-5xl font-serif italic font-bold text-zinc-800/60 group-hover:text-amber-500/20 transition-colors">
-                    {step.number}
-                  </span>
-                  <h3 className="text-xl font-headline font-semibold text-white mt-2 mb-3">
-                    {step.title}
-                  </h3>
-                  <p className="font-body text-zinc-400 text-sm leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+          {/* Right Column: Vertical Timeline Steps */}
+          <div className="lg:col-span-7 flex flex-col gap-6 relative">
+            {/* Visual timeline line connecting the numbers */}
+            <div className="absolute left-[44px] md:left-[64px] top-10 bottom-10 w-[1px] bg-zinc-800/80 pointer-events-none" />
 
-        {/* Mobile Vertical Timeline (Beautiful, responsive, fits 100% device width perfectly) */}
-        <div className="md:hidden relative flex flex-col gap-6 pl-6 w-full max-w-full">
-          {/* Vertical Timeline Line */}
-          <div className="absolute left-[11px] top-2 bottom-6 w-[2px] bg-gradient-to-b from-amber-500/30 via-orange-500/20 to-transparent pointer-events-none" />
+            {steps.map((step, index) => {
+              const Icon = step.icon
+              return (
+                <motion.div
+                  key={step.number}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="relative group"
+                >
+                  <div className="flex items-start gap-4 md:gap-8 rounded-2xl border border-transparent hover:border-zinc-800/60 hover:bg-zinc-900/30 p-4 md:p-6 transition-all duration-300">
+                    
+                    {/* Step Number Badge */}
+                    <div className="relative flex-shrink-0 z-10">
+                      <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl bg-zinc-950/90 border border-zinc-800/80 flex items-center justify-center group-hover:border-amber-500/30 transition-all duration-300 shadow-lg">
+                        <span className="text-xl md:text-3xl font-serif italic font-bold text-zinc-650 group-hover:text-amber-400 transition-colors">
+                          {step.number}
+                        </span>
+                      </div>
+                      
+                      {/* Floating Mini Icon Badge */}
+                      <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-400 group-hover:border-amber-500/30 group-hover:text-amber-400 transition-all duration-300 shadow-md">
+                        <Icon className="w-3 h-3" />
+                      </div>
+                    </div>
 
-          {steps.map((step, index) => {
-            const Icon = step.icon
-            return (
-              <motion.div
-                key={`mobile-${step.number}`}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="relative flex flex-col w-full"
-              >
-                {/* Step Marker Dot / Icon */}
-                <div className="absolute -left-[23px] top-1.5 w-6 h-6 rounded-full bg-zinc-950 border-2 border-amber-500 flex items-center justify-center text-amber-400 z-10 shadow-md">
-                  <Icon className="w-2.5 h-2.5" />
-                </div>
+                    {/* Step Content */}
+                    <div className="flex-1 pt-1 md:pt-1.5">
+                      <h3 className="text-base md:text-xl font-headline font-semibold text-white mb-2 group-hover:text-amber-400 transition-colors duration-300">
+                        {step.title}
+                      </h3>
+                      <p className="font-body text-zinc-400 text-sm md:text-base leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
 
-                <div className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-5 relative w-full">
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <h3 className="text-base font-headline font-semibold text-zinc-100">
-                      {step.title}
-                    </h3>
-                    <span className="text-2xl font-serif italic font-bold text-zinc-800/80">
-                      {step.number}
-                    </span>
                   </div>
-                  <p className="font-body text-zinc-400 text-sm leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
-            )
-          })}
+                </motion.div>
+              )
+            })}
+          </div>
+
         </div>
       </div>
     </section>
