@@ -38,13 +38,14 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="relative py-24 max-w-7xl mx-auto px-6 flex flex-col gap-12">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center max-w-2xl mx-auto"
-      >
+    <section id="features" className="relative py-24 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col gap-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-2xl mx-auto"
+        >
         <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
           Intelligence at <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">every step.</span>
         </h2>
@@ -123,6 +124,7 @@ export function Features() {
             </motion.div>
           )
         })}
+        </div>
       </div>
     </section>
   )

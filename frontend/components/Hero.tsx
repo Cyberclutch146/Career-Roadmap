@@ -5,22 +5,11 @@ import Link from 'next/link'
 
 export function Hero() {
   return (
-    <section className="relative pt-40 pb-24 overflow-hidden blueprint-grid">
+    <section className="relative pt-40 pb-24 overflow-hidden blueprint-grid border-b border-white/5">
       {/* Ambient background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-primary/[0.04] rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[800px] h-[350px] bg-primary/[0.04] rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-y-8 z-10 relative">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/10 w-fit">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="font-label text-xs font-semibold text-primary tracking-widest uppercase">AI-Powered Learning</span>
-          </div>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -64,27 +53,6 @@ export function Hero() {
               Generate Path
             </button>
           </Link>
-        </motion.div>
-
-        {/* Floating trust badges / stats */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="flex flex-wrap justify-center items-center gap-4 mt-8 text-on-surface-variant text-xs font-mono"
-        >
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-outline-variant bg-surface-container/40">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <span>10,000+ ROADMAPS GENERATED</span>
-          </div>
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-outline-variant bg-surface-container/40">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <span>50+ PRIMARY DISCIPLINES</span>
-          </div>
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-outline-variant bg-surface-container/40">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <span>AI ENGINE V2.0 ACTIVE</span>
-          </div>
         </motion.div>
       </div>
     </section>

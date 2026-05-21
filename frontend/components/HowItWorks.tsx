@@ -32,20 +32,21 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative py-24 max-w-7xl mx-auto px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center max-w-2xl mx-auto mb-16"
-      >
-        <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
-          How it <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">works.</span>
-        </h2>
-        <p className="font-body text-zinc-400 text-lg max-w-xl mx-auto">
-          From ambition to achievement in four simple steps
-        </p>
-      </motion.div>
+    <section id="how-it-works" className="relative py-24 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-2xl mx-auto mb-16"
+        >
+          <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
+            How it <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">works.</span>
+          </h2>
+          <p className="font-body text-zinc-400 text-lg max-w-xl mx-auto">
+            From ambition to achievement in four simple steps
+          </p>
+        </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {steps.map((step, index) => (
@@ -81,6 +82,7 @@ export function HowItWorks() {
             </div>
           </motion.div>
         ))}
+        </div>
       </div>
     </section>
   )

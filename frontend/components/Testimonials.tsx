@@ -29,8 +29,8 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="relative py-24 max-w-7xl mx-auto px-6">
-      <div className="w-full">
+    <section className="relative py-24 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
