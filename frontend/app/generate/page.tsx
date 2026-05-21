@@ -208,7 +208,7 @@ export default function GeneratePage() {
               </motion.div>
             )}
 
-            <div className="bg-zinc-950/40 backdrop-blur-xl border border-zinc-800/50 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden min-h-[400px]">
+            <div className="bg-zinc-950/40 backdrop-blur-xl border border-zinc-800/50 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-y-auto max-h-[65vh] min-h-[400px]">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={step}
