@@ -163,24 +163,24 @@ export default function GeneratePage() {
 
   if (publishSuccess) {
     return (
-      <div className="min-h-screen relative flex items-center justify-center p-4">
+      <div className="min-h-screen min-h-[100dvh] relative flex items-center justify-center p-4 px-5">
         <Navbar />
         <ConfettiBurst trigger={showConfetti} onComplete={() => setShowConfetti(false)} />
         <motion.div 
           initial={{ opacity: 0, y: 24, scale: 0.95 }} 
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/50 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl"
+          className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/50 rounded-2xl md:rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl"
         >
-          <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
-            <Award className="w-10 h-10 text-amber-500" />
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
+            <Award className="w-8 h-8 md:w-10 md:h-10 text-amber-500" />
           </div>
-          <h1 className="text-3xl font-headline font-bold text-zinc-100 mb-2">Roadmap Created!</h1>
-          <p className="text-zinc-400 mb-8">Your personalized learning journey for "{formData.goal}" is ready.</p>
-          <div className="space-y-3">
-            <Button size="lg" className="w-full bg-amber-500 text-black hover:bg-amber-400" onClick={() => router.push(`/roadmap/${generatedRoadmapId}`)}>
+          <h1 className="text-2xl md:text-3xl font-headline font-bold text-zinc-100 mb-1.5 md:mb-2">Roadmap Created!</h1>
+          <p className="text-zinc-400 text-sm md:text-base mb-6 md:mb-8 px-2">Your personalized journey for &ldquo;{formData.goal}&rdquo; is ready.</p>
+          <div className="space-y-2.5 md:space-y-3">
+            <Button size="lg" className="w-full bg-amber-500 text-black hover:bg-amber-400 active:scale-95" onClick={() => router.push(`/roadmap/${generatedRoadmapId}`)}>
               View Roadmap
             </Button>
-            <Button variant="ghost" className="w-full text-zinc-400" onClick={() => {
+            <Button variant="ghost" className="w-full text-zinc-400 active:scale-95" onClick={() => {
               setPublishSuccess(false)
               setStep(1)
               setFormData({ ...formData, goal: '' })
@@ -197,18 +197,18 @@ export default function GeneratePage() {
     <div className="min-h-screen relative">
       <Navbar />
 
-      <div className="pt-28 pb-16 relative z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <div className="pt-20 md:pt-28 pb-6 md:pb-16 relative z-10">
+        <div className="max-w-3xl mx-auto px-2 sm:px-6 w-full">
           <WizardProgress steps={STEPS} currentStep={step} onStepClick={goToStep} />
 
           <div className="relative">
             {error && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm flex items-center justify-center">
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 md:mb-6 p-3 md:p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs md:text-sm flex items-center justify-center mx-2 md:mx-0">
                 {error}
               </motion.div>
             )}
 
-            <div className="bg-zinc-950/40 backdrop-blur-xl border border-zinc-800/50 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-y-auto max-h-[65vh] min-h-[400px]">
+            <div className="bg-zinc-950/40 backdrop-blur-xl border border-zinc-800/50 rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-10 shadow-2xl overflow-y-auto max-h-[75vh] md:max-h-[65vh] min-h-[60vh] md:min-h-[400px]">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={step}
@@ -267,65 +267,66 @@ export default function GeneratePage() {
 
       {/* Quiz Modal */}
       {showQuizModal && quizQuestions.length > 0 && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-end sm:items-center justify-center sm:p-4">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-zinc-950 rounded-2xl border border-zinc-800 w-full max-w-lg shadow-[0_0_40px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-zinc-950 rounded-t-2xl sm:rounded-2xl border-t sm:border border-zinc-800 w-full sm:max-w-lg max-h-[90vh] sm:max-h-[80vh] shadow-[0_0_40px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
           >
-            <div className="bg-zinc-900 border-b border-zinc-800 px-6 py-5 flex justify-between items-center">
-              <h3 className="font-headline font-bold text-lg text-zinc-100 flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-amber-500" />
+            <div className="bg-zinc-900 border-b border-zinc-800 px-4 md:px-6 py-3.5 md:py-5 flex justify-between items-center flex-shrink-0">
+              <h3 className="font-headline font-bold text-base md:text-lg text-zinc-100 flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 md:w-5 md:h-5 text-amber-500" />
                 Assessment Quiz
               </h3>
               {quizScore === null && (
-                <span className="text-xs font-mono text-zinc-500 bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700">
+                <span className="text-[10px] md:text-xs font-mono text-zinc-500 bg-zinc-800 px-2.5 md:px-3 py-1 rounded-full border border-zinc-700">
                   {currentQuestionIndex + 1} / {quizQuestions.length}
                 </span>
               )}
             </div>
 
-            <div className="p-6 flex-1 overflow-y-auto min-h-[300px]">
+            <div className="p-4 md:p-6 flex-1 overflow-y-auto min-h-0">
               {quizScore === null ? (
-                <div className="space-y-5">
-                  <h4 className="font-medium text-zinc-200 leading-relaxed text-base">
+                <div className="space-y-4 md:space-y-5">
+                  <h4 className="font-medium text-zinc-200 leading-relaxed text-sm md:text-base">
                     {quizQuestions[currentQuestionIndex].question}
                   </h4>
-                  <div className="space-y-3 pt-2">
+                  <div className="space-y-2 md:space-y-3 pt-1 md:pt-2">
                     {quizQuestions[currentQuestionIndex].options.map((option, idx) => (
                       <button
                         key={idx}
                         type="button"
                         onClick={() => handleSelectOption(idx)}
-                        className={`w-full p-4 text-left text-sm rounded-xl border transition-all duration-200 flex items-start gap-3 group ${
+                        className={`w-full p-3 md:p-4 text-left text-xs md:text-sm rounded-xl border transition-all duration-200 flex items-start gap-2.5 md:gap-3 group active:scale-[0.98] ${
                           selectedAnswers[currentQuestionIndex] === idx
                             ? 'border-amber-500 bg-amber-500/10 text-amber-500 font-medium'
                             : 'border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-800'
                         }`}
                       >
-                        <span className={`w-6 h-6 rounded-full flex items-center justify-center border text-xs font-bold transition-colors ${
+                        <span className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border text-[10px] md:text-xs font-bold transition-colors flex-shrink-0 ${
                           selectedAnswers[currentQuestionIndex] === idx
                             ? 'border-amber-500 bg-amber-500 text-black'
                             : 'border-zinc-700 text-zinc-500 group-hover:text-zinc-300 group-hover:border-zinc-500'
                         }`}>
                           {String.fromCharCode(65 + idx)}
                         </span>
-                        <span className="flex-1 mt-0.5">{option}</span>
+                        <span className="flex-1 mt-0 md:mt-0.5">{option}</span>
                       </button>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6 text-center py-8">
-                  <div className="w-20 h-20 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                    <Award className="w-10 h-10" />
+                <div className="space-y-5 md:space-y-6 text-center py-6 md:py-8">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                    <Award className="w-8 h-8 md:w-10 md:h-10" />
                   </div>
-                  <div className="space-y-3">
-                    <h4 className="font-headline font-bold text-2xl text-zinc-100">Quiz Completed!</h4>
-                    <p className="text-4xl font-extrabold text-amber-500 drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">
-                      {quizScore} <span className="text-2xl text-zinc-600">/ {quizQuestions.length}</span>
+                  <div className="space-y-2 md:space-y-3">
+                    <h4 className="font-headline font-bold text-xl md:text-2xl text-zinc-100">Quiz Completed!</h4>
+                    <p className="text-3xl md:text-4xl font-extrabold text-amber-500 drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">
+                      {quizScore} <span className="text-xl md:text-2xl text-zinc-600">/ {quizQuestions.length}</span>
                     </p>
-                    <p className="text-sm text-zinc-400 max-w-sm mx-auto pt-2">
+                    <p className="text-xs md:text-sm text-zinc-400 max-w-sm mx-auto pt-1 md:pt-2 px-4">
                       {assessmentScore !== null && assessmentScore >= 0.7
                         ? "Excellent job! We'll tailor your roadmap to skip introductory concepts."
                         : "Thanks for taking the quiz! We'll ensure your roadmap covers all fundamentals."}
@@ -335,16 +336,16 @@ export default function GeneratePage() {
               )}
             </div>
 
-            <div className="bg-zinc-900 border-t border-zinc-800 px-6 py-4 flex justify-end gap-3">
+            <div className="bg-zinc-900 border-t border-zinc-800 px-4 md:px-6 py-3 md:py-4 flex justify-end gap-2.5 md:gap-3 flex-shrink-0">
               {quizScore === null ? (
                 <>
-                  <Button variant="ghost" onClick={() => setShowQuizModal(false)} className="text-xs text-zinc-400">Cancel</Button>
-                  <Button onClick={handleNextQuestion} disabled={selectedAnswers[currentQuestionIndex] === undefined} className="text-xs px-6 bg-zinc-100 text-black hover:bg-white">
+                  <Button variant="ghost" onClick={() => setShowQuizModal(false)} className="text-xs text-zinc-400 active:scale-95">Cancel</Button>
+                  <Button onClick={handleNextQuestion} disabled={selectedAnswers[currentQuestionIndex] === undefined} className="text-xs px-5 md:px-6 bg-zinc-100 text-black hover:bg-white active:scale-95 flex-1 sm:flex-none">
                     {currentQuestionIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question'}
                   </Button>
                 </>
               ) : (
-                <Button onClick={() => setShowQuizModal(false)} className="text-xs px-8 bg-zinc-100 text-black hover:bg-white">Done</Button>
+                <Button onClick={() => setShowQuizModal(false)} className="text-xs px-6 md:px-8 bg-zinc-100 text-black hover:bg-white active:scale-95 w-full sm:w-auto">Done</Button>
               )}
             </div>
           </motion.div>

@@ -11,7 +11,7 @@ interface WizardProgressProps {
 
 export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgressProps) {
   return (
-    <div className="w-full mb-8 relative z-20">
+    <div className="w-full mb-4 md:mb-8 relative z-20">
       {/* Desktop Floating Pill Progress */}
       <div className="hidden md:flex justify-center">
         <div className="bg-zinc-900/40 backdrop-blur-xl border border-zinc-800/50 rounded-full p-2 flex items-center gap-2 relative">
@@ -45,7 +45,6 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
                     {step.label}
                   </span>
                   
-                  {/* Active Indicator Line */}
                   {isActive && (
                     <motion.div
                       layoutId="activeStep"
@@ -56,7 +55,6 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
                   )}
                 </button>
 
-                {/* Connector */}
                 {idx < steps.length - 1 && (
                   <div className="w-6 h-px mx-1 bg-zinc-800/50">
                     <div 
@@ -71,26 +69,39 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
         </div>
       </div>
 
-      {/* Mobile Progress Track */}
-      <div className="md:hidden flex flex-col gap-3">
-        <div className="flex justify-between items-center px-2">
-          <span className="text-xs font-mono text-zinc-500 uppercase tracking-wider">
-            Step {currentStep} of {steps.length}
+      {/* Mobile Progress — Compact Dot Stepper */}
+      <div className="md:hidden">
+        <div className="flex items-center justify-between px-1 mb-3">
+          <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+            Step {currentStep}/{steps.length}
           </span>
-          <span className="text-sm font-medium text-zinc-200">
+          <span className="text-xs font-semibold text-zinc-200">
             {steps[currentStep - 1].label}
           </span>
         </div>
-        <div className="flex gap-1.5 px-2">
-          {steps.map((_, idx) => (
-            <div 
-              key={idx} 
-              className={`h-1 rounded-full flex-1 transition-all duration-500 ${
-                idx + 1 === currentStep ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]' : 
-                idx + 1 < currentStep ? 'bg-zinc-700' : 'bg-zinc-800/50'
-              }`}
-            />
-          ))}
+
+        {/* Segmented progress bar */}
+        <div className="flex gap-1 px-1">
+          {steps.map((_, idx) => {
+            const stepNum = idx + 1
+            const isActive = currentStep === stepNum
+            const isCompleted = currentStep > stepNum
+            return (
+              <button
+                key={idx}
+                onClick={() => isCompleted && onStepClick(stepNum)}
+                disabled={!isCompleted}
+                className={`
+                  h-1.5 rounded-full flex-1 transition-all duration-400 
+                  ${isActive 
+                    ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' 
+                    : isCompleted 
+                      ? 'bg-amber-500/40 active:scale-95' 
+                      : 'bg-zinc-800/60'}
+                `}
+              />
+            )
+          })}
         </div>
       </div>
     </div>

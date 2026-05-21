@@ -41,18 +41,18 @@ export function Features() {
   const [activeFeature, setActiveFeature] = useState<number | null>(0)
 
   return (
-    <section id="features" className="relative min-h-[100dvh] w-full flex flex-col justify-center border-b border-white/5 py-24">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col gap-12">
+    <section id="features" className="relative min-h-0 md:min-h-[100dvh] w-full flex flex-col justify-center border-b border-white/5 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-5 md:px-6 flex flex-col gap-8 md:gap-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center max-w-2xl mx-auto"
         >
-        <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
+        <h2 className="font-headline text-2xl md:text-5xl text-white font-bold leading-tight mb-3 md:mb-4">
           Intelligence at <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">every step.</span>
         </h2>
-        <p className="font-body text-zinc-400 text-lg max-w-xl mx-auto">
+        <p className="font-body text-zinc-400 text-base md:text-lg max-w-xl mx-auto">
           The architecture of your success, built on deep learning models that understand educational progression.
         </p>
       </motion.div>
@@ -130,7 +130,7 @@ export function Features() {
       </div>
 
       {/* Mobile Accordion */}
-      <div className="flex flex-col gap-4 md:hidden mt-8 w-full">
+      <div className="flex flex-col gap-3 md:hidden mt-6 w-full">
         {features.map((feature, index) => {
           const Icon = feature.icon
           const isActive = activeFeature === index

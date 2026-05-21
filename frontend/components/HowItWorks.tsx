@@ -32,18 +32,18 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative min-h-[100dvh] w-full flex flex-col justify-center border-b border-white/5 py-24">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="how-it-works" className="relative min-h-0 md:min-h-[100dvh] w-full flex flex-col justify-center border-b border-white/5 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-5 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-2xl mx-auto mb-16"
+          className="text-center max-w-2xl mx-auto mb-10 md:mb-16"
         >
-          <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
+          <h2 className="font-headline text-2xl md:text-5xl text-white font-bold leading-tight mb-3 md:mb-4">
             How it <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">works.</span>
           </h2>
-          <p className="font-body text-zinc-400 text-lg max-w-xl mx-auto">
+          <p className="font-body text-zinc-400 text-base md:text-lg max-w-xl mx-auto">
             From ambition to achievement in four simple steps
           </p>
         </motion.div>

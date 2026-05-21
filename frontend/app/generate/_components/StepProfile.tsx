@@ -20,10 +20,10 @@ const SKILL_LEVELS: { id: SkillLevel; label: string; desc: string; icon: any }[]
 ]
 
 const LEARNING_STYLES: { id: LearningStyle; label: string; desc: string; icon: any }[] = [
-  { id: 'visual', label: 'Visual', desc: 'Diagrams, videos, and charts', icon: Eye },
+  { id: 'visual', label: 'Visual', desc: 'Diagrams, videos, charts', icon: Eye },
   { id: 'auditory', label: 'Auditory', desc: 'Lectures and discussions', icon: Headphones },
-  { id: 'reading', label: 'Reading/Writing', desc: 'Text-heavy resources and notes', icon: PenTool },
-  { id: 'active', label: 'Active', desc: 'Hands-on projects and coding', icon: Wrench },
+  { id: 'reading', label: 'Reading/Writing', desc: 'Text-heavy resources', icon: PenTool },
+  { id: 'active', label: 'Active', desc: 'Hands-on projects', icon: Wrench },
 ]
 
 export function StepProfile({
@@ -35,20 +35,20 @@ export function StepProfile({
   onBack,
 }: StepProfileProps) {
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-2 mb-8">
-        <h2 className="text-2xl font-headline font-bold text-zinc-100 flex items-center justify-center gap-2">
-          <User className="w-6 h-6 text-amber-500" />
+    <div className="space-y-5 md:space-y-8">
+      <div className="text-center space-y-1.5 md:space-y-2 mb-4 md:mb-8">
+        <h2 className="text-xl md:text-2xl font-headline font-bold text-zinc-100 flex items-center justify-center gap-2">
+          <User className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
           Your Profile
         </h2>
-        <p className="text-zinc-400 text-sm">How do you prefer to learn?</p>
+        <p className="text-zinc-400 text-xs md:text-sm">How do you prefer to learn?</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-5 md:space-y-6">
         {/* Skill Level Selection */}
-        <div className="space-y-3">
-          <label className="text-sm font-semibold uppercase tracking-wider text-zinc-500">Current Skill Level</label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="space-y-2.5 md:space-y-3">
+          <label className="text-[10px] md:text-sm font-semibold uppercase tracking-wider text-zinc-500">Current Skill Level</label>
+          <div className="grid grid-cols-3 gap-2 md:gap-3">
             {SKILL_LEVELS.map((level) => {
               const Icon = level.icon
               const isSelected = skillLevel === level.id
@@ -57,15 +57,15 @@ export function StepProfile({
                   key={level.id}
                   onClick={() => setSkillLevel(level.id)}
                   className={`
-                    relative p-4 rounded-xl text-left transition-all duration-200 border group
+                    relative p-3 md:p-4 rounded-xl text-left transition-all duration-200 border group active:scale-[0.97]
                     ${isSelected 
                       ? 'bg-amber-500/10 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.1)]' 
                       : 'bg-zinc-900/40 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900/80'}
                   `}
                 >
-                  <Icon className={`w-5 h-5 mb-3 ${isSelected ? 'text-amber-500' : 'text-zinc-500 group-hover:text-zinc-400'}`} />
-                  <div className={`font-semibold mb-1 ${isSelected ? 'text-zinc-100' : 'text-zinc-300'}`}>{level.label}</div>
-                  <div className={`text-xs ${isSelected ? 'text-zinc-400' : 'text-zinc-600'}`}>{level.desc}</div>
+                  <Icon className={`w-4 h-4 md:w-5 md:h-5 mb-2 md:mb-3 ${isSelected ? 'text-amber-500' : 'text-zinc-500 group-hover:text-zinc-400'}`} />
+                  <div className={`font-semibold text-xs md:text-base mb-0.5 md:mb-1 ${isSelected ? 'text-zinc-100' : 'text-zinc-300'}`}>{level.label}</div>
+                  <div className={`text-[10px] md:text-xs leading-tight ${isSelected ? 'text-zinc-400' : 'text-zinc-600'} hidden sm:block`}>{level.desc}</div>
                 </button>
               )
             })}
@@ -73,9 +73,9 @@ export function StepProfile({
         </div>
 
         {/* Learning Style Selection */}
-        <div className="space-y-3 pt-4 border-t border-zinc-800/50">
-          <label className="text-sm font-semibold uppercase tracking-wider text-zinc-500">Preferred Learning Style</label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-2.5 md:space-y-3 pt-3 md:pt-4 border-t border-zinc-800/50">
+          <label className="text-[10px] md:text-sm font-semibold uppercase tracking-wider text-zinc-500">Preferred Learning Style</label>
+          <div className="grid grid-cols-2 gap-2 md:gap-3">
             {LEARNING_STYLES.map((style) => {
               const Icon = style.icon
               const isSelected = learningStyle === style.id
@@ -84,18 +84,18 @@ export function StepProfile({
                   key={style.id}
                   onClick={() => setLearningStyle(style.id)}
                   className={`
-                    flex items-start gap-3 p-4 rounded-xl text-left transition-all duration-200 border group
+                    flex items-center gap-2.5 md:gap-3 p-3 md:p-4 rounded-xl text-left transition-all duration-200 border group active:scale-[0.97]
                     ${isSelected 
                       ? 'bg-amber-500/10 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.1)]' 
                       : 'bg-zinc-900/40 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900/80'}
                   `}
                 >
-                  <div className={`p-2 rounded-lg ${isSelected ? 'bg-amber-500/20' : 'bg-zinc-800/50'}`}>
-                    <Icon className={`w-4 h-4 ${isSelected ? 'text-amber-500' : 'text-zinc-500 group-hover:text-zinc-400'}`} />
+                  <div className={`p-1.5 md:p-2 rounded-lg flex-shrink-0 ${isSelected ? 'bg-amber-500/20' : 'bg-zinc-800/50'}`}>
+                    <Icon className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isSelected ? 'text-amber-500' : 'text-zinc-500 group-hover:text-zinc-400'}`} />
                   </div>
-                  <div>
-                    <div className={`font-semibold mb-0.5 ${isSelected ? 'text-zinc-100' : 'text-zinc-300'}`}>{style.label}</div>
-                    <div className={`text-xs ${isSelected ? 'text-zinc-400' : 'text-zinc-600'}`}>{style.desc}</div>
+                  <div className="min-w-0">
+                    <div className={`font-semibold text-xs md:text-base mb-0 md:mb-0.5 ${isSelected ? 'text-zinc-100' : 'text-zinc-300'}`}>{style.label}</div>
+                    <div className={`text-[10px] md:text-xs leading-tight ${isSelected ? 'text-zinc-400' : 'text-zinc-600'} hidden sm:block`}>{style.desc}</div>
                   </div>
                 </button>
               )
@@ -104,11 +104,11 @@ export function StepProfile({
         </div>
       </div>
 
-      <div className="pt-8 border-t border-zinc-800/50 flex flex-col-reverse sm:flex-row gap-3 sm:justify-between">
-        <Button onClick={onBack} variant="ghost" className="w-full sm:w-auto text-zinc-400 hover:text-zinc-200">
+      <div className="pt-5 md:pt-8 border-t border-zinc-800/50 flex gap-3 justify-between">
+        <Button onClick={onBack} variant="ghost" className="flex-1 sm:flex-none sm:w-auto text-zinc-400 hover:text-zinc-200 active:scale-95">
           Back
         </Button>
-        <Button onClick={onNext} size="lg" className="w-full sm:w-auto px-8 font-semibold">
+        <Button onClick={onNext} size="lg" className="flex-1 sm:flex-none sm:w-auto px-8 font-semibold active:scale-95">
           Continue
         </Button>
       </div>
