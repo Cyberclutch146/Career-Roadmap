@@ -16,6 +16,7 @@ import {
   FileText,
   Bookmark,
   BookmarkCheck,
+  Layers,
 } from 'lucide-react'
 import { formatDuration } from '@/lib/utils'
 import type { Phase, Chapter, Lesson, ResourceItem } from '@/types'
@@ -84,182 +85,231 @@ export function ChapterList({
         const phaseProgress =
           totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0
         const isExpanded = expandedPhases.has(phase.id)
+        const isComplete = phaseProgress === 100
+        const isActive = phaseProgress > 0 && phaseProgress < 100
 
         return (
-          <div key={phase.id} className="bg-white rounded-xl border border-border overflow-hidden">
+          <motion.div
+            key={phase.id}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: phaseIndex * 0.05 }}
+            className={`rounded-2xl border overflow-hidden transition-all duration-300 ${
+              isComplete
+                ? 'bg-amber-500/[0.03] border-amber-500/20'
+                : isExpanded
+                ? 'bg-zinc-900/80 border-zinc-700/50'
+                : 'bg-zinc-900/40 border-zinc-800/50 hover:border-zinc-700/50'
+            }`}
+          >
+            {/* Phase Header */}
             <button
               onClick={() => togglePhase(phase.id)}
-              className="w-full p-6 flex items-center justify-between hover:bg-surface transition-colors"
+              className="w-full p-5 sm:p-6 flex items-center justify-between group transition-colors"
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                    phaseProgress === 100
-                      ? 'bg-success text-white'
-                      : phaseProgress > 0
-                      ? 'bg-primary text-white'
-                      : 'bg-surface text-on-surface-variant'
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                    isComplete
+                      ? 'bg-amber-500 text-black shadow-glow'
+                      : isActive
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                      : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
                   }`}
                 >
-                  {phaseProgress === 100 ? (
+                  {isComplete ? (
                     <CheckCircle2 className="w-5 h-5" />
                   ) : (
-                    phaseIndex + 1
+                    <span className="font-headline">{phaseIndex + 1}</span>
                   )}
                 </div>
                 <div className="text-left">
-                  <h3 className="font-headline font-bold text-lg text-on-surface">
+                  <h3 className="font-headline font-bold text-base sm:text-lg text-zinc-100 group-hover:text-white transition-colors">
                     {phase.name}
                   </h3>
-                  <p className="text-sm text-on-surface-variant">{phase.description}</p>
+                  <p className="text-sm text-zinc-500 line-clamp-1 max-w-md">{phase.description}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="hidden sm:block text-right">
-                  <div className="text-sm font-medium text-on-surface-variant">
-                    {completedCount}/{totalLessons} lessons
-                  </div>
-                  <div className="w-24">
+              <div className="flex items-center gap-4 flex-shrink-0">
+                <div className="hidden sm:flex items-center gap-3">
+                  <span className="text-xs text-zinc-500 font-medium tabular-nums">
+                    {completedCount}/{totalLessons}
+                  </span>
+                  <div className="w-20">
                     <ProgressBar value={phaseProgress} size="sm" />
                   </div>
                 </div>
-                {isExpanded ? (
-                  <ChevronDown className="w-5 h-5 text-on-surface-variant" />
-                ) : (
-                  <ChevronRight className="w-5 h-5 text-on-surface-variant" />
-                )}
+                <ChevronDown
+                  className={`w-4 h-4 text-zinc-600 transition-transform duration-300 ${
+                    isExpanded ? 'rotate-180' : ''
+                  }`}
+                />
               </div>
             </button>
 
+            {/* Mobile progress bar */}
+            <div className="px-5 pb-3 sm:hidden">
+              <div className="flex items-center justify-between text-xs text-zinc-500 mb-1.5">
+                <span>{completedCount}/{totalLessons} lessons</span>
+                <span>{phaseProgress}%</span>
+              </div>
+              <ProgressBar value={phaseProgress} size="sm" />
+            </div>
+
+            {/* Expanded Content */}
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="border-t border-border"
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="border-t border-zinc-800/60"
                 >
-                  <div className="p-6 space-y-4">
-                    {phase.chapters.map((chapter) => (
-                      <div key={chapter.id} className="bg-surface rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-headline font-bold text-on-surface">
-                            {chapter.title}
-                          </h4>
-                          <span className="text-xs text-on-surface-variant">
-                            {chapter.lessons.length} lessons
-                          </span>
-                        </div>
-                        <p className="text-sm text-on-surface-variant mb-4">{chapter.description}</p>
+                  <div className="p-4 sm:p-6 space-y-5">
+                    {phase.chapters.map((chapter, chapterIdx) => {
+                      const chapterCompleted = chapter.lessons.filter(l => completedLessons.has(l.id)).length
+                      const chapterTotal = chapter.lessons.length
+                      const chapterDone = chapterCompleted === chapterTotal && chapterTotal > 0
 
-                        <div className="space-y-2">
-                          {chapter.lessons.map((lesson) => {
-                            const isCompleted = completedLessons.has(lesson.id)
-                            const isBookmarked = bookmarkedLessons.has(lesson.id)
-                            return (
-                              <div
-                                key={lesson.id}
-                                className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${
-                                  isCompleted
-                                    ? 'bg-success/5 border border-success/20'
-                                    : 'bg-white border border-border hover:border-border'
-                                }`}
-                              >
-                                {/* Completion toggle */}
-                                <button
-                                  onClick={() => onToggleLesson(lesson.id)}
-                                  className="mt-0.5 flex-shrink-0"
-                                  title={isCompleted ? 'Mark incomplete' : 'Mark complete'}
-                                >
-                                  {isCompleted ? (
-                                    <CheckCircle2 className="w-5 h-5 text-success" />
-                                  ) : (
-                                    <Circle className="w-5 h-5 text-on-surface-variant hover:text-primary transition-colors" />
-                                  )}
-                                </button>
+                      return (
+                        <div
+                          key={chapter.id}
+                          className="rounded-xl bg-zinc-950/50 border border-zinc-800/40 overflow-hidden"
+                        >
+                          {/* Chapter Header */}
+                          <div className="px-4 sm:px-5 py-4 flex items-center justify-between border-b border-zinc-800/30">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
+                                chapterDone
+                                  ? 'bg-amber-500/20 text-amber-400'
+                                  : 'bg-zinc-800/80 text-zinc-500'
+                              }`}>
+                                {chapterDone ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Layers className="w-3.5 h-3.5" />}
+                              </div>
+                              <div>
+                                <h4 className="font-headline font-semibold text-sm text-zinc-200">
+                                  {chapter.title}
+                                </h4>
+                                <p className="text-xs text-zinc-600 line-clamp-1 max-w-sm mt-0.5">{chapter.description}</p>
+                              </div>
+                            </div>
+                            <span className="text-xs text-zinc-600 font-medium tabular-nums flex-shrink-0 ml-3">
+                              {chapterCompleted}/{chapterTotal}
+                            </span>
+                          </div>
 
-                                {/* Lesson title + meta */}
-                                <div className="flex-1 min-w-0">
-                                  <div
-                                    className={`font-medium cursor-pointer ${
-                                      isCompleted
-                                        ? 'text-on-surface-variant line-through'
-                                        : 'text-on-surface hover:text-primary'
-                                    }`}
-                                    onClick={() => onSelectLesson(lesson)}
-                                  >
-                                    {lesson.title}
-                                  </div>
-                                  <div className="flex items-center gap-3 mt-1">
-                                    <span className="text-xs text-on-surface-variant flex items-center gap-1">
-                                      <Clock className="w-3 h-3" />
-                                      {formatDuration(lesson.duration_minutes)}
-                                    </span>
-                                    {lesson.resources.length > 0 && (
-                                      <span className="text-xs text-on-surface-variant">
-                                        {lesson.resources.length} resources
-                                      </span>
-                                    )}
-                                    {isBookmarked && (
-                                      <span className="text-xs text-amber-500 flex items-center gap-0.5 font-medium">
-                                        <BookmarkCheck className="w-3 h-3" />
-                                        Saved
-                                      </span>
-                                    )}
-                                  </div>
-                                  {lesson.resources.length > 0 && (
-                                    <div className="mt-2 flex flex-wrap gap-2">
-                                      {lesson.resources.slice(0, 3).map((resource, idx) => {
-                                        const Icon = getResourceIcon(resource.type)
-                                        return (
-                                          <a
-                                            key={idx}
-                                            href={resource.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-surface-container rounded hover:bg-surface transition-colors text-on-surface-variant hover:text-on-surface"
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            <Icon className="w-3 h-3" />
-                                            {resource.title}
-                                          </a>
-                                        )
-                                      })}
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* Bookmark toggle */}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    onToggleBookmark(lesson.id)
-                                  }}
-                                  title={isBookmarked ? 'Remove bookmark' : 'Bookmark this lesson'}
-                                  className={`mt-0.5 flex-shrink-0 transition-colors ${
-                                    isBookmarked
-                                      ? 'text-amber-500 hover:text-amber-600'
-                                      : 'text-border hover:text-amber-400'
+                          {/* Lessons */}
+                          <div className="divide-y divide-zinc-800/30">
+                            {chapter.lessons.map((lesson) => {
+                              const isCompleted = completedLessons.has(lesson.id)
+                              const isBookmarked = bookmarkedLessons.has(lesson.id)
+                              return (
+                                <div
+                                  key={lesson.id}
+                                  className={`flex items-start gap-3 px-4 sm:px-5 py-3.5 transition-all duration-200 group/lesson ${
+                                    isCompleted
+                                      ? 'bg-amber-500/[0.03]'
+                                      : 'hover:bg-zinc-800/20'
                                   }`}
                                 >
-                                  {isBookmarked ? (
-                                    <BookmarkCheck className="w-4 h-4" />
-                                  ) : (
-                                    <Bookmark className="w-4 h-4" />
-                                  )}
-                                </button>
-                              </div>
-                            )
-                          })}
+                                  {/* Completion toggle */}
+                                  <button
+                                    onClick={() => onToggleLesson(lesson.id)}
+                                    className="mt-0.5 flex-shrink-0 transition-transform active:scale-90"
+                                    title={isCompleted ? 'Mark incomplete' : 'Mark complete'}
+                                  >
+                                    {isCompleted ? (
+                                      <CheckCircle2 className="w-[18px] h-[18px] text-amber-500" />
+                                    ) : (
+                                      <Circle className="w-[18px] h-[18px] text-zinc-700 group-hover/lesson:text-zinc-500 transition-colors" />
+                                    )}
+                                  </button>
+
+                                  {/* Lesson content */}
+                                  <div className="flex-1 min-w-0">
+                                    <div
+                                      className={`text-sm font-medium cursor-pointer transition-colors ${
+                                        isCompleted
+                                          ? 'text-zinc-500 line-through decoration-zinc-700'
+                                          : 'text-zinc-300 hover:text-amber-400'
+                                      }`}
+                                      onClick={() => onSelectLesson(lesson)}
+                                    >
+                                      {lesson.title}
+                                    </div>
+                                    <div className="flex items-center gap-3 mt-1.5">
+                                      <span className="text-xs text-zinc-600 flex items-center gap-1">
+                                        <Clock className="w-3 h-3" />
+                                        {formatDuration(lesson.duration_minutes)}
+                                      </span>
+                                      {lesson.resources.length > 0 && (
+                                        <span className="text-xs text-zinc-600">
+                                          {lesson.resources.length} resources
+                                        </span>
+                                      )}
+                                      {isBookmarked && (
+                                        <span className="text-xs text-amber-500/80 flex items-center gap-0.5 font-medium">
+                                          <BookmarkCheck className="w-3 h-3" />
+                                          Saved
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    {/* Resource badges */}
+                                    {lesson.resources.length > 0 && (
+                                      <div className="mt-2.5 flex flex-wrap gap-1.5">
+                                        {lesson.resources.slice(0, 3).map((resource, idx) => {
+                                          const Icon = getResourceIcon(resource.type)
+                                          return (
+                                            <a
+                                              key={idx}
+                                              href={resource.url}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 bg-zinc-800/50 border border-zinc-800/60 rounded-lg hover:border-amber-500/30 hover:text-amber-400 transition-all text-zinc-500"
+                                              onClick={(e) => e.stopPropagation()}
+                                            >
+                                              <Icon className="w-3 h-3" />
+                                              <span className="truncate max-w-[140px]">{resource.title}</span>
+                                            </a>
+                                          )
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Bookmark toggle */}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      onToggleBookmark(lesson.id)
+                                    }}
+                                    title={isBookmarked ? 'Remove bookmark' : 'Bookmark this lesson'}
+                                    className={`mt-0.5 flex-shrink-0 transition-all opacity-0 group-hover/lesson:opacity-100 ${
+                                      isBookmarked
+                                        ? 'opacity-100 text-amber-500 hover:text-amber-400'
+                                        : 'text-zinc-700 hover:text-amber-500'
+                                    }`}
+                                  >
+                                    {isBookmarked ? (
+                                      <BookmarkCheck className="w-4 h-4" />
+                                    ) : (
+                                      <Bookmark className="w-4 h-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              )
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         )
       })}
     </div>

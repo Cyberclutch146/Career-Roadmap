@@ -7,7 +7,6 @@ import { useStore } from '@/store'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import {
@@ -20,7 +19,10 @@ import {
   ArrowRight,
   Bookmark,
   CheckCircle,
-  FolderPlus
+  FolderPlus,
+  Layers,
+  TrendingUp,
+  Zap,
 } from 'lucide-react'
 import type { Roadmap } from '@/types'
 
@@ -138,26 +140,38 @@ export default function GalleryPage() {
     }
   }
 
+  const getDifficultyColor = (level: string) => {
+    switch (level) {
+      case 'beginner': return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+      case 'intermediate': return 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+      case 'advanced': return 'text-red-400 bg-red-500/10 border-red-500/20'
+      default: return 'text-zinc-400 bg-zinc-800 border-zinc-700'
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-surface flex flex-col justify-between">
+    <div className="min-h-screen bg-[#0a0a0b] flex flex-col justify-between">
       <Navbar />
 
       <div className="pt-24 pb-16 flex-grow">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Hero Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-10"
+            className="text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-              <Compass className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-xs font-semibold mb-5 border border-amber-500/20">
+              <Compass className="w-3.5 h-3.5" />
               Community Library
             </div>
-            <h1 className="text-3xl sm:text-4xl font-headline font-bold text-on-surface mb-4">
+            <h1 className="text-3xl sm:text-5xl font-headline font-bold text-zinc-100 mb-4 tracking-tight">
               Discover Learning Roadmaps
             </h1>
-            <p className="text-on-surface-variant text-lg max-w-2xl mx-auto">
-              Explore customized, AI-generated roadmaps shared by other learners. Add them to your library to track your own progress.
+            <p className="text-zinc-500 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+              Explore customized, AI-generated roadmaps shared by other learners.
+              Add them to your library to track your own progress.
             </p>
           </motion.div>
 
@@ -166,14 +180,14 @@ export default function GalleryPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white border border-border rounded-2xl p-5 mb-8 shadow-sm grid md:grid-cols-12 gap-4 items-end"
+            className="rounded-2xl bg-zinc-900/60 border border-zinc-800/50 p-5 mb-10 grid md:grid-cols-12 gap-4 items-end"
           >
             <div className="md:col-span-6 space-y-2">
-              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Search Goals</label>
+              <label className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">Search Goals</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
                 <Input
-                  className="pl-9"
+                  className="pl-10"
                   placeholder="e.g. Full Stack Developer, React, DSA..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
@@ -182,7 +196,7 @@ export default function GalleryPage() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Difficulty</label>
+              <label className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">Difficulty</label>
               <Select
                 options={[
                   { value: 'all', label: 'All Levels' },
@@ -196,11 +210,11 @@ export default function GalleryPage() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Duration</label>
+              <label className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">Duration</label>
               <Select
                 options={[
                   { value: 'all', label: 'All Durations' },
-                  { value: 'short', label: 'Short (<= 3 Months)' },
+                  { value: 'short', label: 'Short (≤ 3 Months)' },
                   { value: 'medium', label: 'Medium (4-6 Months)' },
                   { value: 'long', label: 'Long (7+ Months)' }
                 ]}
@@ -212,90 +226,126 @@ export default function GalleryPage() {
 
           {/* Roadmap Grid */}
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <span className="text-on-surface-variant text-sm">Loading roadmaps...</span>
+            <div className="flex flex-col items-center justify-center py-24 gap-4">
+              <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+              <span className="text-zinc-600 text-sm">Discovering roadmaps...</span>
             </div>
           ) : filteredRoadmaps.length === 0 ? (
-            <Card className="text-center py-16">
-              <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-on-surface-variant" />
+            /* Empty State */
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl border border-zinc-800/50 bg-zinc-900/30 text-center py-20 px-6"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 border border-zinc-700/50 flex items-center justify-center mx-auto mb-5">
+                <BookOpen className="w-7 h-7 text-zinc-600" />
               </div>
-              <h3 className="text-lg font-headline font-bold text-on-surface mb-2">No roadmaps found</h3>
-              <p className="text-on-surface-variant max-w-md mx-auto">
-                We couldn&apos;t find any public roadmaps matching your filters. Try adjusting your search query.
+              <h3 className="text-lg font-headline font-bold text-zinc-300 mb-2">No roadmaps found</h3>
+              <p className="text-zinc-600 max-w-md mx-auto text-sm leading-relaxed mb-6">
+                We couldn&apos;t find any public roadmaps matching your filters. Try adjusting your search query or be the first to share one!
               </p>
-            </Card>
+              <Link href="/generate">
+                <Button size="sm" className="gap-2">
+                  <Zap className="w-4 h-4" />
+                  Create a Roadmap
+                </Button>
+              </Link>
+            </motion.div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRoadmaps.map(roadmap => {
+            /* Roadmap Cards Grid */
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredRoadmaps.map((roadmap, index) => {
                 const totalLessons = roadmap.generated_roadmap.overview.total_lessons
                 const hours = roadmap.generated_roadmap.overview.total_estimated_hours
+                const phases = roadmap.generated_roadmap.phases.length
                 const isCloned = clonedRoadmaps.has(roadmap.id)
 
                 return (
-                  <Link key={roadmap.id} href={`/roadmap/${roadmap.id}`}>
-                    <Card hover className="h-full flex flex-col justify-between p-6">
-                      <div>
-                        <div className="flex items-start justify-between gap-3 mb-4">
-                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                            <Target className="w-5 h-5 text-primary" />
+                  <motion.div
+                    key={roadmap.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.04 }}
+                  >
+                    <Link href={`/roadmap/${roadmap.id}`}>
+                      <div className="group h-full flex flex-col justify-between rounded-2xl bg-zinc-900/50 border border-zinc-800/50 hover:border-zinc-700/60 p-5 transition-all duration-300 hover:shadow-[0_4px_24px_-8px_rgba(245,158,11,0.08)]">
+                        <div>
+                          {/* Top row: icon + duration badge */}
+                          <div className="flex items-start justify-between gap-3 mb-4">
+                            <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center group-hover:bg-amber-500/15 transition-colors">
+                              <Target className="w-5 h-5 text-amber-500" />
+                            </div>
+                            <span className="text-[10px] text-zinc-500 font-semibold px-2.5 py-1 bg-zinc-800/60 border border-zinc-800 rounded-lg uppercase tracking-wider">
+                              {roadmap.target_months}mo
+                            </span>
                           </div>
-                          <span className="text-xs text-on-surface-variant font-medium px-2 py-1 bg-surface-container rounded border border-border">
-                            {roadmap.target_months} Months
-                          </span>
+
+                          {/* Title */}
+                          <h3 className="font-headline font-bold text-zinc-200 mb-2 text-base line-clamp-2 group-hover:text-zinc-100 transition-colors">
+                            {roadmap.goal}
+                          </h3>
+
+                          {/* Description */}
+                          <p className="text-xs text-zinc-600 line-clamp-2 mb-4 leading-relaxed">
+                            {roadmap.generated_roadmap.overview.description}
+                          </p>
+
+                          {/* Tags */}
+                          <div className="flex flex-wrap gap-1.5 mb-5">
+                            <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 border rounded-md ${getDifficultyColor(roadmap.skill_level)}`}>
+                              {roadmap.skill_level}
+                            </span>
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800/50 text-zinc-500 border border-zinc-800 rounded-md">
+                              {roadmap.learning_style}
+                            </span>
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800/50 text-zinc-500 border border-zinc-800 rounded-md">
+                              {roadmap.daily_hours}h/day
+                            </span>
+                          </div>
                         </div>
 
-                        <h3 className="font-headline font-bold text-on-surface mb-2 text-base line-clamp-2">
-                          {roadmap.goal}
-                        </h3>
+                        {/* Footer: stats + save button */}
+                        <div className="pt-4 border-t border-zinc-800/40 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 text-xs text-zinc-600">
+                            <span className="flex items-center gap-1">
+                              <Layers className="w-3 h-3" />
+                              {phases} phases
+                            </span>
+                            <span className="text-zinc-800">&middot;</span>
+                            <span>{totalLessons} lessons</span>
+                            <span className="text-zinc-800">&middot;</span>
+                            <span>{hours}h</span>
+                          </div>
 
-                        <p className="text-xs text-on-surface-variant line-clamp-3 mb-4 leading-relaxed">
-                          {roadmap.generated_roadmap.overview.description}
-                        </p>
-
-                        <div className="flex flex-wrap gap-1.5 mb-5">
-                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-primary/5 text-primary border border-primary/10 rounded">
-                            {roadmap.skill_level}
-                          </span>
-                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-surface-container text-on-surface-variant border border-border rounded">
-                            {roadmap.learning_style}
-                          </span>
-                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-surface-container text-on-surface-variant border border-border rounded">
-                            {roadmap.daily_hours}h/day
-                          </span>
+                          <button
+                            disabled={isCloned || cloningId === roadmap.id}
+                            onClick={(e) => handleCloneRoadmap(e, roadmap)}
+                            className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${
+                              isCloned
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-default'
+                                : cloningId === roadmap.id
+                                ? 'bg-zinc-800 text-zinc-500 cursor-wait'
+                                : 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 active:scale-95'
+                            }`}
+                          >
+                            {isCloned ? (
+                              <>
+                                <CheckCircle className="w-3.5 h-3.5" />
+                                Saved
+                              </>
+                            ) : cloningId === roadmap.id ? (
+                              'Saving...'
+                            ) : (
+                              <>
+                                <FolderPlus className="w-3.5 h-3.5" />
+                                Save
+                              </>
+                            )}
+                          </button>
                         </div>
                       </div>
-
-                      <div className="pt-4 border-t border-border flex items-center justify-between gap-4">
-                        <span className="text-xs text-on-surface-variant font-semibold">
-                          {totalLessons} lessons &bull; {hours}h
-                        </span>
-
-                        <Button
-                          variant={isCloned ? 'secondary' : 'primary'}
-                          size="sm"
-                          disabled={isCloned || cloningId === roadmap.id}
-                          onClick={(e) => handleCloneRoadmap(e, roadmap)}
-                          className="text-xs gap-1.5 py-1.5"
-                        >
-                          {isCloned ? (
-                            <>
-                              <CheckCircle className="w-3.5 h-3.5 text-success" />
-                              Saved
-                            </>
-                          ) : cloningId === roadmap.id ? (
-                            'Saving...'
-                          ) : (
-                            <>
-                              <FolderPlus className="w-3.5 h-3.5" />
-                              Save
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </Card>
-                  </Link>
+                    </Link>
+                  </motion.div>
                 )
               })}
             </div>

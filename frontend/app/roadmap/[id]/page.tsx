@@ -622,32 +622,38 @@ export default function RoadmapPage() {
   const progressPercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0
 
   const SidebarContent = () => (
-    <div className="p-6">
-      <Link href="/generate" className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface mb-6">
+    <div className="p-5">
+      <Link href="/generate" className="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-6 text-sm transition-colors">
         <ArrowLeft className="w-4 h-4" />
         Back to Generator
       </Link>
 
       <div className="mb-6">
-        <h2 className="font-headline font-bold text-lg text-on-surface mb-2">
+        <h2 className="font-headline font-bold text-base text-zinc-100 mb-1.5 leading-snug">
           {generatedRoadmap.overview.title}
         </h2>
-        <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-          <Target className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-xs text-zinc-500">
+          <Calendar className="w-3.5 h-3.5" />
           <span>{roadmap.target_months} months</span>
+          <span className="text-zinc-700">·</span>
+          <span>{totalLessons} lessons</span>
         </div>
       </div>
 
-      <div className="mb-6">
-        <div className="flex justify-between text-sm mb-2">
-          <span className="text-on-surface-variant">Progress</span>
-          <span className="font-medium text-on-surface">{progressPercent}%</span>
+      <div className="mb-6 p-4 rounded-xl bg-zinc-900/80 border border-zinc-800/50">
+        <div className="flex justify-between text-sm mb-2.5">
+          <span className="text-zinc-500 text-xs font-medium">Progress</span>
+          <span className="font-bold text-amber-400 text-xs tabular-nums">{progressPercent}%</span>
         </div>
         <ProgressBar value={progressPercent} size="md" />
+        <div className="mt-2.5 flex items-center justify-between text-xs text-zinc-600">
+          <span>{completedCount} completed</span>
+          <span>{totalLessons - completedCount} remaining</span>
+        </div>
       </div>
 
       {user && roadmap.user_id === user.id ? (
-        <div className="mb-6">
+        <div className="mb-5">
           <Button
             variant="secondary"
             size="sm"
@@ -659,72 +665,71 @@ export default function RoadmapPage() {
             {roadmap.is_public ? 'Shared (Copy Link)' : 'Share Roadmap'}
           </Button>
           {roadmap.is_public && (
-            <p className="text-[10px] text-success-dark mt-1 text-center font-medium">
+            <p className="text-[10px] text-amber-500 mt-1 text-center font-medium">
               Public link copied!
             </p>
           )}
         </div>
       ) : (
-        <div className="mb-6 p-2.5 bg-primary/10 border border-primary/20 rounded-xl">
-          <p className="text-xs text-on-surface text-center font-medium flex items-center justify-center gap-1.5">
-            <Share2 className="w-3.5 h-3.5 text-primary" />
+        <div className="mb-5 p-2.5 bg-amber-500/5 border border-amber-500/10 rounded-xl">
+          <p className="text-xs text-zinc-300 text-center font-medium flex items-center justify-center gap-1.5">
+            <Share2 className="w-3.5 h-3.5 text-amber-500" />
             Viewing Shared Roadmap
           </p>
         </div>
       )}
 
-      <div className="mb-6 border-t border-border pt-4">
-        <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-2">
-          Export Options
+      <div className="mb-6 border-t border-zinc-800/50 pt-4">
+        <span className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest block mb-2.5">
+          Export
         </span>
         <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="secondary"
-            size="sm"
-            className="flex items-center justify-center gap-1.5 text-xs py-2 px-1"
+          <button
             onClick={exportToMarkdown}
+            className="flex items-center justify-center gap-1.5 text-xs py-2.5 px-2 rounded-xl bg-zinc-900/80 border border-zinc-800/50 text-zinc-400 hover:text-amber-400 hover:border-amber-500/20 transition-all"
           >
-            <FileText className="w-3.5 h-3.5 text-primary" />
+            <FileText className="w-3.5 h-3.5" />
             Markdown
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="flex items-center justify-center gap-1.5 text-xs py-2 px-1"
+          </button>
+          <button
             onClick={exportToPDF}
+            className="flex items-center justify-center gap-1.5 text-xs py-2.5 px-2 rounded-xl bg-zinc-900/80 border border-zinc-800/50 text-zinc-400 hover:text-amber-400 hover:border-amber-500/20 transition-all"
           >
-            <Download className="w-3.5 h-3.5 text-primary" />
-            PDF / Print
-          </Button>
+            <Download className="w-3.5 h-3.5" />
+            PDF
+          </button>
         </div>
       </div>
 
-      <nav className="space-y-2 mb-6">
-        <a href="#overview" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-          Overview
-        </a>
-        <a href="#phases" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-          Learning Phases
-        </a>
-        <a href="#resources" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-          Resources
-        </a>
-        <a href="#revision" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-          Revision Strategy
-        </a>
-        <a href="#interview" className="block px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface rounded-lg">
-          Interview Prep
-        </a>
+      <nav className="space-y-0.5">
+        <span className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest block mb-2">
+          Sections
+        </span>
+        {[
+          { href: '#overview', label: 'Overview' },
+          { href: '#phases', label: 'Learning Phases' },
+          { href: '#resources', label: 'Resources' },
+          { href: '#revision', label: 'Revision Strategy' },
+          { href: '#interview', label: 'Interview Prep' },
+        ].map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="block px-3 py-2 text-sm text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/40 rounded-lg transition-colors"
+          >
+            {item.label}
+          </a>
+        ))}
       </nav>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-[#0a0a0b]">
       <Navbar />
 
       <div className="pt-16 flex">
-        <aside className="fixed left-0 top-16 bottom-0 w-72 bg-surface-container border-r border-border overflow-y-auto hidden lg:block">
+        <aside className="fixed left-0 top-16 bottom-0 w-72 bg-zinc-950/90 border-r border-zinc-800/40 overflow-y-auto hidden lg:block backdrop-blur-sm">
           <SidebarContent />
         </aside>
         
@@ -803,28 +808,26 @@ export default function RoadmapPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="grid sm:grid-cols-4 gap-4 mb-8"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10"
             >
-              <Card className="text-center p-4">
-                <Clock className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-bold text-xl text-on-surface">{generatedRoadmap.overview.total_estimated_hours}h</div>
-                <div className="text-xs text-on-surface-variant">Total Hours</div>
-              </Card>
-              <Card className="text-center p-4">
-                <BookOpen className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-bold text-xl text-on-surface">{totalLessons}</div>
-                <div className="text-xs text-on-surface-variant">Lessons</div>
-              </Card>
-              <Card className="text-center p-4">
-                <Target className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-bold text-xl text-on-surface">{generatedRoadmap.phases.length}</div>
-                <div className="text-xs text-on-surface-variant">Phases</div>
-              </Card>
-              <Card className="text-center p-4">
-                <CheckCircle2 className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-bold text-xl text-on-surface">{completedCount}</div>
-                <div className="text-xs text-on-surface-variant">Completed</div>
-              </Card>
+              {[
+                { icon: Clock, value: `${generatedRoadmap.overview.total_estimated_hours}h`, label: 'Total Hours', color: 'from-amber-500/10 to-transparent' },
+                { icon: BookOpen, value: totalLessons, label: 'Lessons', color: 'from-orange-500/10 to-transparent' },
+                { icon: Target, value: generatedRoadmap.phases.length, label: 'Phases', color: 'from-amber-500/10 to-transparent' },
+                { icon: CheckCircle2, value: completedCount, label: 'Completed', color: 'from-orange-500/10 to-transparent' },
+              ].map((stat, i) => (
+                <div
+                  key={stat.label}
+                  className="relative rounded-2xl bg-zinc-900/60 border border-zinc-800/50 p-4 text-center overflow-hidden group hover:border-zinc-700/50 transition-all"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-b ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className="relative">
+                    <stat.icon className="w-5 h-5 text-amber-500/70 mx-auto mb-2" />
+                    <div className="font-bold text-xl text-zinc-100 font-headline tabular-nums">{stat.value}</div>
+                    <div className="text-[11px] text-zinc-500 font-medium mt-0.5">{stat.label}</div>
+                  </div>
+                </div>
+              ))}
             </motion.div>
 
             <motion.div
@@ -864,7 +867,7 @@ export default function RoadmapPage() {
               transition={{ delay: 0.3 }}
               className="mb-12"
             >
-              <h2 className="text-2xl font-headline font-bold text-on-surface mb-6">Learning Phases</h2>
+              <h2 className="text-2xl font-headline font-bold text-zinc-100 mb-6">Learning Phases</h2>
               <ChapterList
                 phases={generatedRoadmap.phases}
                 completedLessons={completedLessons}
@@ -956,7 +959,7 @@ export default function RoadmapPage() {
 
         <button
           onClick={() => setShowMentor(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition-colors z-40"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-amber-500 text-black rounded-full shadow-glow flex items-center justify-center hover:bg-amber-400 hover:shadow-glow-hover transition-all duration-300 z-40 active:scale-95"
         >
           <Brain className="w-6 h-6" />
         </button>
