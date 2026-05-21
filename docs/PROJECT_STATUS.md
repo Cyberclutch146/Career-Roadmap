@@ -132,7 +132,9 @@ Career-Roadmap/
     ├── IMPL_P0_CRITICAL.md        # P0 implementation plan (8 features, ~120h)
     ├── IMPL_P1_HIGH.md            # P1 implementation plan (14 features, ~180h)
     ├── IMPL_P2_MEDIUM.md          # P2 implementation plan (16 features, ~200h)
-    └── IMPL_P3_EXPLORATORY.md     # P3 implementation plan (12 features, ~160h)
+    ├── IMPL_P3_EXPLORATORY.md     # P3 implementation plan (12 features, ~160h)
+    ├── IMPL_ROADMAP_WIZARD.md     # Implementation plan for the multi-step generate wizard
+    └── IMPL_AGENTIC_CHATBOT.md    # Implementation plan for the agentic RAG chatbot
 ```
 
 ---
