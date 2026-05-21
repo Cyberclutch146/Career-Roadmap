@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { MobileNav } from '@/components/MobileNav'
+import { ChatWidget } from '@/components/AIMentor'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -45,6 +46,7 @@ export default function RootLayout({
         <AuthProvider>
           {children}
           <MobileNav />
+          <ChatWidget />
         </AuthProvider>
       </body>
     </html>

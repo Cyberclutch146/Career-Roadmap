@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/store'
@@ -9,7 +9,6 @@ import { api } from '@/lib/api'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import {
   BookOpen,
@@ -20,6 +19,8 @@ import {
   TrendingUp,
   Sparkles,
   Clock,
+  Flame,
+  ArrowUpRight,
 } from 'lucide-react'
 import type { Roadmap } from '@/types'
 import { ProgressCalendar, CompletionItem } from '@/components/ProgressCalendar'
@@ -233,135 +234,100 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0a0a0b]">
       <Navbar />
 
       <div className="pt-24 pb-16">
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <div className="max-w-[1100px] mx-auto px-5 sm:px-8">
+
+          {/* Header — left-aligned, no card wrapper */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-10"
           >
-            <h1 className="text-3xl font-headline font-bold text-on-surface mb-2">
-              {user ? `Welcome back, ${user.name}` : 'Your Learning Dashboard'}
+            <p className="text-zinc-600 text-xs font-medium uppercase tracking-widest mb-2">Dashboard</p>
+            <h1 className="text-2xl sm:text-3xl font-headline font-bold text-zinc-100 mb-1">
+              {user ? `${user.name}` : 'Your Dashboard'}
             </h1>
-            <p className="text-on-surface-variant">
-              Track your progress and continue your learning journey
+            <p className="text-zinc-500 text-sm">
+              {savedRoadmaps.length} active roadmap{savedRoadmaps.length !== 1 ? 's' : ''} · {totalCompletedLessons} lessons completed
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <Card className="text-center p-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <BookOpen className="w-6 h-6 text-primary" />
-                </div>
-                <div className="text-2xl font-bold text-on-surface">{savedRoadmaps.length}</div>
-                <div className="text-sm text-on-surface-variant">Active Roadmaps</div>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-            >
-              <Card className="text-center p-6">
-                <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <TrendingUp className="w-6 h-6 text-secondary" />
-                </div>
-                <div className="text-2xl font-bold text-on-surface">{totalCompletedLessons}</div>
-                <div className="text-sm text-on-surface-variant">Lessons Completed</div>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <Card className="text-center p-6">
-                <div className="w-12 h-12 bg-tertiary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Calendar className="w-6 h-6 text-tertiary" />
-                </div>
-                <div className="text-2xl font-bold text-on-surface">{dayStreak}</div>
-                <div className="text-sm text-on-surface-variant">Day Streak</div>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-            >
-              <Card className="text-center p-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Clock className="w-6 h-6 text-primary" />
-                </div>
-                <div className="text-2xl font-bold text-on-surface">
-                  {formatTimeInvested(totalTimeMinutes)}
-                </div>
-                <div className="text-sm text-on-surface-variant">Time Invested</div>
-              </Card>
-            </motion.div>
-          </div>
-
+          {/* Stats Row — asymmetric, no icons-in-boxes */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="mb-8"
+            transition={{ delay: 0.05 }}
+            className="grid grid-cols-3 gap-px bg-zinc-800/30 rounded-2xl overflow-hidden border border-zinc-800/40 mb-8"
+          >
+            {[
+              { value: savedRoadmaps.length, label: 'Roadmaps', sub: 'active' },
+              { value: totalCompletedLessons, label: 'Lessons', sub: 'completed' },
+              { value: dayStreak, label: 'Day Streak', sub: dayStreak > 0 ? '🔥' : 'start today' },
+            ].map((stat) => (
+              <div key={stat.label} className="bg-[#0e0e0f] p-5 sm:p-6">
+                <div className="text-2xl sm:text-3xl font-bold text-zinc-100 font-headline tabular-nums leading-none mb-1.5">
+                  {stat.value}
+                </div>
+                <div className="text-xs text-zinc-500">
+                  <span className="text-zinc-400 font-medium">{stat.label}</span>
+                  {' '}
+                  <span>{stat.sub}</span>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Quick Action — subtle, inline */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="mb-10"
           >
             <Link href="/generate">
-              <Button size="lg" className="group">
-                <Sparkles className="w-5 h-5 mr-2" />
-                Create New Roadmap
-                <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <button className="group flex items-center gap-2 text-sm font-medium text-amber-500 hover:text-amber-400 transition-colors">
+                <Plus className="w-4 h-4" />
+                New Roadmap
+                <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
+              </button>
             </Link>
           </motion.div>
 
-          {/* Progress & Consistency Heatmap Calendar */}
+          {/* Progress Calendar */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.28 }}
+            transition={{ delay: 0.1 }}
           >
             <ProgressCalendar completions={completions} streak={dayStreak} />
           </motion.div>
 
+          {/* Analytics Section */}
           {savedRoadmaps.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.29 }}
-              className="mb-8"
+              transition={{ delay: 0.12 }}
+              className="mb-10"
             >
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <div>
-                  <h2 className="text-xl font-headline font-bold text-on-surface">Learning Analytics</h2>
-                  <p className="text-sm text-on-surface-variant">Analyze your learning habits and forecast completion</p>
-                </div>
+              {/* Section header with roadmap picker */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
+                <h2 className="text-lg font-headline font-bold text-zinc-200">Analytics</h2>
                 {savedRoadmaps.length > 1 && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-on-surface-variant font-medium">Select Roadmap:</span>
-                    <select
-                      value={selectedRoadmapId}
-                      onChange={(e) => setSelectedRoadmapId(e.target.value)}
-                      className="px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-sm text-on-surface focus:outline-none focus:border-primary"
-                    >
-                      {savedRoadmaps.map((rm) => (
-                        <option key={rm.id} value={rm.id}>
-                          {rm.generated_roadmap.overview.title || rm.goal}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <select
+                    value={selectedRoadmapId}
+                    onChange={(e) => setSelectedRoadmapId(e.target.value)}
+                    className="px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-zinc-300 focus:outline-none focus:border-zinc-600 transition-colors"
+                  >
+                    {savedRoadmaps.map((rm) => (
+                      <option key={rm.id} value={rm.id}>
+                        {rm.generated_roadmap.overview.title || rm.goal}
+                      </option>
+                    ))}
+                  </select>
                 )}
               </div>
 
@@ -386,18 +352,17 @@ export default function DashboardPage() {
                 const targetMonths = selectedRoadmap.target_months || 3
                 const targetCompletionDate = new Date(createdAt)
                 targetCompletionDate.setMonth(targetCompletionDate.getMonth() + targetMonths)
-
                 const formattedTargetDate = targetCompletionDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 
                 let estCompletionText = ''
-                let badgeText = 'Not Started'
-                let badgeClass = 'border-outline-variant/30 bg-surface-container text-on-surface-variant'
+                let statusLabel = 'Not Started'
+                let statusColor = 'text-zinc-500'
 
                 if (completedCount > 0) {
                   if (remainingLessons === 0) {
-                    badgeText = 'Completed'
-                    badgeClass = 'border-success/30 bg-success/10 text-success'
-                    estCompletionText = 'Congratulations! You have completed all lessons in this roadmap.'
+                    statusLabel = 'Complete'
+                    statusColor = 'text-emerald-400'
+                    estCompletionText = 'All lessons completed.'
                   } else if (velocity > 0) {
                     const weeksToComplete = remainingLessons / velocity
                     const estCompletionDate = new Date()
@@ -405,54 +370,42 @@ export default function DashboardPage() {
                     const formattedEstDate = estCompletionDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 
                     if (estCompletionDate <= targetCompletionDate) {
-                      badgeText = 'On Track'
-                      badgeClass = 'border-success/30 bg-success/10 text-success'
-                      estCompletionText = `At your current pace of ${roundedVelocity} lessons/week, you are on track to complete by ${formattedEstDate} (target: ${formattedTargetDate}).`
+                      statusLabel = 'On Track'
+                      statusColor = 'text-emerald-400'
+                      estCompletionText = `${roundedVelocity} lessons/week → est. ${formattedEstDate}`
                     } else {
-                      badgeText = 'Behind Target'
-                      badgeClass = 'border-warning/30 bg-warning/10 text-warning'
-
+                      statusLabel = 'Behind'
+                      statusColor = 'text-amber-400'
                       const msRemaining = targetCompletionDate.getTime() - now.getTime()
                       const weeksRemaining = Math.max(0.5, msRemaining / (7 * 24 * 60 * 60 * 1000))
                       const neededVelocity = Math.round((remainingLessons / weeksRemaining) * 10) / 10
-
-                      estCompletionText = `Current pace (${roundedVelocity} lessons/week) estimates completion by ${formattedEstDate}. Target is ${formattedTargetDate}. To finish on time, aim for ${neededVelocity} lessons/week.`
+                      estCompletionText = `${roundedVelocity} lessons/week · need ${neededVelocity}/week to hit ${formattedTargetDate}`
                     }
                   }
                 } else {
                   const expectedVelocity = Math.round((totalLessons / (targetMonths * 4.34)) * 10) / 10
-                  estCompletionText = `Complete your first lesson to start tracking your velocity. Target completion date is ${formattedTargetDate} (recommended pace: ${expectedVelocity} lessons/week).`
+                  estCompletionText = `Target: ${formattedTargetDate} · ${expectedVelocity} lessons/week recommended`
                 }
 
                 return (
-                  <div className="space-y-6">
-                    {/* Forecast Banner */}
-                    <div className="glass-card p-5 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/10 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-headline font-bold text-base text-on-surface">Completion Forecast</h3>
-                          <span className={`text-xs px-2.5 py-0.5 rounded-full border font-semibold ${badgeClass}`}>
-                            {badgeText}
-                          </span>
-                        </div>
-                        <p className="text-sm text-on-surface-variant leading-relaxed">
-                          {estCompletionText}
-                        </p>
+                  <div className="space-y-5">
+                    {/* Forecast — minimal strip, not a card */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 px-5 rounded-xl bg-zinc-900/60 border border-zinc-800/40">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className={`text-xs font-bold uppercase tracking-wider ${statusColor}`}>
+                          {statusLabel}
+                        </span>
+                        <span className="text-zinc-700">|</span>
+                        <span className="text-xs text-zinc-500 truncate">{estCompletionText}</span>
                       </div>
-                      <div className="flex gap-6 flex-shrink-0 w-full md:w-auto border-t md:border-t-0 md:border-l border-outline-variant/20 pt-4 md:pt-0 md:pl-6 text-left">
-                        <div>
-                          <div className="text-xs text-on-surface-variant font-medium">Remaining</div>
-                          <div className="text-xl font-bold text-on-surface">{remainingLessons} lessons</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-on-surface-variant font-medium">Target Date</div>
-                          <div className="text-xl font-bold text-primary">{formattedTargetDate}</div>
-                        </div>
+                      <div className="flex items-center gap-5 text-xs text-zinc-500 flex-shrink-0">
+                        <span><span className="text-zinc-300 font-bold tabular-nums">{remainingLessons}</span> left</span>
+                        <span>target <span className="text-zinc-300 font-medium">{formattedTargetDate}</span></span>
                       </div>
                     </div>
 
-                    {/* Visualizations Grid */}
-                    <div className="grid md:grid-cols-2 gap-6">
+                    {/* Charts side by side */}
+                    <div className="grid md:grid-cols-2 gap-5">
                       <SkillsRadar roadmap={selectedRoadmap} completedLessons={completedSet} />
                       <WeeklyVelocity completions={roadmapCompletions} />
                     </div>
@@ -462,35 +415,32 @@ export default function DashboardPage() {
             </motion.div>
           )}
 
+          {/* Roadmaps Section */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.32 }}
+            transition={{ delay: 0.15 }}
           >
-            <h2 className="text-xl font-headline font-bold text-on-surface mb-4">Your Roadmaps</h2>
+            <h2 className="text-lg font-headline font-bold text-zinc-200 mb-4">Roadmaps</h2>
 
             {savedRoadmaps.length === 0 ? (
-              <Card className="text-center py-12">
-                <div className="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="w-8 h-8 text-on-surface-variant" />
-                </div>
-                <h3 className="text-lg font-headline font-bold text-on-surface mb-2">
-                  No roadmaps yet
-                </h3>
-                <p className="text-on-surface-variant mb-6 max-w-md mx-auto">
-                  Create your first learning roadmap and start your journey towards mastering new skills.
+              <div className="rounded-2xl border border-dashed border-zinc-800 py-16 text-center">
+                <BookOpen className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
+                <h3 className="text-sm font-semibold text-zinc-400 mb-1">No roadmaps yet</h3>
+                <p className="text-xs text-zinc-600 mb-5 max-w-xs mx-auto">
+                  Create your first learning roadmap to start tracking your progress.
                 </p>
                 <Link href="/generate">
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Your First Roadmap
+                  <Button size="sm">
+                    <Plus className="w-4 h-4 mr-1.5" />
+                    Create Roadmap
                   </Button>
                 </Link>
-              </Card>
+              </div>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {savedRoadmaps.map((roadmap) => (
-                  <RoadmapCard key={roadmap.id} roadmap={roadmap} />
+              <div className="space-y-3">
+                {savedRoadmaps.map((roadmap, i) => (
+                  <RoadmapRow key={roadmap.id} roadmap={roadmap} index={i} />
                 ))}
               </div>
             )}
@@ -503,47 +453,60 @@ export default function DashboardPage() {
   )
 }
 
-function RoadmapCard({ roadmap }: { roadmap: Roadmap }) {
+/* Roadmap as a row instead of a card — breaks the repetitive grid pattern */
+function RoadmapRow({ roadmap, index }: { roadmap: Roadmap; index: number }) {
   const totalLessons = roadmap.generated_roadmap.overview.total_lessons
   const completedLessons = roadmap.completed_lessons_count || 0
   const progress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
   return (
     <Link href={`/roadmap/${roadmap.id}`}>
-      <Card hover className="h-full">
-        <div className="flex items-start justify-between mb-4">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Target className="w-5 h-5 text-primary" />
-          </div>
-          <span className="text-xs text-on-surface-variant">
-            {roadmap.target_months} months
+      <motion.div
+        initial={{ opacity: 0, x: -8 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: index * 0.04 }}
+        className="group flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 hover:bg-zinc-900/60 transition-all cursor-pointer"
+      >
+        {/* Progress ring */}
+        <div className="relative w-11 h-11 flex-shrink-0">
+          <svg className="w-11 h-11 -rotate-90" viewBox="0 0 44 44">
+            <circle cx="22" cy="22" r="18" fill="none" stroke="#27272a" strokeWidth="3" />
+            <circle
+              cx="22" cy="22" r="18" fill="none"
+              stroke={progress === 100 ? '#34d399' : '#f59e0b'}
+              strokeWidth="3"
+              strokeDasharray={`${(progress / 100) * 113.1} 113.1`}
+              strokeLinecap="round"
+              className="transition-all duration-500"
+            />
+          </svg>
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-zinc-400 tabular-nums">
+            {progress}%
           </span>
         </div>
 
-        <h3 className="font-headline font-bold text-on-surface mb-2 line-clamp-2">
-          {roadmap.goal}
-        </h3>
-
-        <div className="flex items-center gap-2 text-xs text-on-surface-variant mb-4">
-          <span className="capitalize">{roadmap.skill_level}</span>
-          <span>&bull;</span>
-          <span className="capitalize">{roadmap.learning_style}</span>
-          <span>&bull;</span>
-          <span>{roadmap.daily_hours}h/day</span>
-        </div>
-
-        <div className="mb-2">
-          <div className="flex justify-between text-xs mb-1">
-            <span className="text-on-surface-variant">Progress</span>
-            <span className="font-medium text-on-surface">{progress}%</span>
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm text-zinc-200 group-hover:text-zinc-100 truncate transition-colors">
+            {roadmap.goal}
+          </h3>
+          <div className="flex items-center gap-2 mt-1 text-xs text-zinc-600">
+            <span className="capitalize">{roadmap.skill_level}</span>
+            <span className="text-zinc-800">·</span>
+            <span>{totalLessons} lessons</span>
+            <span className="text-zinc-800">·</span>
+            <span>{roadmap.target_months}mo</span>
           </div>
-          <ProgressBar value={progress} size="sm" />
         </div>
 
-        <div className="text-xs text-on-surface-variant">
-          {totalLessons} lessons &bull; {roadmap.generated_roadmap.overview.total_estimated_hours}h total
+        {/* Right side: progress bar + chevron */}
+        <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
+          <div className="w-24">
+            <ProgressBar value={progress} size="sm" />
+          </div>
+          <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-500 group-hover:translate-x-0.5 transition-all" />
         </div>
-      </Card>
+      </motion.div>
     </Link>
   )
 }

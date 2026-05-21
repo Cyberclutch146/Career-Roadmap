@@ -11,7 +11,6 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card'
 import { ChapterList } from '@/components/ChapterList'
 import { ResourcePanel } from '@/components/ResourcePanel'
-import { AIMentor } from '@/components/AIMentor'
 import { LessonWorkspace } from '@/components/LessonWorkspace'
 import { SkillsRadar } from '@/components/SkillsRadar'
 import { Navbar } from '@/components/Navbar'
@@ -39,7 +38,6 @@ export default function RoadmapPage() {
   const router = useRouter()
   const { currentRoadmap, setCurrentRoadmap, user } = useStore()
   const [isLoading, setIsLoading] = useState(true)
-  const [showMentor, setShowMentor] = useState(false)
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null)
   const [showResources, setShowResources] = useState(false)
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set())
@@ -957,21 +955,7 @@ export default function RoadmapPage() {
           </div>
         </main>
 
-        <button
-          onClick={() => setShowMentor(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-amber-500 text-black rounded-full shadow-glow flex items-center justify-center hover:bg-amber-400 hover:shadow-glow-hover transition-all duration-300 z-40 active:scale-95"
-        >
-          <Brain className="w-6 h-6" />
-        </button>
 
-        <AnimatePresence>
-          {showMentor && (
-            <AIMentor
-              roadmap={roadmap}
-              onClose={() => setShowMentor(false)}
-            />
-          )}
-        </AnimatePresence>
 
         <AnimatePresence>
           {selectedLesson && (
