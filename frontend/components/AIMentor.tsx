@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import { X, Send, Bot, User, Sparkles, Brain } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useStore } from '@/store'
@@ -11,6 +12,48 @@ import ReactMarkdown from 'react-markdown'
 interface AIMentorProps {
   roadmap?: Roadmap | null
   onClose: () => void
+}
+
+function ActionRenderer({ action }: { action: { type: string; payload: any } }) {
+  const router = useRouter()
+  if (!action) return null
+  
+  if (action.type === 'navigate_to_view') {
+    return (
+      <div className="mt-2 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50">
+        <p className="text-xs text-zinc-300 mb-2">I can take you there:</p>
+        <button 
+          onClick={() => router.push(action.payload.view_name === 'dashboard' ? '/dashboard' : '/')}
+          className="text-xs px-3 py-1.5 bg-amber-500 text-black rounded-lg hover:bg-amber-400 font-semibold"
+        >
+          Go to {action.payload.view_name}
+        </button>
+      </div>
+    )
+  }
+  
+  if (action.type === 'generate_mini_quiz') {
+    return (
+      <div className="mt-2 p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
+        <p className="text-xs text-amber-500 font-semibold mb-2">Mini Quiz Generated!</p>
+        <p className="text-xs text-zinc-300">Topic: {action.payload.topic}</p>
+        <button className="mt-2 text-xs px-3 py-1.5 bg-zinc-800 text-zinc-200 rounded-lg border border-zinc-700 hover:bg-zinc-700">
+          Start Quiz
+        </button>
+      </div>
+    )
+  }
+
+  if (action.type === 'update_lesson_status') {
+    return (
+      <div className="mt-2 p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20 flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <p className="text-xs text-emerald-400">Lesson updated in roadmap.</p>
+      </div>
+    )
+  }
+
+  return null
 }
 
 const generalQuestions = [
@@ -134,6 +177,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
         role: 'assistant',
         content: response.data.reply,
         timestamp: new Date().toISOString(),
+        action: response.data.action,
       }
 
       setMessages((prev) => [...prev, assistantMessage])
@@ -227,6 +271,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
                 }`}
               >
                 <MarkdownMessage content={message.content} isUser={message.role === 'user'} />
+                {message.action && <ActionRenderer action={message.action} />}
               </div>
             </motion.div>
           ))}

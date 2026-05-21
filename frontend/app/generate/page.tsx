@@ -1,18 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
+import { Target, User, Clock, Award, HelpCircle } from 'lucide-react'
 import { useStore } from '@/store'
 import { api } from '@/lib/api'
-import { Sparkles, Clock, Target, BookOpen, ArrowRight, HelpCircle, Award, CheckCircle, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
 import type { RoadmapFormData, SkillLevel, LearningStyle, Roadmap } from '@/types'
 import type { AxiosError } from 'axios'
+
+import { WizardProgress } from './_components/WizardProgress'
+import { StepGoal } from './_components/StepGoal'
+import { StepProfile } from './_components/StepProfile'
+import { StepCommitment } from './_components/StepCommitment'
+import { StepReview } from './_components/StepReview'
+import { ConfettiBurst } from './_components/ConfettiBurst'
 
 interface QuizQuestion {
   question: string
@@ -21,41 +25,25 @@ interface QuizQuestion {
   explanation: string
 }
 
-const skillLevelOptions = [
-  { value: 'beginner', label: 'Beginner - No prior knowledge' },
-  { value: 'intermediate', label: 'Intermediate - Some experience' },
-  { value: 'advanced', label: 'Advanced - Strong foundation' },
-]
-
-const learningStyleOptions = [
-  { value: 'visual', label: 'Visual - Diagrams, videos, charts' },
-  { value: 'auditory', label: 'Auditory - Lectures, discussions' },
-  { value: 'reading', label: 'Reading/Writing - Text, notes' },
-  { value: 'active', label: 'Active - Hands-on projects' },
-]
-
-const durationOptions = [
-  { value: '3', label: '3 months' },
-  { value: '6', label: '6 months' },
-  { value: '12', label: '12 months' },
-  { value: '18', label: '18 months' },
-  { value: '24', label: '24 months' },
-]
-
-const goalSuggestions = [
-  'Become a Full Stack Developer',
-  'Learn DSA for Placements',
-  'Become an AI Engineer',
-  'Master React Development',
-  'Learn Cybersecurity',
-  'Crack GATE CSE',
-  'Become a Data Scientist',
-  'Master Python Programming',
+const STEPS = [
+  { icon: Target, label: 'The Goal' },
+  { icon: User, label: 'Profile' },
+  { icon: Clock, label: 'Commitment' },
+  { icon: Award, label: 'Review' },
 ]
 
 export default function GeneratePage() {
   const router = useRouter()
   const { setCurrentRoadmap, user } = useStore()
+  
+  // Wizard State
+  const [step, setStep] = useState(1)
+  const [direction, setDirection] = useState(1)
+  const [publishSuccess, setPublishSuccess] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [error, setLocalError] = useState<string | null>(null)
+
+  // Form State
   const [formData, setFormData] = useState<RoadmapFormData>({
     goal: '',
     skill_level: 'beginner',
@@ -63,10 +51,8 @@ export default function GeneratePage() {
     learning_style: 'reading',
     target_months: 6,
   })
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [error, setLocalError] = useState<string | null>(null)
 
-  // Pre-assessment state
+  // Quiz State
   const [isQuizLoading, setIsQuizLoading] = useState(false)
   const [showQuizModal, setShowQuizModal] = useState(false)
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
@@ -74,13 +60,30 @@ export default function GeneratePage() {
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([])
   const [quizScore, setQuizScore] = useState<number | null>(null)
   const [assessmentScore, setAssessmentScore] = useState<number | null>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generatedRoadmapId, setGeneratedRoadmapId] = useState<string | null>(null)
 
+  const goToStep = (target: number) => {
+    setDirection(target > step ? 1 : -1)
+    setStep(target)
+  }
+
+  const handleNext = () => {
+    setDirection(1)
+    setStep((s) => Math.min(s + 1, STEPS.length))
+  }
+
+  const handleBack = () => {
+    setDirection(-1)
+    setStep((s) => Math.max(s - 1, 1))
+  }
+
+  const updateFormData = (key: keyof RoadmapFormData, value: any) => {
+    setFormData((prev) => ({ ...prev, [key]: value }))
+  }
+
+  // --- Quiz Logic ---
   const handleStartQuiz = async () => {
-    if (!formData.goal.trim()) {
-      setLocalError('Please enter your learning goal first to generate a relevant assessment.')
-      return
-    }
-    setLocalError(null)
     setIsQuizLoading(true)
     try {
       const res = await api.post<{ questions: QuizQuestion[] }>('/api/assessment/generate', {
@@ -112,39 +115,27 @@ export default function GeneratePage() {
     } else {
       let correct = 0
       quizQuestions.forEach((q, idx) => {
-        if (selectedAnswers[idx] === q.answer_index) {
-          correct++
-        }
+        if (selectedAnswers[idx] === q.answer_index) correct++
       })
       const finalScore = correct / quizQuestions.length
       setQuizScore(correct)
       setAssessmentScore(finalScore)
     }
   }
+  // ------------------
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.goal.trim()) {
-      setLocalError('Please enter your learning goal')
-      return
-    }
-
+  const handleGenerate = async () => {
     setLocalError(null)
     setIsGenerating(true)
 
     try {
       const response = await api.post<Roadmap>('/api/roadmaps/generate', {
-        goal: formData.goal,
-        skill_level: formData.skill_level,
-        daily_hours: formData.daily_hours,
-        learning_style: formData.learning_style,
-        target_months: formData.target_months,
+        ...formData,
         assessment_score: assessmentScore,
       })
 
       const roadmap = response.data
       
-      // Offline/mock mode: save generated roadmaps to localStorage
       roadmap.created_at = roadmap.created_at || new Date().toISOString()
       roadmap.updated_at = roadmap.updated_at || new Date().toISOString()
       roadmap.user_id = user?.id || 'mock-user-123'
@@ -152,7 +143,10 @@ export default function GeneratePage() {
 
       setCurrentRoadmap(roadmap)
       localStorage.setItem('current_roadmap', JSON.stringify(roadmap))
-      router.push(`/roadmap/${roadmap.id}`)
+      
+      setGeneratedRoadmapId(roadmap.id)
+      setPublishSuccess(true)
+      setShowConfetti(true)
     } catch (err: unknown) {
       const axiosErr = err as AxiosError<{ detail?: string }>
       setLocalError(axiosErr.response?.data?.detail || 'Failed to generate roadmap. Please try again.')
@@ -161,231 +155,140 @@ export default function GeneratePage() {
     }
   }
 
+  const variants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 40 : -40, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? -40 : 40, opacity: 0 }),
+  }
+
+  if (publishSuccess) {
+    return (
+      <div className="min-h-screen relative flex items-center justify-center p-4">
+        <Navbar />
+        <ConfettiBurst trigger={showConfetti} onComplete={() => setShowConfetti(false)} />
+        <motion.div 
+          initial={{ opacity: 0, y: 24, scale: 0.95 }} 
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/50 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl"
+        >
+          <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
+            <Award className="w-10 h-10 text-amber-500" />
+          </div>
+          <h1 className="text-3xl font-headline font-bold text-zinc-100 mb-2">Roadmap Created!</h1>
+          <p className="text-zinc-400 mb-8">Your personalized learning journey for "{formData.goal}" is ready.</p>
+          <div className="space-y-3">
+            <Button size="lg" className="w-full bg-amber-500 text-black hover:bg-amber-400" onClick={() => router.push(`/roadmap/${generatedRoadmapId}`)}>
+              View Roadmap
+            </Button>
+            <Button variant="ghost" className="w-full text-zinc-400" onClick={() => {
+              setPublishSuccess(false)
+              setStep(1)
+              setFormData({ ...formData, goal: '' })
+            }}>
+              Create Another
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen relative">
       <Navbar />
 
-      <div className="pt-24 pb-16 relative z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 text-primary rounded-full text-sm font-medium mb-6 shadow-[0_0_15px_rgba(255,113,98,0.15)]">
-              <Sparkles className="w-4 h-4" />
-              AI-Powered
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-headline font-bold text-on-surface mb-4">
-              Create Your Learning Roadmap
-            </h1>
-            <p className="text-on-surface-variant text-lg max-w-2xl mx-auto">
-              Tell us about your learning goals and we&apos;ll generate a personalized
-              roadmap just for you.
-            </p>
-          </motion.div>
+      <div className="pt-28 pb-16 relative z-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <WizardProgress steps={STEPS} currentStep={step} onStepClick={goToStep} />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Card className="max-w-2xl mx-auto p-2">
-              <CardHeader className="text-center border-b border-outline-variant/50 pb-6 mb-6">
-                <CardTitle className="text-2xl">Learning Details</CardTitle>
-                <CardDescription className="text-on-surface-variant">
-                  Fill in your information to get a customized learning path
-                </CardDescription>
-              </CardHeader>
+          <div className="relative">
+            {error && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm flex items-center justify-center">
+                {error}
+              </motion.div>
+            )}
 
-              <form onSubmit={handleSubmit} className="space-y-6 px-4 pb-4">
-                <div>
-                  <label className="block text-sm font-medium text-on-surface-variant mb-2">
-                    What&apos;s your learning goal?
-                  </label>
-                  <Input
-                    value={formData.goal}
-                    onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-                    placeholder="e.g., Become a Full Stack Developer"
-                  />
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {goalSuggestions.slice(0, 4).map((goal) => (
-                      <button
-                        key={goal}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, goal })}
-                        className="text-xs px-3 py-1.5 bg-surface-container border border-outline-variant text-on-surface-variant rounded-md hover:bg-surface-container-high hover:text-on-surface transition-colors"
-                      >
-                        {goal}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <Select
-                    label="Current Skill Level"
-                    options={skillLevelOptions}
-                    value={formData.skill_level}
-                    onChange={(e) => setFormData({ ...formData, skill_level: e.target.value as SkillLevel })}
-                  />
-
-                  <Select
-                    label="Preferred Learning Style"
-                    options={learningStyleOptions}
-                    value={formData.learning_style}
-                    onChange={(e) => setFormData({ ...formData, learning_style: e.target.value as LearningStyle })}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-on-surface-variant mb-2">
-                    Daily Study Time: <span className="text-primary font-bold">{formData.daily_hours}</span> hours
-                  </label>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="8"
-                    step="0.5"
-                    value={formData.daily_hours}
-                    onChange={(e) => setFormData({ ...formData, daily_hours: parseFloat(e.target.value) })}
-                    className="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
-                  />
-                  <div className="flex justify-between text-xs text-on-surface-variant mt-2 font-mono">
-                    <span>30 min</span>
-                    <span>8 hours</span>
-                  </div>
-                </div>
-
-                <Select
-                  label="Target Duration"
-                  options={durationOptions}
-                  value={formData.target_months.toString()}
-                  onChange={(e) => setFormData({ ...formData, target_months: parseInt(e.target.value) })}
-                />
-
-                {/* Pre-Assessment Card */}
-                <div className="bg-surface-container/50 backdrop-blur-md border border-outline-variant rounded-xl p-5 space-y-3 relative overflow-hidden group hover:border-primary/50 transition-colors duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative z-10">
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-bold text-on-surface flex items-center gap-2">
-                        <Award className="w-4 h-4 text-primary" />
-                        Skill Assessment <span className="text-[10px] font-normal uppercase tracking-wider text-on-surface-variant bg-surface-container-highest px-2 py-0.5 rounded-full">(Optional)</span>
-                      </h4>
-                      <p className="text-xs text-on-surface-variant leading-relaxed max-w-sm">
-                        Take a quick 5-question AI quiz on your goal. Score 70%+ and we will customize your roadmap by pre-completing introductory topics for you!
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={handleStartQuiz}
-                      isLoading={isQuizLoading}
-                      className="text-xs py-2 whitespace-nowrap"
-                    >
-                      {assessmentScore !== null ? 'Retake Quiz' : 'Take Quiz'}
-                    </Button>
-                  </div>
-                  {assessmentScore !== null && (
-                    <div className="bg-success/10 border border-success/20 rounded-lg p-3 text-xs text-success flex items-start sm:items-center gap-2 mt-4 relative z-10">
-                      <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5 sm:mt-0" />
-                      <span>
-                        Assessment recorded: <strong className="text-on-surface">{quizScore}/5 ({Math.round(assessmentScore * 100)}%)</strong>.
-                        {assessmentScore >= 0.7 
-                          ? ' Introductory lessons will be marked completed so you can skip ahead!' 
-                          : ' We will tailor your roadmap explanations to support your level.'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {error && (
-                  <div className="p-4 bg-error/10 border border-error/20 text-error rounded-lg text-sm flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-error mt-1.5 flex-shrink-0" />
-                    {error}
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full group mt-4 h-12 text-base font-semibold"
-                  isLoading={isGenerating}
+            <div className="bg-zinc-950/40 backdrop-blur-xl border border-zinc-800/50 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden min-h-[400px]">
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={step}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  {isGenerating ? 'Generating your roadmap...' : 'Generate My Roadmap'}
-                  {!isGenerating && <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />}
-                </Button>
-              </form>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-8 grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto"
-          >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 p-4 bg-surface-container/30 backdrop-blur-md rounded-xl border border-outline-variant hover:border-outline transition-colors">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Clock className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <div className="font-medium text-on-surface text-sm">Personalized</div>
-                <div className="text-xs text-on-surface-variant mt-0.5">Based on your schedule</div>
-              </div>
+                  {step === 1 && (
+                    <StepGoal 
+                      goal={formData.goal} 
+                      setGoal={(v) => updateFormData('goal', v)} 
+                      onNext={handleNext} 
+                    />
+                  )}
+                  {step === 2 && (
+                    <StepProfile 
+                      skillLevel={formData.skill_level} 
+                      setSkillLevel={(v) => updateFormData('skill_level', v)} 
+                      learningStyle={formData.learning_style} 
+                      setLearningStyle={(v) => updateFormData('learning_style', v)} 
+                      onNext={handleNext} 
+                      onBack={handleBack} 
+                    />
+                  )}
+                  {step === 3 && (
+                    <StepCommitment 
+                      dailyHours={formData.daily_hours} 
+                      setDailyHours={(v) => updateFormData('daily_hours', v)} 
+                      targetMonths={formData.target_months} 
+                      setTargetMonths={(v) => updateFormData('target_months', v)} 
+                      onNext={handleNext} 
+                      onBack={handleBack} 
+                    />
+                  )}
+                  {step === 4 && (
+                    <StepReview 
+                      formData={formData} 
+                      goToStep={goToStep} 
+                      onGenerate={handleGenerate} 
+                      isGenerating={isGenerating}
+                      onStartQuiz={handleStartQuiz}
+                      isQuizLoading={isQuizLoading}
+                      assessmentScore={assessmentScore}
+                      quizScore={quizScore}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
-
-            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 p-4 bg-surface-container/30 backdrop-blur-md rounded-xl border border-outline-variant hover:border-outline transition-colors">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Target className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <div className="font-medium text-on-surface text-sm">Goal-Oriented</div>
-                <div className="text-xs text-on-surface-variant mt-0.5">Clear milestones</div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 p-4 bg-surface-container/30 backdrop-blur-md rounded-xl border border-outline-variant hover:border-outline transition-colors">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <BookOpen className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <div className="font-medium text-on-surface text-sm">Comprehensive</div>
-                <div className="text-xs text-on-surface-variant mt-0.5">Resources included</div>
-              </div>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Quiz Modal */}
       {showQuizModal && quizQuestions.length > 0 && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-surface-container-high rounded-2xl border border-outline w-full max-w-lg shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col"
+            className="bg-zinc-950 rounded-2xl border border-zinc-800 w-full max-w-lg shadow-[0_0_40px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col"
           >
-            {/* Modal Header */}
-            <div className="bg-surface-container border-b border-outline-variant px-6 py-5 flex justify-between items-center">
-              <h3 className="font-headline font-bold text-lg text-on-surface flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-primary" />
-                Assessment: {formData.goal}
+            <div className="bg-zinc-900 border-b border-zinc-800 px-6 py-5 flex justify-between items-center">
+              <h3 className="font-headline font-bold text-lg text-zinc-100 flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-amber-500" />
+                Assessment Quiz
               </h3>
               {quizScore === null && (
-                <span className="text-xs font-mono text-on-surface-variant bg-surface-container-highest px-3 py-1 rounded-full border border-outline-variant">
+                <span className="text-xs font-mono text-zinc-500 bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700">
                   {currentQuestionIndex + 1} / {quizQuestions.length}
                 </span>
               )}
             </div>
 
-            {/* Modal Content */}
             <div className="p-6 flex-1 overflow-y-auto min-h-[300px]">
               {quizScore === null ? (
                 <div className="space-y-5">
-                  <h4 className="font-medium text-on-surface leading-relaxed text-base">
+                  <h4 className="font-medium text-zinc-200 leading-relaxed text-base">
                     {quizQuestions[currentQuestionIndex].question}
                   </h4>
                   <div className="space-y-3 pt-2">
@@ -396,14 +299,14 @@ export default function GeneratePage() {
                         onClick={() => handleSelectOption(idx)}
                         className={`w-full p-4 text-left text-sm rounded-xl border transition-all duration-200 flex items-start gap-3 group ${
                           selectedAnswers[currentQuestionIndex] === idx
-                            ? 'border-primary bg-primary/10 text-primary font-medium'
-                            : 'border-outline-variant hover:border-outline bg-surface-container text-on-surface hover:bg-surface-container-high'
+                            ? 'border-amber-500 bg-amber-500/10 text-amber-500 font-medium'
+                            : 'border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-800'
                         }`}
                       >
                         <span className={`w-6 h-6 rounded-full flex items-center justify-center border text-xs font-bold transition-colors ${
                           selectedAnswers[currentQuestionIndex] === idx
-                            ? 'border-primary bg-primary text-on-primary'
-                            : 'border-outline text-on-surface-variant group-hover:border-on-surface-variant group-hover:text-on-surface'
+                            ? 'border-amber-500 bg-amber-500 text-black'
+                            : 'border-zinc-700 text-zinc-500 group-hover:text-zinc-300 group-hover:border-zinc-500'
                         }`}>
                           {String.fromCharCode(65 + idx)}
                         </span>
@@ -414,50 +317,34 @@ export default function GeneratePage() {
                 </div>
               ) : (
                 <div className="space-y-6 text-center py-8">
-                  <div className="w-20 h-20 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(40,167,69,0.2)]">
+                  <div className="w-20 h-20 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                     <Award className="w-10 h-10" />
                   </div>
                   <div className="space-y-3">
-                    <h4 className="font-headline font-bold text-2xl text-on-surface">Quiz Completed!</h4>
-                    <p className="text-4xl font-extrabold text-primary drop-shadow-[0_0_10px_rgba(255,113,98,0.3)]">
-                      {quizScore} <span className="text-2xl text-on-surface-variant">/ {quizQuestions.length}</span>
+                    <h4 className="font-headline font-bold text-2xl text-zinc-100">Quiz Completed!</h4>
+                    <p className="text-4xl font-extrabold text-amber-500 drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">
+                      {quizScore} <span className="text-2xl text-zinc-600">/ {quizQuestions.length}</span>
                     </p>
-                    <p className="text-sm text-on-surface-variant max-w-sm mx-auto pt-2">
+                    <p className="text-sm text-zinc-400 max-w-sm mx-auto pt-2">
                       {assessmentScore !== null && assessmentScore >= 0.7
-                        ? "Excellent job! You've shown solid competency. We'll automatically customize your roadmap by skipping basic topics."
-                        : "Thanks for taking the assessment! We'll tailor your roadmap to ensure you cover all necessary fundamentals."}
+                        ? "Excellent job! We'll tailor your roadmap to skip introductory concepts."
+                        : "Thanks for taking the quiz! We'll ensure your roadmap covers all fundamentals."}
                     </p>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="bg-surface-container border-t border-outline-variant px-6 py-4 flex justify-end gap-3">
+            <div className="bg-zinc-900 border-t border-zinc-800 px-6 py-4 flex justify-end gap-3">
               {quizScore === null ? (
                 <>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setShowQuizModal(false)}
-                    className="text-xs"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleNextQuestion}
-                    disabled={selectedAnswers[currentQuestionIndex] === undefined}
-                    className="text-xs px-6"
-                  >
+                  <Button variant="ghost" onClick={() => setShowQuizModal(false)} className="text-xs text-zinc-400">Cancel</Button>
+                  <Button onClick={handleNextQuestion} disabled={selectedAnswers[currentQuestionIndex] === undefined} className="text-xs px-6 bg-zinc-100 text-black hover:bg-white">
                     {currentQuestionIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question'}
                   </Button>
                 </>
               ) : (
-                <Button
-                  onClick={() => setShowQuizModal(false)}
-                  className="text-xs px-8"
-                >
-                  Done
-                </Button>
+                <Button onClick={() => setShowQuizModal(false)} className="text-xs px-8 bg-zinc-100 text-black hover:bg-white">Done</Button>
               )}
             </div>
           </motion.div>
@@ -466,4 +353,3 @@ export default function GeneratePage() {
     </div>
   )
 }
-

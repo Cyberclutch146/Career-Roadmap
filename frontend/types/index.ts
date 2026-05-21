@@ -99,6 +99,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   timestamp: string
+  action?: { type: string; payload: any }
 }
 
 export interface RoadmapFormData {

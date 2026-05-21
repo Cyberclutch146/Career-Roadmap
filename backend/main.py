@@ -167,7 +167,8 @@ async def chat_with_mentor(
 
     return ChatResponse(
         reply=response["reply"],
-        suggestions=response["suggestions"]
+        suggestions=response["suggestions"],
+        action=response.get("action")
     )
 
 if __name__ == "__main__":

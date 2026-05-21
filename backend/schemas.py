@@ -166,6 +166,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
     suggestions: List[str] = []
+    action: Optional[Dict[str, Any]] = None
 
 
 class UserCreate(BaseModel):

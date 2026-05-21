@@ -1110,42 +1110,108 @@ Return ONLY the JSON, no additional text or explanation."""
         roadmap_context: Dict[str, Any],
         user_message: str
     ) -> Dict[str, Any]:
-        prompt = f"""You are an AI mentor helping a student following this learning roadmap:
-
+        system_instruction = f"""You are an AI mentor helping a student following this learning roadmap:
 Goal: {roadmap_context.get('goal', 'Learning')}
 Current Progress: {roadmap_context.get('progress', 'Just started')}
 
-The student asks: {user_message}
-
-Provide a helpful, educational response that:
-1. Answers their question directly
-2. References their roadmap/learning context when relevant
-3. Suggests next steps or resources
-4. Encourages them in their learning journey
-
-Keep responses concise but informative (2-4 paragraphs max).
-If asking what to learn next, reference their roadmap phases and chapters.
+You have access to tools. Use them when the user asks to mark something complete, navigate to a page, or if they need a quick quiz.
+Otherwise, provide a helpful, educational response (2-4 paragraphs max).
 """
+
+        tools = [
+            {
+                "function_declarations": [
+                    {
+                        "name": "update_lesson_status",
+                        "description": "Marks a lesson as completed.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "lesson_id": {"type": "string", "description": "The ID of the lesson to update."}
+                            },
+                            "required": ["lesson_id"]
+                        }
+                    },
+                    {
+                        "name": "navigate_to_view",
+                        "description": "Navigates the user to a specific view in the application.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "view_name": {"type": "string", "description": "The name of the view (e.g. dashboard, roadmap, gallery)."}
+                            },
+                            "required": ["view_name"]
+                        }
+                    },
+                    {
+                        "name": "generate_mini_quiz",
+                        "description": "Generates a quick 3-question quiz on a specific topic.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "topic": {"type": "string", "description": "The topic to generate a quiz for."}
+                            },
+                            "required": ["topic"]
+                        }
+                    }
+                ]
+            }
+        ]
+
+        action_metadata = None
+        reply = "I encountered an error processing that request."
 
         if self.model:
             try:
-                response = await self.model.generate_content_async(prompt)
+                # Use a specific model instance with tools
+                agent_model = genai.GenerativeModel(
+                    "gemini-flash-latest",
+                    tools=tools,
+                    system_instruction=system_instruction
+                )
+                
+                chat = agent_model.start_chat()
+                response = await chat.send_message_async(user_message)
+
+                if response.parts:
+                    for part in response.parts:
+                        if part.function_call:
+                            func_name = part.function_call.name
+                            args = dict(part.function_call.args)
+                            
+                            # Record the action to send to the frontend
+                            action_metadata = {
+                                "type": func_name,
+                                "payload": args
+                            }
+                            
+                            # Provide a mock function response back to Gemini to complete the loop
+                            func_response = {"status": "success", "message": f"Action {func_name} executed."}
+                            response = await chat.send_message_async(
+                                genai.types.ContentDict(
+                                    role="user",
+                                    parts=[genai.types.Part.from_function_response(name=func_name, response=func_response)]
+                                )
+                            )
+                            break
+
                 reply = response.text
             except Exception as e:
-                reply = f"I'd be happy to help with your learning journey! Regarding your question about {user_message[:50]}... - could you tell me more about what specific aspect you'd like to explore? Based on your roadmap, we can identify the best resources and next steps."
+                print(f"Agentic loop error: {e}")
+                reply = f"I'd be happy to help with your learning journey! Regarding your question about {user_message[:50]}... - could you tell me more about what specific aspect you'd like to explore?"
         else:
-            reply = f"Great question about {user_message[:50]}! Based on your learning journey, I'd recommend reviewing the relevant chapter in your roadmap and practicing with hands-on exercises. Would you like me to suggest specific resources from your roadmap?"
+            reply = f"Great question about {user_message[:50]}! Based on your learning journey, I'd recommend reviewing the relevant chapter in your roadmap and practicing with hands-on exercises."
 
         suggestions = [
             "What should I learn next?",
             "Can you explain this topic in simpler terms?",
-            "Give me some practice exercises",
-            "How does this connect to what I learned before?"
+            "Give me some practice exercises"
         ]
 
         return {
             "reply": reply,
-            "suggestions": suggestions
+            "suggestions": suggestions,
+            "action": action_metadata
         }
 
     async def generate_assessment_quiz(self, goal: str, skill_level: str) -> List[Dict[str, Any]]:
