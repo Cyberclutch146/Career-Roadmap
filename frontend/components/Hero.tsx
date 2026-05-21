@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export function Hero() {
   return (
-    <section className="relative pt-40 pb-24 overflow-hidden blueprint-grid border-b border-white/5">
+    <section className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden blueprint-grid border-b border-white/5 pt-20">
       {/* Ambient background glow */}
       <div className="absolute top-0 right-0 w-[800px] h-[350px] bg-primary/[0.04] rounded-full blur-[140px] pointer-events-none" />
 

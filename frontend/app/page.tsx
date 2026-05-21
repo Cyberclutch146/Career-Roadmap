@@ -14,7 +14,7 @@ import { ArrowRight } from 'lucide-react'
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen w-full">
       <Navbar />
       <Hero />
       <Features />
@@ -22,7 +22,7 @@ export default function Home() {
       <ExampleRoadmap />
       <Testimonials />
 
-      <section className="section-container">
+      <section className="relative min-h-[100dvh] w-full flex flex-col justify-center py-24">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -56,7 +56,9 @@ export default function Home() {
         </div>
       </section>
 
-      <Footer />
+      <div>
+        <Footer />
+      </div>
     </main>
   )
 }
