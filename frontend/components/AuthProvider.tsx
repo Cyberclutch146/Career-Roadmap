@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useStore } from '@/store'
 import { usePathname, useRouter } from 'next/navigation'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -16,6 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const [isInitializing, setIsInitializing] = useState(true)
+  const isRedirecting = useRef(false)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -27,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           streak: user?.streak || 0,
           last_active: new Date().toISOString().split('T')[0]
         })
+        isRedirecting.current = false
       } else {
         setUser(null)
       }
@@ -37,8 +39,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [setUser])
 
   useEffect(() => {
-    if (!isInitializing && !user && !isPublicPath(pathname)) {
-      router.push('/login')
+    if (!isInitializing && !user && !isPublicPath(pathname) && !isRedirecting.current) {
+      isRedirecting.current = true
+      router.replace('/')
     }
   }, [isInitializing, user, pathname, router])
 
@@ -50,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // Prevent flash of protected content
+  // On protected routes with no user, show spinner while redirecting to home
   if (!user && !isPublicPath(pathname)) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">

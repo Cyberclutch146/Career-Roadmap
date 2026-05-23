@@ -323,7 +323,6 @@ export function Navbar() {
                             console.error("Signout error", e);
                           }
                           logout();
-                          router.push('/');
                         }}
                         className="w-full rounded-[20px] px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5"
                         style={{
@@ -447,7 +446,6 @@ export function Navbar() {
                       setMobileMenuOpen(false);
                       try { await signOut(auth); } catch (e) {}
                       logout();
-                      router.push('/');
                     }}
                     className="flex items-center gap-3 w-full p-4 rounded-xl text-red-500 bg-red-500/10 hover:bg-red-500/20 transition-colors"
                   >

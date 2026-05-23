@@ -148,10 +148,11 @@ Press Ctrl+C to stop both servers.
 "@ -ForegroundColor White
 
 # Start frontend in foreground
-Set-Location $FRONTEND_DIR
+Push-Location $FRONTEND_DIR
 try {
     npm run dev
 } finally {
+    Pop-Location
     Write-Host "`n[*] Stopping backend server..." -ForegroundColor Yellow
     Stop-Job -Job $backendJob
     Remove-Job -Job $backendJob

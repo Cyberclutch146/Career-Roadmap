@@ -1,11 +1,10 @@
 # Single command to run everything - RoadmapAI
-# Usage: & {iwr -useb https://gist.githubusercontent.com/user/roadmapai-setup.ps1} | iex
-# Or save this file as run.ps1 and execute: .\run.ps1
+# Usage: .\roadmap.ps1  (from the project root)
 
 $ErrorActionPreference = "SilentlyContinue"
 
 $PROJECT_ROOT = $PSScriptRoot
-if (-not $PROJECT_ROOT) { $PROJECT_ROOT = "." }
+if (-not $PROJECT_ROOT) { $PROJECT_ROOT = (Get-Location).Path }
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "  RoadmapAI - Starting Everything..." -ForegroundColor Cyan
@@ -13,16 +12,18 @@ Write-Host "========================================`n" -ForegroundColor Cyan
 
 # Install backend
 Write-Host "[*] Setting up backend..." -ForegroundColor Yellow
-Set-Location "$PROJECT_ROOT\backend"
+Push-Location "$PROJECT_ROOT\backend"
 python -m venv venv
 & ".\venv\Scripts\Activate.ps1" -Quiet
 pip install --quiet -r requirements.txt
 & deactivate
+Pop-Location
 
 # Install frontend
 Write-Host "[*] Setting up frontend..." -ForegroundColor Yellow
-Set-Location "$PROJECT_ROOT\frontend"
+Push-Location "$PROJECT_ROOT\frontend"
 npm install --silent --legacy-peer-deps
+Pop-Location
 
 # Create env files if missing
 if (-not (Test-Path "$PROJECT_ROOT\backend\.env")) {
@@ -34,8 +35,6 @@ CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 if (-not (Test-Path "$PROJECT_ROOT\frontend\.env.local")) {
     "NEXT_PUBLIC_API_URL=http://localhost:8000" | Out-File "$PROJECT_ROOT\frontend\.env.local"
 }
-
-
 
 # Start backend in background
 Write-Host "[*] Starting backend server in background..." -ForegroundColor Yellow
@@ -55,13 +54,12 @@ Start-Process "http://localhost:3000"
 # Start frontend in foreground
 Write-Host "[*] Starting frontend server..." -ForegroundColor Yellow
 Write-Host "`nPress Ctrl+C to stop both servers.`n" -ForegroundColor Gray
-Set-Location "$PROJECT_ROOT\frontend"
+Push-Location "$PROJECT_ROOT\frontend"
 try {
     npm run dev
 } finally {
+    Pop-Location
     Write-Host "`n[*] Stopping backend server..." -ForegroundColor Yellow
     Stop-Job -Job $backendJob
     Remove-Job -Job $backendJob
 }
-
-
