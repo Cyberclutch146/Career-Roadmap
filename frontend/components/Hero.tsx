@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useStore } from '@/store'
 
 export function Hero() {
+  const { user } = useStore()
+  const targetHref = user ? '/dashboard' : '/login'
   return (
     <section className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden blueprint-grid border-b border-white/5 pt-20">
       {/* Ambient background glow */}
@@ -43,23 +46,30 @@ export function Hero() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
               </svg>
             </div>
-            <Link href="/generate">
+            <Link href={targetHref}>
               <input
                 readOnly
                 className="w-full bg-surface-container/80 backdrop-blur-md border border-outline-variant rounded-full py-5 pl-14 pr-40 text-on-surface focus:outline-none focus:border-primary/50 transition-all font-body text-lg placeholder:text-on-surface-variant/40 shadow-xl cursor-pointer hover:border-outline"
                 placeholder="I want to learn machine learning in 3 months..."
               />
             </Link>
-            <Link href="/generate" className="absolute right-2.5 top-2.5 bottom-2.5">
+            <Link href={targetHref} className="absolute right-2.5 top-2.5 bottom-2.5">
               <button className="h-full bg-primary hover:bg-primary/90 text-on-primary px-8 rounded-full font-label text-sm font-semibold transition-all active:scale-95 shadow-glow hover:shadow-glow-hover">
                 Generate Path
               </button>
             </Link>
+            {user && (
+              <div className="absolute -bottom-10 left-0 right-0 flex justify-center">
+                <Link href="/dashboard" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors underline underline-offset-4">
+                  Access Dashboard &rarr;
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile: Stacked layout — clean CTA button */}
           <div className="sm:hidden flex flex-col gap-3">
-            <Link href="/generate" className="block">
+            <Link href={targetHref} className="block">
               <div className="bg-surface-container/80 backdrop-blur-md border border-outline-variant rounded-2xl py-4 px-5 text-on-surface-variant/40 font-body text-sm flex items-center gap-3 active:scale-[0.98] transition-transform">
                 <svg className="w-5 h-5 text-on-surface-variant/50 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
@@ -67,11 +77,16 @@ export function Hero() {
                 I want to learn machine learning...
               </div>
             </Link>
-            <Link href="/generate" className="block">
+            <Link href={targetHref} className="block">
               <button className="w-full bg-primary hover:bg-primary/90 text-on-primary py-4 rounded-2xl font-label text-sm font-semibold transition-all active:scale-95 shadow-glow">
                 Generate Your Path
               </button>
             </Link>
+            {user && (
+              <Link href="/dashboard" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors text-center mt-2 underline underline-offset-4">
+                Access Dashboard &rarr;
+              </Link>
+            )}
           </div>
         </motion.div>
       </div>

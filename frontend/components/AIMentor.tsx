@@ -330,6 +330,8 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
   )
 }
 
+import { usePathname } from 'next/navigation'
+
 /**
  * Global chat widget FAB + chat panel.
  * Drop this into layout.tsx to make it available on every page.
@@ -337,6 +339,9 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const { currentRoadmap } = useStore()
+  const pathname = usePathname()
+
+  if (pathname === '/') return null
 
   return (
     <>

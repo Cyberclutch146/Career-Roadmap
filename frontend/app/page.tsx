@@ -11,8 +11,11 @@ import { Testimonials } from '@/components/Testimonials'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
 import { ArrowRight } from 'lucide-react'
+import { useStore } from '@/store'
 
 export default function Home() {
+  const { user } = useStore()
+  const targetHref = user ? '/dashboard' : '/login'
   return (
     <main className="min-h-screen w-full overflow-x-hidden">
       <Navbar />
@@ -41,7 +44,7 @@ export default function Home() {
               Your personalized roadmap is just a few clicks away.
             </p>
             <div className="relative z-10 flex justify-center">
-              <Link href="/generate">
+              <Link href={targetHref}>
                 <Button
                   variant="primary"
                   size="lg"

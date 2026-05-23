@@ -65,7 +65,7 @@ export function Navbar() {
 
   const navLinks = user
     ? [...baseLinks, { label: 'My Library', path: '/dashboard', exact: true }, { label: 'Create', path: '/generate' }]
-    : [...baseLinks, { label: 'How It Works', path: '/#how-it-works' }, { label: 'Get Started', path: '/generate' }]
+    : [...baseLinks, { label: 'How It Works', path: '/#how-it-works' }, { label: 'Get Started', path: '/login' }]
 
   const isLinkActive = (link: typeof navLinks[0]) => {
     if ('exact' in link && link.exact) return pathname === link.path
@@ -354,7 +354,7 @@ export function Navbar() {
                   Sign In
                 </Link>
                 <Link 
-                  href="/generate" 
+                  href="/login" 
                   className="text-sm font-medium text-white px-4 py-1.5 rounded-full transition-all hover:opacity-90"
                   style={{
                     background: `linear-gradient(135deg, ${themeVars.primaryBase} 0%, ${themeVars.moss} 100%)`,
@@ -463,7 +463,7 @@ export function Navbar() {
                     Sign In
                   </Link>
                   <Link
-                    href="/generate"
+                    href="/login"
                     onClick={() => setMobileMenuOpen(false)}
                     className="w-full text-center py-3 rounded-xl text-black font-semibold transition-colors"
                     style={{ background: themeVars.primaryBase }}
