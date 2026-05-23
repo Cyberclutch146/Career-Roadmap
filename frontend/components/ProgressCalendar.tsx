@@ -125,11 +125,14 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
       <div className="overflow-x-auto pb-2">
         <div className="min-w-[640px] flex gap-2 justify-center">
           {/* Weekday labels */}
-          <div className="flex flex-col justify-between text-[10px] text-on-surface-variant pr-2 pt-6 pb-2 h-[120px] select-none font-medium">
-            <span>Sun</span>
-            <span>Tue</span>
-            <span>Thu</span>
-            <span>Sat</span>
+          <div className="flex flex-col gap-1.5 text-[10px] text-on-surface-variant pr-2 select-none font-medium pt-0.5">
+            <span className="h-4 flex items-center">Sun</span>
+            <span className="h-4 flex items-center"></span>
+            <span className="h-4 flex items-center">Tue</span>
+            <span className="h-4 flex items-center"></span>
+            <span className="h-4 flex items-center">Thu</span>
+            <span className="h-4 flex items-center"></span>
+            <span className="h-4 flex items-center">Sat</span>
           </div>
 
           {/* Grid columns */}
@@ -147,7 +150,7 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
                     <div key={dateStr} className="relative group">
                       <button
                         onClick={() => setSelectedDateStr(isSelected ? null : dateStr)}
-                        className={`w-4.5 h-4.5 rounded-[4px] border transition-all duration-150 ${getHeatmapColor(count)} ${
+                        className={`w-4 h-4 rounded-[4px] border transition-all duration-150 ${getHeatmapColor(count)} ${
                           isSelected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''
                         } ${isToday ? 'border-primary border-2' : 'border-outline-variant/30'}`}
                         title={`${count} lessons completed on ${formatDateFull(date)}`}
