@@ -17,9 +17,10 @@ RoadmapAI is an AI-powered educational platform that transforms career and learn
 |---|---|---|---|
 | **Frontend Framework** | Next.js | 14.x (App Router) | Fully functional with `'use client'` directives and SSR-safe patterns. |
 | **Language** | TypeScript | Strict mode | All components and stores are strictly typed. |
-| **Styling** | TailwindCSS | v3.x | Dark-mode amber/zinc design system with custom tokens in `globals.css`. |
+| **Styling** | TailwindCSS | v3.x | Strict 100% Dark-mode (amber/zinc) design system. Universal Light Mode was explored but reverted for aesthetic consistency. |
+| **Background** | WebGL / Three.js | Custom | `Galaxy.tsx` dynamic particle background powering the global application aesthetic. |
 | **State Management** | Zustand | Stable | Handles user state, roadmap selection, progress tracking, and settings. |
-| **Charts** | Recharts | v3.8+ | Used in Progress Heatmap and Skills Radar components. |
+| **Charts** | Recharts | v3.8+ | Used in Progress Heatmap, Weekly Velocity, and Skills Radar components. |
 | **Animations** | Framer Motion | v11+ | Employed for page transitions, card hovers, accordion expand/collapse, mobile sidebar, and navbar animations. |
 | **Rich Text Editor** | TipTap | v3.23+ | Used in the Notes Workspace for rich text editing with formatting toolbar. |
 | **Code Editor** | Monaco Editor | v4.7+ | Replaced basic textarea in Code Playground with full syntax highlighting, autocomplete, and line numbers. |
@@ -96,6 +97,8 @@ Career-Roadmap/
 │   │   ├── LessonWorkspace.tsx    # Tabbed workspace (Content, Code, Interview, Notes)
 │   │   ├── AIMentor.tsx           # Chat interface + global ChatWidget FAB
 │   │   ├── RichTextEditor.tsx     # TipTap editor wrapper
+│   │   ├── AppBackground.tsx      # Global background wrapper for Galaxy component
+│   │   ├── Galaxy.tsx             # 3D interactive WebGL background component
 │   │   ├── ProgressCalendar.tsx   # GitHub-style heatmap + streak
 │   │   ├── SkillsRadar.tsx        # Recharts radar chart
 │   │   ├── WeeklyVelocity.tsx     # Recharts weekly lesson velocity chart
@@ -150,9 +153,12 @@ Career-Roadmap/
 - [x] **AI Mentor Chat**: Context-aware assistant that understands roadmap, progress, and lesson content.
 - [x] **AI Mock Technical Interviews**: Simulated interviews with scoring feedback and improvement suggestions.
 
-#### Learning Experience
-- [x] **Tabbed Lesson Workspace**: 4-tab interface (Content, Code Playground, Mock Interview, Notes).
-- [x] **Monaco Code Playground**: Full syntax highlighting, autocomplete, line numbers, and live rendering. Replaced basic textarea.
+#### UI / UX
+- [x] **Dark-Mode Glassmorphism**: Complete stylistic overhaul using pure dark-mode CSS tokens, ambient glow effects, and responsive mobile layouts.
+- [x] **3D Generative Background**: Implemented a stunning `Galaxy` WebGL particle simulation for the global application background.
+- [x] **Dashboard Analytics Overhaul**: Built comprehensive user dashboard featuring Recharts-powered `SkillsRadar`, `WeeklyVelocity`, and GitHub-style `ProgressCalendar`. Mobile layouts optimized with native-feeling custom dropdowns.
+- [x] **Tabbed Lesson Workspace**: Seamless switching between Lesson Content, Code Playground (Monaco), Technical Mock Interview (AI Chat), and Rich Text Notes (TipTap).
+- [x] **Landing Page & Gallery**: Fully responsive landing page with animated sections and a public roadmap gallery with community sorting.
 - [x] **TipTap Rich Text Notes**: Formatting toolbar with bold, italic, lists, and code blocks. Auto-save with animated toast feedback.
 - [x] **Resource Indexing**: Categorized guides, docs, code references, and videos under lesson sheets.
 - [x] **Mobile Sidebar (Swappable)**: Framer Motion drawer/bottom-sheet with "Swap Mode" toggle for testing.
