@@ -13,18 +13,15 @@ export function MobileNav() {
   const links = [
     { href: '/', icon: Home, label: 'Home' },
     { href: '/generate', icon: Sparkles, label: 'Generate' },
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', requiresAuth: true },
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/gallery', icon: Compass, label: 'Gallery' },
-    { href: '/profile', icon: User, label: 'Profile', requiresAuth: true },
+    { href: '/profile', icon: User, label: 'Profile' },
   ]
-
-  // Filter out links that require auth if the user is not logged in
-  const visibleLinks = links.filter((link) => !link.requiresAuth || user)
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-xl border-t border-surface-variant/20 shadow-[0_-4px_12px_rgba(0,0,0,0.3)] pb-safe">
       <nav className="flex items-center justify-around h-16 px-2">
-        {visibleLinks.map((link) => {
+        {links.map((link) => {
           const Icon = link.icon
           const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/')
           

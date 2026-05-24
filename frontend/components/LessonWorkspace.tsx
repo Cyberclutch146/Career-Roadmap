@@ -8,6 +8,7 @@ import { Button } from './ui/Button'
 import { Card } from './ui/Card'
 import { RichTextEditor } from './RichTextEditor'
 import { api } from '@/lib/api'
+import { shouldSyncWithFirestore } from '@/lib/sync'
 import {
   X,
   BookOpen,
@@ -80,7 +81,7 @@ export function LessonWorkspace({
   useEffect(() => {
     const fetchNote = async () => {
       setNoteStatus('idle')
-      const syncWithFirestore = false
+      const syncWithFirestore = shouldSyncWithFirestore(user)
       if (user && syncWithFirestore) {
         try {
           const { doc, getDoc } = await import('firebase/firestore')
@@ -151,7 +152,7 @@ export function LessonWorkspace({
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
 
     saveTimeoutRef.current = setTimeout(async () => {
-      const syncWithFirestore = false
+      const syncWithFirestore = shouldSyncWithFirestore(user)
       if (user && syncWithFirestore) {
         try {
           const { doc, setDoc } = await import('firebase/firestore')
@@ -326,7 +327,7 @@ export function LessonWorkspace({
       </div>
 
       {/* Tabs list */}
-      <div className="bg-white border-b border-border px-5 flex gap-4 text-sm font-medium">
+      <div className="bg-zinc-950/60 border-b border-zinc-800/60 px-5 flex gap-4 text-sm font-medium overflow-x-auto whitespace-nowrap scrollbar-hide">
         <button
           onClick={() => setActiveTab('content')}
           className={`py-3 border-b-2 transition-colors flex items-center gap-1.5 ${
@@ -385,7 +386,7 @@ export function LessonWorkspace({
               className="space-y-8"
             >
               {/* Lesson Description */}
-              <div className="bg-white p-5 rounded-xl border border-border">
+              <div className="bg-zinc-900/60 p-5 rounded-xl border border-zinc-800/40">
                 <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Lesson Overview</h3>
                 <p className="text-on-surface-variant leading-relaxed whitespace-pre-wrap max-w-prose">{lesson.description}</p>
               </div>
@@ -411,7 +412,7 @@ export function LessonWorkspace({
 
               {/* Practice Exercises */}
               {lesson.practice_exercises && lesson.practice_exercises.length > 0 && (
-                <div className="bg-white p-5 rounded-xl border border-border">
+                <div className="bg-zinc-900/60 p-5 rounded-xl border border-zinc-800/40">
                   <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-primary" />
                     Practice Exercises
@@ -431,7 +432,7 @@ export function LessonWorkspace({
 
               {/* Additional Resources */}
               {otherResources.length > 0 && (
-                <div className="bg-white p-5 rounded-xl border border-border">
+                <div className="bg-zinc-900/60 p-5 rounded-xl border border-zinc-800/40">
                   <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-3">Additional Readings & Resources</h3>
                   <div className="grid gap-3">
                     {otherResources.map((res, idx) => (
@@ -465,7 +466,7 @@ export function LessonWorkspace({
               exit={{ opacity: 0, y: -10 }}
               className="h-full flex flex-col space-y-4"
             >
-              <div className="bg-white rounded-xl border border-border overflow-hidden flex flex-col flex-1 min-h-[300px]">
+              <div className="bg-zinc-900/60 rounded-xl border border-zinc-800/40 overflow-hidden flex flex-col flex-1 min-h-[300px]">
                 {/* Sandbox tabs */}
                 <div className="bg-surface-container px-4 py-2 border-b border-border flex items-center justify-between">
                   <div className="flex gap-2">
@@ -475,8 +476,8 @@ export function LessonWorkspace({
                         onClick={() => setSandboxTab(tab)}
                         className={`text-xs px-3 py-1.5 rounded-md font-semibold uppercase tracking-wider transition-colors ${
                           sandboxTab === tab
-                            ? 'bg-white text-on-surface shadow-sm border border-border'
-                            : 'text-on-surface-variant hover:text-on-surface'
+                            ? 'bg-zinc-800 text-zinc-100 shadow-sm border border-zinc-700'
+                            : 'text-zinc-500 hover:text-zinc-300'
                         }`}
                       >
                         {tab}
@@ -529,13 +530,13 @@ export function LessonWorkspace({
               </div>
 
               {/* Output Preview */}
-              <div className="flex flex-col h-[280px] bg-white rounded-xl border border-border overflow-hidden shadow-sm relative">
+              <div className="flex flex-col h-[280px] bg-zinc-900/60 rounded-xl border border-zinc-800/40 overflow-hidden shadow-sm relative">
                 <div className="bg-surface-container px-4 py-2 border-b border-border flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                   Live Preview Output
                 </div>
-                <div className="flex-1 bg-white relative">
+                <div className="flex-1 bg-zinc-950 relative">
                   {isExecutingCode && (
-                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
+                    <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
                       <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mb-2">
                         <Loader2 className="w-4 h-4 text-primary animate-spin" />
                       </div>
@@ -571,7 +572,7 @@ export function LessonWorkspace({
               className="space-y-6"
             >
               {!interviewStarted ? (
-                <div className="bg-white p-6 rounded-xl border border-border text-center space-y-4 shadow-sm">
+                <div className="bg-zinc-900/60 p-6 rounded-xl border border-zinc-800/40 text-center space-y-4 shadow-sm">
                   <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
                     <MessageSquare className="w-6 h-6" />
                   </div>
@@ -605,7 +606,7 @@ export function LessonWorkspace({
                         </div>
                         {/* Answer & Feedback */}
                         {item.answer && (
-                          <div className="bg-white border border-border rounded-xl p-4 space-y-2">
+                          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-2">
                             <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                               Your Answer
                             </p>
@@ -641,7 +642,7 @@ export function LessonWorkspace({
                             placeholder="Type your answer here..."
                             rows={3}
                             disabled={isInterviewLoading}
-                            className="w-full text-sm p-3 border border-border rounded-lg outline-none focus:border-primary resize-none bg-white shadow-inner"
+                            className="w-full text-sm p-3 border border-zinc-800 rounded-lg outline-none focus:border-primary resize-none bg-zinc-900 text-zinc-200 shadow-inner"
                           />
                           <div className="flex justify-end">
                             <Button
@@ -702,7 +703,7 @@ export function LessonWorkspace({
               exit={{ opacity: 0, y: -10 }}
               className="h-full flex flex-col space-y-4"
             >
-              <div className="flex-1 flex flex-col bg-white rounded-xl border border-border p-4 shadow-sm min-h-[350px]">
+              <div className="flex-1 flex flex-col bg-zinc-900/60 rounded-xl border border-zinc-800/40 p-4 shadow-sm min-h-[350px]">
                 <div className="flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
                   <span>Take notes as you learn</span>
                   <AnimatePresence>

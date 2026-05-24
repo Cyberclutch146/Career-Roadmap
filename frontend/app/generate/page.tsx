@@ -34,7 +34,7 @@ const STEPS = [
 
 export default function GeneratePage() {
   const router = useRouter()
-  const { setCurrentRoadmap, user } = useStore()
+  const { setCurrentRoadmap, user, addSavedRoadmap } = useStore()
   
   // Wizard State
   const [step, setStep] = useState(1)
@@ -142,6 +142,7 @@ export default function GeneratePage() {
       localStorage.setItem(`roadmap_${roadmap.id}`, JSON.stringify(roadmap))
 
       setCurrentRoadmap(roadmap)
+      addSavedRoadmap(roadmap)
       localStorage.setItem('current_roadmap', JSON.stringify(roadmap))
       
       setGeneratedRoadmapId(roadmap.id)
@@ -198,7 +199,7 @@ export default function GeneratePage() {
       <Navbar />
 
       <div className="pt-20 md:pt-28 pb-6 md:pb-16 relative z-10">
-        <div className="max-w-3xl mx-auto px-2 sm:px-6 w-full">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full">
           <WizardProgress steps={STEPS} currentStep={step} onStepClick={goToStep} />
 
           <div className="relative">

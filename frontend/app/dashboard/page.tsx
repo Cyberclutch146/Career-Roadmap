@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/store'
 import { api } from '@/lib/api'
+import { shouldSyncWithFirestore } from '@/lib/sync'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
@@ -29,15 +30,20 @@ import { WeeklyVelocity } from '@/components/WeeklyVelocity'
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { user, savedRoadmaps, setSavedRoadmaps } = useStore()
+  const { user, savedRoadmaps, setSavedRoadmaps, setCurrentRoadmap } = useStore()
   const [completions, setCompletions] = useState<CompletionItem[]>([])
   const [selectedRoadmapId, setSelectedRoadmapId] = useState<string>('')
   const [completedLessonsByRoadmap, setCompletedLessonsByRoadmap] = useState<Record<string, Set<string>>>({})
 
+  // Clear any active roadmap context when returning to dashboard
+  useEffect(() => {
+    setCurrentRoadmap(null)
+  }, [setCurrentRoadmap])
+
   useEffect(() => {
     const fetchRoadmaps = async () => {
-      let syncWithFirestore = false;
-      if (user && syncWithFirestore) {
+      const syncWithFirestore = shouldSyncWithFirestore(user)
+      if (syncWithFirestore) {
         try {
           const { collection, getDocs } = await import('firebase/firestore')
           const { db } = await import('@/lib/firebase')
@@ -217,7 +223,46 @@ export default function DashboardPage() {
     0
   )
 
-  const dayStreak = user?.streak || 0
+  const calculateStreak = () => {
+    if (!completions.length) return 0;
+    
+    const uniqueDates = Array.from(new Set(completions.map(c => c.completedAt.split('T')[0])))
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    
+    if (uniqueDates.length === 0) return 0;
+
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const latestDate = new Date(uniqueDates[0]);
+    latestDate.setHours(0, 0, 0, 0);
+    
+    if (latestDate.getTime() !== today.getTime() && latestDate.getTime() !== yesterday.getTime()) {
+      return 0;
+    }
+    
+    let currentDateToCheck = latestDate;
+    
+    for (const dateStr of uniqueDates) {
+      const d = new Date(dateStr);
+      d.setHours(0, 0, 0, 0);
+      
+      if (d.getTime() === currentDateToCheck.getTime()) {
+        streak++;
+        currentDateToCheck.setDate(currentDateToCheck.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    
+    return streak;
+  }
+
+  const dayStreak = calculateStreak();
 
   const totalTimeMinutes = completions.reduce(
     (sum, item) => sum + (item.durationMinutes || 0),
@@ -260,12 +305,13 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="grid grid-cols-3 gap-px bg-zinc-800/30 rounded-2xl overflow-hidden border border-zinc-800/40 mb-8"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-zinc-800/30 rounded-2xl overflow-hidden border border-zinc-800/40 mb-8"
           >
             {[
               { value: savedRoadmaps.length, label: 'Roadmaps', sub: 'active' },
               { value: totalCompletedLessons, label: 'Lessons', sub: 'completed' },
               { value: dayStreak, label: 'Day Streak', sub: dayStreak > 0 ? '🔥' : 'start today' },
+              { value: formatTimeInvested(totalTimeMinutes), label: 'Time Invested', sub: 'learning' },
             ].map((stat) => (
               <div key={stat.label} className="bg-[#0e0e0f] p-5 sm:p-6">
                 <div className="text-2xl sm:text-3xl font-bold text-zinc-100 font-headline tabular-nums leading-none mb-1.5">

@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isInitializing && !user && !isPublicPath(pathname) && !isRedirecting.current) {
       isRedirecting.current = true
-      router.replace('/')
+      router.replace('/login')
     }
   }, [isInitializing, user, pathname, router])
 

@@ -127,13 +127,26 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
     ? `Hi! I'm your AI mentor for **"${roadmap.goal}"**. I can help you understand concepts, suggest next steps, and guide you through your learning journey. What would you like to know?`
     : `Hi! I'm your AI learning assistant. I can help you explore career paths, explain concepts, recommend roadmaps, and answer questions about your learning journey. What's on your mind?`
 
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: 'assistant',
-      content: welcomeMessage,
-      timestamp: new Date().toISOString(),
-    },
-  ])
+  const { chatHistory, setChatHistory, addChatMessage } = useStore()
+
+  useEffect(() => {
+    if (chatHistory.length === 0) {
+      setChatHistory([
+        {
+          role: 'assistant',
+          content: welcomeMessage,
+          timestamp: new Date().toISOString(),
+        }
+      ])
+    }
+  }, [chatHistory.length, setChatHistory, welcomeMessage])
+
+  const messages = chatHistory.length > 0 ? chatHistory : [{
+    role: 'assistant',
+    content: welcomeMessage,
+    timestamp: new Date().toISOString(),
+  } as ChatMessage]
+
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -156,7 +169,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
       timestamp: new Date().toISOString(),
     }
 
-    setMessages((prev) => [...prev, userMessage])
+    addChatMessage(userMessage)
     setInputValue('')
     setIsLoading(true)
 
@@ -180,14 +193,14 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
         action: response.data.action,
       }
 
-      setMessages((prev) => [...prev, assistantMessage])
+      addChatMessage(assistantMessage)
     } catch (error) {
       const errorMessage: ChatMessage = {
         role: 'assistant',
         content: "I'm sorry, I encountered an error. Please try again in a moment.",
         timestamp: new Date().toISOString(),
       }
-      setMessages((prev) => [...prev, errorMessage])
+      addChatMessage(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -352,7 +365,7 @@ export function ChatWidget() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', delay: 0.5, stiffness: 200, damping: 15 }}
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-amber-500 text-black rounded-full shadow-glow flex items-center justify-center hover:bg-amber-400 hover:shadow-glow-hover transition-all duration-300 z-40 active:scale-95"
+          className="fixed bottom-24 md:bottom-6 right-6 w-14 h-14 bg-amber-500 text-black rounded-full shadow-glow flex items-center justify-center hover:bg-amber-400 hover:shadow-glow-hover transition-all duration-300 z-40 active:scale-95"
           aria-label="Open AI Mentor"
         >
           <Brain className="w-6 h-6" />

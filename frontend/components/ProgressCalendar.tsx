@@ -104,7 +104,7 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2.5 sm:gap-4 mt-4 md:mt-0">
           <div className="flex items-center gap-2 bg-warning/10 border border-warning/20 px-3 py-1.5 rounded-full">
             <Flame className="w-5 h-5 text-warning fill-warning animate-pulse" />
             <span className="text-sm font-medium text-on-surface">
@@ -122,8 +122,11 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
       </div>
 
       {/* Heatmap Grid container */}
-      <div className="overflow-x-auto pb-2">
-        <div className="min-w-[640px] flex gap-2 justify-center">
+      <div className="flex justify-between items-end mb-2">
+        <p className="text-[10px] text-on-surface-variant/70 uppercase tracking-widest sm:hidden">Swipe to view history &rarr;</p>
+      </div>
+      <div className="overflow-x-auto pb-2 scrollbar-hide">
+        <div className="min-w-[640px] flex gap-2 justify-center sm:justify-start">
           {/* Weekday labels */}
           <div className="flex flex-col gap-1.5 text-[10px] text-on-surface-variant pr-2 select-none font-medium pt-0.5">
             <span className="h-4 flex items-center">Sun</span>

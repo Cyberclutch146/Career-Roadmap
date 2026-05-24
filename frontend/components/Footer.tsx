@@ -22,7 +22,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-zinc-800/80 bg-zinc-950/40 backdrop-blur-md">
+    <footer className="border-t border-zinc-800/80 bg-zinc-950/40 backdrop-blur-md pb-20 md:pb-0">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
@@ -81,10 +81,10 @@ export function Footer() {
             &copy; {new Date().getFullYear()} RoadmapAI. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors p-2 rounded-full hover:bg-zinc-900">
+            <a href="https://github.com/blaze/career-roadmap" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors p-2 rounded-full hover:bg-zinc-900">
               <Github className="w-5 h-5" />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors p-2 rounded-full hover:bg-zinc-900">
+            <a href="https://twitter.com/RoadmapAI" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors p-2 rounded-full hover:bg-zinc-900">
               <Twitter className="w-5 h-5" />
             </a>
           </div>

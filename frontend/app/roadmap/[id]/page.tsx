@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useStore } from '@/store'
 import { api } from '@/lib/api'
+import { shouldSyncWithFirestore } from '@/lib/sync'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card'
@@ -78,7 +79,7 @@ export default function RoadmapPage() {
         }
 
         // 1. Try owner collection if user is logged in (disabled for offline mode)
-        const syncWithFirestore = false
+        const syncWithFirestore = shouldSyncWithFirestore(user)
         if (!loadedRoadmap && user && syncWithFirestore) {
           try {
             const { doc, getDoc } = await import('firebase/firestore')
@@ -214,7 +215,7 @@ export default function RoadmapPage() {
     }
     setCompletedLessons(newCompleted)
 
-    const syncWithFirestore = false
+    const syncWithFirestore = shouldSyncWithFirestore(user)
     if (user && syncWithFirestore && roadmap.user_id === user.id) {
       try {
         const { doc, setDoc } = await import('firebase/firestore')
@@ -265,7 +266,7 @@ export default function RoadmapPage() {
     }
     setBookmarkedLessons(newBookmarks)
 
-    const syncWithFirestore = false
+    const syncWithFirestore = shouldSyncWithFirestore(user)
     if (user && syncWithFirestore && roadmap.user_id === user.id) {
       try {
         const { doc, setDoc, deleteDoc } = await import('firebase/firestore')
@@ -298,6 +299,23 @@ export default function RoadmapPage() {
       const updated = { ...roadmap, is_public: newIsPublic }
       setRoadmap(updated)
       window.localStorage.setItem(`roadmap_${roadmap.id}`, JSON.stringify(updated))
+      
+      const syncWithFirestore = shouldSyncWithFirestore(user)
+      if (syncWithFirestore) {
+        const { doc, setDoc, deleteDoc } = await import('firebase/firestore')
+        const { db } = await import('@/lib/firebase')
+        const publicRef = doc(db, 'public_roadmaps', roadmap.id)
+        if (newIsPublic) {
+          await setDoc(publicRef, updated)
+        } else {
+          await deleteDoc(publicRef).catch(() => {})
+        }
+        
+        if (user && roadmap.user_id === user.id) {
+          const ownerRef = doc(db, 'users', user.id, 'roadmaps', roadmap.id)
+          await setDoc(ownerRef, updated, { merge: true })
+        }
+      }
       
       if (newIsPublic) {
         await navigator.clipboard.writeText(window.location.href)
