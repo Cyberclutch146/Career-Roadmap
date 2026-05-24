@@ -19,7 +19,8 @@
 | Feature | Description |
 |---|---|
 | **Roadmap Generator** | Describe your goal, pick a skill level, set daily study hours and a target timeline. Gemini generates a multi-phase roadmap with chapters, lessons, curated resources, and exercises. Falls back to built-in templates when offline. |
-| **AI Mentor Chat** | Context-aware assistant that understands your roadmap, current progress, and lesson content. Ask follow-ups, request simpler explanations, or get practice problems. |
+| **Multi-Step Generation Wizard** | Polished 4-step wizard (Goal → Profile → Commitment → Review) with Framer Motion slide animations, card-based selectors, and confetti celebration on success. |
+| **AI Mentor Chat** | Context-aware assistant that understands your roadmap, current progress, and lesson content. Ask follow-ups, request simpler explanations, or get practice problems. Available as a floating FAB on every page. |
 | **AI Mock Interviews** | Simulated technical interviews tailored to your roadmap topic. Receive scoring feedback and targeted improvement suggestions. |
 | **Skill Assessment** | Pre-roadmap MCQ quiz powered by Gemini to gauge your current level and calibrate the generated content. |
 
@@ -39,14 +40,17 @@
 | **Dashboard** | Central hub showing active roadmaps, total lessons completed, current day streak, and quick-access cards. |
 | **Progress Calendar** | GitHub-style heatmap showing daily lesson completion activity over the past year. |
 | **Streak Tracking** | Consecutive-day streak counter with visual indicators to build consistency habits. |
-| **Skills Radar** | Recharts-powered radar chart visualizing mastery across roadmap phases. |
+| **Skills Radar** | Recharts-powered radar chart visualizing mastery across roadmap phases — integrated on the dashboard. |
+| **Weekly Velocity** | Bar chart tracking lessons completed per week with accent glow on the current week. |
+| **Completion Forecast** | Smart velocity-based projections showing estimated completion date and on-track / behind status. |
+| **Time Invested** | Cumulative hours invested across all completed lessons. |
 
 ### 🎨 Premium Dark-Mode UI
 
 | Feature | Description |
 |---|---|
 | **Glassmorphic Navbar** | Permanently floating pill-shaped navbar with frosted glass blur and ambient glow effects. |
-| **Mobile-First Design** | Staggered sidebar menu, horizontal swipe carousels, and tap-to-expand accordions on mobile. |
+| **Mobile-First Design** | Staggered sidebar menu, bottom tab bar, horizontal swipe carousels, and tap-to-expand accordions on mobile. |
 | **Full-Viewport Sections** | Every landing page section fills the screen (`min-h-[100dvh]`) with smooth scroll and subtle border separators. |
 | **Amber/Zinc Theme** | Deep zinc backgrounds with warm amber accents, gradient highlights, and ambient glow effects. |
 
@@ -94,8 +98,8 @@
 
 ```powershell
 # Clone and enter the project
-git clone https://github.com/yourusername/roadmapai.git
-cd roadmapai
+git clone https://github.com/Cyberclutch146/Career-Roadmap.git
+cd Career-Roadmap
 
 # One-command setup — installs everything, generates configs, starts both servers
 .\roadmap
@@ -198,7 +202,7 @@ All endpoints are browsable at **http://localhost:8000/docs** (Swagger UI).
 | Method | Endpoint | Auth | Rate Limit | Description |
 |---|---|---|---|---|
 | `POST` | `/api/chat` | Optional | 20/min | Send message to AI mentor |
-| `POST` | `/api/assessment/generate` | Optional | 5/min | Generate skill assessment quiz |
+| `POST` | `/api/assessment/generate` | Optional | 10/min | Generate skill assessment quiz |
 | `POST` | `/api/interview/chat` | Optional | 20/min | AI mock interview conversation |
 
 ---
@@ -206,33 +210,48 @@ All endpoints are browsable at **http://localhost:8000/docs** (Swagger UI).
 ## 📁 Project Structure
 
 ```
-roadmapai/
+Career-Roadmap/
 ├── backend/
 │   ├── main.py                    # FastAPI app — routes, CORS, rate limiting
 │   ├── schemas.py                 # Pydantic v2 request/response models
 │   ├── services/
+│   │   ├── __init__.py
 │   │   ├── ai_service.py          # Gemini integration + fallback templates
 │   │   └── auth.py                # Firebase Admin token verification
 │   ├── tests/
 │   │   └── test_api.py            # pytest suite
+│   ├── firebase.json              # Firebase project config
+│   ├── firestore.rules            # Firestore security rules
 │   ├── requirements.txt
 │   └── .env.example
 │
 ├── frontend/
 │   ├── app/
-│   │   ├── layout.tsx             # Root layout (fonts, metadata, providers)
+│   │   ├── layout.tsx             # Root layout (fonts, metadata, AuthProvider, ChatWidget)
 │   │   ├── page.tsx               # Landing page (full-viewport sections)
 │   │   ├── globals.css            # Tailwind dark theme + design tokens
 │   │   ├── error.tsx              # Global error boundary
 │   │   ├── loading.tsx            # Animated loading skeleton
-│   │   ├── generate/page.tsx      # Roadmap generator + assessment
+│   │   ├── generate/
+│   │   │   ├── page.tsx           # Multi-step generation wizard orchestrator
+│   │   │   └── _components/
+│   │   │       ├── WizardProgress.tsx   # Desktop progress bar + mobile step track
+│   │   │       ├── StepGoal.tsx         # Step 1 — Goal input + AI suggestions
+│   │   │       ├── StepProfile.tsx      # Step 2 — Skill level + learning style
+│   │   │       ├── StepCommitment.tsx   # Step 3 — Study hours + target duration
+│   │   │       ├── StepReview.tsx       # Step 4 — Summary + assessment + generate
+│   │   │       └── ConfettiBurst.tsx    # Success celebration animation
 │   │   ├── roadmap/[id]/page.tsx  # Interactive roadmap workspace
 │   │   ├── dashboard/page.tsx     # User dashboard + analytics
-│   │   ├── gallery/page.tsx       # Public roadmap gallery (stub)
-│   │   └── login/page.tsx         # Auth (Email/Password + Google SSO)
+│   │   ├── gallery/page.tsx       # Public roadmap gallery
+│   │   ├── login/page.tsx         # Auth (Email/Password + Google SSO)
+│   │   └── api/auth/             # Next.js API routes (OTP send/verify)
+│   │
 │   ├── components/
 │   │   ├── ui/                    # Button, Card, Input, Select, ProgressBar
 │   │   ├── Navbar.tsx             # Floating glassmorphic pill + mobile sidebar
+│   │   ├── MobileNav.tsx          # Bottom tab bar for mobile
+│   │   ├── MobileSidebar.tsx      # Framer Motion slide-out drawer
 │   │   ├── Footer.tsx             # Site footer
 │   │   ├── Hero.tsx               # Landing hero section
 │   │   ├── Features.tsx           # Feature grid (desktop) / accordion (mobile)
@@ -242,14 +261,20 @@ roadmapai/
 │   │   ├── ChapterList.tsx        # Roadmap phase/chapter renderer
 │   │   ├── ResourcePanel.tsx      # Resource cards by type
 │   │   ├── LessonWorkspace.tsx    # Tabbed workspace (Content, Code, Interview, Notes)
-│   │   ├── AIMentor.tsx           # AI mentor chat interface
+│   │   ├── AIMentor.tsx           # AI mentor chat interface + global FAB widget
+│   │   ├── RichTextEditor.tsx     # TipTap editor wrapper
 │   │   ├── ProgressCalendar.tsx   # GitHub-style heatmap + streak
 │   │   ├── SkillsRadar.tsx        # Recharts radar chart
+│   │   ├── WeeklyVelocity.tsx     # Recharts weekly lesson velocity chart
 │   │   └── AuthProvider.tsx       # Firebase auth + route protection
+│   │
 │   ├── lib/
 │   │   ├── api.ts                 # Axios instance + 401 interceptor
 │   │   ├── firebase.ts            # Firebase client initialization
+│   │   ├── firebase-admin.ts      # Firebase Admin SDK (server-side)
+│   │   ├── sampleRoadmaps.ts     # Pre-built fallback roadmap data
 │   │   └── utils.ts               # Formatting helpers
+│   │
 │   ├── store/index.ts             # Zustand state management
 │   ├── types/index.ts             # TypeScript interfaces
 │   └── .env.example
@@ -261,12 +286,16 @@ roadmapai/
 │   ├── FEATURE_ROADMAP.md         # Core 10 feature specifications
 │   ├── FUTURE_FEATURES.md         # 50 AI/ML future features strategy
 │   ├── IMPLEMENTATION_PLAN.md     # Sprint execution guide
-│   └── UI_OVERHAUL_PLAN.md        # UI/UX improvement strategy
+│   ├── UI_OVERHAUL_PLAN.md        # UI/UX improvement strategy
+│   ├── IMPL_P0_CRITICAL.md       # P0 implementation plan (~120h)
+│   ├── IMPL_P1_HIGH.md           # P1 implementation plan (~180h)
+│   ├── IMPL_P2_MEDIUM.md         # P2 implementation plan (~200h)
+│   ├── IMPL_P3_EXPLORATORY.md    # P3 implementation plan (~160h)
+│   ├── IMPL_ROADMAP_WIZARD.md    # Multi-step wizard implementation plan
+│   └── IMPL_AGENTIC_CHATBOT.md   # Agentic RAG chatbot implementation plan
 │
 ├── roadmap.ps1 / roadmap.bat     # One-command start scripts
 ├── setup.ps1                      # Guided setup wizard
-├── firebase.json                  # Firebase project config
-├── firestore.rules                # Firestore security rules
 ├── .gitignore
 └── README.md                      # ← You are here
 ```
@@ -305,6 +334,8 @@ roadmapai/
 | Hover states | Border glow + shadow | 300–500ms |
 | Accordion expand | Height auto + opacity | 300ms |
 | Mobile sidebar | Spring slide from right | spring(300, 30) |
+| Wizard steps | Horizontal slide (left/right) | AnimatePresence |
+| Confetti burst | Canvas particle explosion | 2000ms |
 
 > **Philosophy:** Subtle, purposeful animations. The experience should feel premium, fluid, and alive.
 
@@ -335,7 +366,7 @@ users/{userId}/
 | **Firebase Authentication** | Email/Password + Google SSO with `onAuthStateChanged` session management |
 | **Route Protection** | `AuthProvider.tsx` redirects unauthenticated users on private routes |
 | **Firestore Security Rules** | Per-user data isolation — users can only read/write their own documents |
-| **Rate Limiting** | SlowAPI: 5/min on generation, 20/min on chat endpoints |
+| **Rate Limiting** | SlowAPI: 5/min on generation, 10/min on assessment, 20/min on chat endpoints |
 | **CORS** | Configurable allowed origins via `CORS_ORIGINS` environment variable |
 | **Security Headers** | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy` |
 | **No secrets in git** | `.env` files git-ignored; `.env.example` uses placeholders |
@@ -407,6 +438,12 @@ All documentation lives in the [`docs/`](docs/) directory:
 | **[50 AI/ML Future Features](docs/FUTURE_FEATURES.md)** | Detailed descriptions, ML models, use cases, and impact for 50 AI-powered features. |
 | **[Implementation Plan](docs/IMPLEMENTATION_PLAN.md)** | Execution steps, dependencies, and file change maps. |
 | **[UI Overhaul Plan](docs/UI_OVERHAUL_PLAN.md)** | UI/UX improvement strategy and design decisions. |
+| **[P0 Critical Features](docs/IMPL_P0_CRITICAL.md)** | Implementation plan for 8 critical features (~120h). |
+| **[P1 High Priority](docs/IMPL_P1_HIGH.md)** | Implementation plan for 14 high-priority features (~180h). |
+| **[P2 Medium Priority](docs/IMPL_P2_MEDIUM.md)** | Implementation plan for 16 medium-priority features (~200h). |
+| **[P3 Exploratory](docs/IMPL_P3_EXPLORATORY.md)** | Implementation plan for 12 exploratory features (~160h). |
+| **[Roadmap Wizard](docs/IMPL_ROADMAP_WIZARD.md)** | Multi-step generation wizard implementation plan. |
+| **[Agentic Chatbot](docs/IMPL_AGENTIC_CHATBOT.md)** | Agentic RAG chatbot with ReAct loop and function calling. |
 
 ---
 
@@ -416,8 +453,8 @@ Development is organized into **4 sprints** covering 10 planned core features, f
 
 | Sprint / Phase | Theme | Key Features | Effort | Status |
 |---|---|---|---|---|
-| **Sprint 0** | UI/UX & Auth Overhaul | Glassmorphic navbar, mobile layouts, Firebase Auth, Monaco/TipTap | ~40h | ✅ Complete |
-| **Sprint 1** | Dashboard Glow-Up | Skills Radar Integration, Progress Analytics | 6–8h | ⏳ Pending |
+| **Sprint 0** | UI/UX & Auth Overhaul | Glassmorphic navbar, mobile layouts, Firebase Auth, Monaco/TipTap, Generation Wizard | ~40h | ✅ Complete |
+| **Sprint 1** | Dashboard Glow-Up | Skills Radar, Weekly Velocity, Completion Forecast, Time Invested | 6–8h | ✅ Complete |
 | **Sprint 2** | Active Learning | AI Chapter Quizzes, Achievement Badge System | 14–18h | ⏳ Pending |
 | **Sprint 3** | Power Tools | PDF Export, Offline-to-Cloud Sync | 8–10h | ⏳ Pending |
 | **Sprint 4** | Polish | Resource Bookmarking, Calendar Sync, Light Mode | 8–11h | ⏳ Pending |
@@ -426,8 +463,9 @@ Development is organized into **4 sprints** covering 10 planned core features, f
 ### Current Development Status
 
 - [x] AI Roadmap Generation (Gemini 2.0 Flash)
+- [x] Multi-Step Generation Wizard (4-step with AnimatePresence + Confetti)
 - [x] Interactive Lesson Workspace (4-tab view with Monaco + TipTap)
-- [x] AI Mentor Chat
+- [x] AI Mentor Chat + Global ChatWidget FAB
 - [x] AI Mock Interviews
 - [x] Skill Assessment Quizzes
 - [x] Firebase Auth (Email/Password + Google SSO) + Route Protection
@@ -435,8 +473,10 @@ Development is organized into **4 sprints** covering 10 planned core features, f
 - [x] Guest Mode (localStorage fallback)
 - [x] Progress Calendar Heatmap + Streak Tracking
 - [x] Premium Dark-Mode UI (glassmorphic navbar, mobile carousels, accordions)
-- [ ] Skills Radar Dashboard Integration *(Sprint 1)*
-- [ ] Progress Analytics Widgets *(Sprint 1)*
+- [x] Skills Radar Dashboard Integration *(Sprint 1)*
+- [x] Weekly Velocity Chart *(Sprint 1)*
+- [x] Completion Forecast *(Sprint 1)*
+- [x] Time Invested Estimator *(Sprint 1)*
 - [ ] AI Chapter Quizzes *(Sprint 2)*
 - [ ] Achievement Badge System *(Sprint 2)*
 - [ ] PDF Export *(Sprint 3)*
