@@ -8,7 +8,7 @@ export function Hero() {
   const { user } = useStore()
   const targetHref = user ? '/dashboard' : '/login'
   return (
-    <section className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden blueprint-grid border-b border-white/5 pt-20">
+    <section className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden blueprint-grid border-b border-outline-variant/50 pt-20">
       {/* Ambient background glow */}
       <div className="absolute top-0 right-0 w-[400px] md:w-[800px] h-[200px] md:h-[350px] bg-primary/[0.04] rounded-full blur-[100px] md:blur-[140px] pointer-events-none" />
 
@@ -60,7 +60,7 @@ export function Hero() {
             </Link>
             {user && (
               <div className="absolute -bottom-10 left-0 right-0 flex justify-center">
-                <Link href="/dashboard" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors underline underline-offset-4">
+                <Link href="/dashboard" className="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors underline underline-offset-4">
                   Access Dashboard &rarr;
                 </Link>
               </div>
@@ -83,7 +83,7 @@ export function Hero() {
               </button>
             </Link>
             {user && (
-              <Link href="/dashboard" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors text-center mt-2 underline underline-offset-4">
+              <Link href="/dashboard" className="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors text-center mt-2 underline underline-offset-4">
                 Access Dashboard &rarr;
               </Link>
             )}

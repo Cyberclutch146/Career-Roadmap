@@ -145,7 +145,7 @@ export default function GalleryPage() {
       case 'beginner': return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
       case 'intermediate': return 'text-amber-400 bg-amber-500/10 border-amber-500/20'
       case 'advanced': return 'text-red-400 bg-red-500/10 border-red-500/20'
-      default: return 'text-zinc-400 bg-zinc-800 border-zinc-700'
+      default: return 'text-on-surface-variant bg-surface-container-high border-outline'
     }
   }
 
@@ -166,10 +166,10 @@ export default function GalleryPage() {
               <Compass className="w-3.5 h-3.5" />
               Community Library
             </div>
-            <h1 className="text-3xl sm:text-5xl font-headline font-bold text-zinc-100 mb-4 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-headline font-bold text-on-surface mb-4 tracking-tight">
               Discover Learning Roadmaps
             </h1>
-            <p className="text-zinc-500 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+            <p className="text-on-surface-variant text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
               Explore customized, AI-generated roadmaps shared by other learners.
               Add them to your library to track your own progress.
             </p>
@@ -180,12 +180,12 @@ export default function GalleryPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-2xl bg-zinc-900/60 border border-zinc-800/50 p-5 mb-10 grid md:grid-cols-12 gap-4 items-end"
+            className="rounded-2xl bg-surface-container/60 border border-outline-variant/50 p-5 mb-10 grid md:grid-cols-12 gap-4 items-end"
           >
             <div className="md:col-span-6 space-y-2">
-              <label className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">Search Goals</label>
+              <label className="text-[10px] font-semibold text-tertiary uppercase tracking-widest">Search Goals</label>
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-tertiary" />
                 <Input
                   className="pl-10"
                   placeholder="e.g. Full Stack Developer, React, DSA..."
@@ -196,7 +196,7 @@ export default function GalleryPage() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">Difficulty</label>
+              <label className="text-[10px] font-semibold text-tertiary uppercase tracking-widest">Difficulty</label>
               <Select
                 options={[
                   { value: 'all', label: 'All Levels' },
@@ -210,7 +210,7 @@ export default function GalleryPage() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">Duration</label>
+              <label className="text-[10px] font-semibold text-tertiary uppercase tracking-widest">Duration</label>
               <Select
                 options={[
                   { value: 'all', label: 'All Durations' },
@@ -228,20 +228,20 @@ export default function GalleryPage() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-              <span className="text-zinc-600 text-sm">Discovering roadmaps...</span>
+              <span className="text-tertiary text-sm">Discovering roadmaps...</span>
             </div>
           ) : filteredRoadmaps.length === 0 ? (
             /* Empty State */
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-zinc-800/50 bg-zinc-900/30 text-center py-20 px-6"
+              className="rounded-2xl border border-outline-variant/50 bg-zinc-900/30 text-center py-20 px-6"
             >
               <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 border border-zinc-700/50 flex items-center justify-center mx-auto mb-5">
-                <BookOpen className="w-7 h-7 text-zinc-600" />
+                <BookOpen className="w-7 h-7 text-tertiary" />
               </div>
-              <h3 className="text-lg font-headline font-bold text-zinc-300 mb-2">No roadmaps found</h3>
-              <p className="text-zinc-600 max-w-md mx-auto text-sm leading-relaxed mb-6">
+              <h3 className="text-lg font-headline font-bold text-on-surface mb-2">No roadmaps found</h3>
+              <p className="text-tertiary max-w-md mx-auto text-sm leading-relaxed mb-6">
                 We couldn&apos;t find any public roadmaps matching your filters. Try adjusting your search query or be the first to share one!
               </p>
               <Link href="/generate">
@@ -268,25 +268,25 @@ export default function GalleryPage() {
                     transition={{ delay: index * 0.04 }}
                   >
                     <Link href={`/roadmap/${roadmap.id}`}>
-                      <div className="group h-full flex flex-col justify-between rounded-2xl bg-zinc-900/50 border border-zinc-800/50 hover:border-zinc-700/60 p-5 transition-all duration-300 hover:shadow-[0_4px_24px_-8px_rgba(245,158,11,0.08)]">
+                      <div className="group h-full flex flex-col justify-between rounded-2xl bg-zinc-900/50 border border-outline-variant/50 hover:border-zinc-700/60 p-5 transition-all duration-300 hover:shadow-[0_4px_24px_-8px_rgba(245,158,11,0.08)]">
                         <div>
                           {/* Top row: icon + duration badge */}
                           <div className="flex items-start justify-between gap-3 mb-4">
                             <div className="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center group-hover:bg-amber-500/15 transition-colors">
                               <Target className="w-5 h-5 text-amber-500" />
                             </div>
-                            <span className="text-[10px] text-zinc-500 font-semibold px-2.5 py-1 bg-zinc-800/60 border border-zinc-800 rounded-lg uppercase tracking-wider">
+                            <span className="text-[10px] text-on-surface-variant font-semibold px-2.5 py-1 bg-zinc-800/60 border border-outline-variant rounded-lg uppercase tracking-wider">
                               {roadmap.target_months}mo
                             </span>
                           </div>
 
                           {/* Title */}
-                          <h3 className="font-headline font-bold text-zinc-200 mb-2 text-base line-clamp-2 group-hover:text-zinc-100 transition-colors">
+                          <h3 className="font-headline font-bold text-on-surface mb-2 text-base line-clamp-2 group-hover:text-zinc-100 transition-colors">
                             {roadmap.goal}
                           </h3>
 
                           {/* Description */}
-                          <p className="text-xs text-zinc-600 line-clamp-2 mb-4 leading-relaxed">
+                          <p className="text-xs text-tertiary line-clamp-2 mb-4 leading-relaxed">
                             {roadmap.generated_roadmap.overview.description}
                           </p>
 
@@ -295,25 +295,25 @@ export default function GalleryPage() {
                             <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 border rounded-md ${getDifficultyColor(roadmap.skill_level)}`}>
                               {roadmap.skill_level}
                             </span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800/50 text-zinc-500 border border-zinc-800 rounded-md">
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800/50 text-on-surface-variant border border-outline-variant rounded-md">
                               {roadmap.learning_style}
                             </span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800/50 text-zinc-500 border border-zinc-800 rounded-md">
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800/50 text-on-surface-variant border border-outline-variant rounded-md">
                               {roadmap.daily_hours}h/day
                             </span>
                           </div>
                         </div>
 
                         {/* Footer: stats + save button */}
-                        <div className="pt-4 border-t border-zinc-800/40 flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-3 text-xs text-zinc-600">
+                        <div className="pt-4 border-t border-outline-variant/40 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 text-xs text-tertiary">
                             <span className="flex items-center gap-1">
                               <Layers className="w-3 h-3" />
                               {phases} phases
                             </span>
-                            <span className="text-zinc-800">&middot;</span>
+                            <span className="text-outline-variant">&middot;</span>
                             <span>{totalLessons} lessons</span>
-                            <span className="text-zinc-800">&middot;</span>
+                            <span className="text-outline-variant">&middot;</span>
                             <span>{hours}h</span>
                           </div>
 
@@ -324,7 +324,7 @@ export default function GalleryPage() {
                               isCloned
                                 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-default'
                                 : cloningId === roadmap.id
-                                ? 'bg-zinc-800 text-zinc-500 cursor-wait'
+                                ? 'bg-surface-container-high text-on-surface-variant cursor-wait'
                                 : 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 active:scale-95'
                             }`}
                           >

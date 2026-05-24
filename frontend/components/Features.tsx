@@ -40,7 +40,7 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="relative min-h-0 w-full flex flex-col justify-center border-b border-white/5 py-16 md:py-24">
+    <section id="features" className="relative min-h-0 w-full flex flex-col justify-center border-b border-outline-variant/50 py-16 md:py-24">
       {/* Ambient background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/[0.02] rounded-full blur-[120px] pointer-events-none" />
 
@@ -52,10 +52,10 @@ export function Features() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-2xl mx-auto"
         >
-          <h2 className="font-headline text-2xl md:text-5xl text-white font-bold leading-tight mb-3 md:mb-4">
+          <h2 className="font-headline text-2xl md:text-5xl text-on-surface font-bold leading-tight mb-3 md:mb-4">
             Intelligence at <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">every step.</span>
           </h2>
-          <p className="font-body text-zinc-400 text-base md:text-lg max-w-xl mx-auto">
+          <p className="font-body text-on-surface-variant text-base md:text-lg max-w-xl mx-auto">
             The architecture of your success, built on deep learning models that understand educational progression.
           </p>
         </motion.div>
@@ -75,7 +75,7 @@ export function Features() {
                 whileHover={{ y: -4 }}
                 className="relative"
               >
-                <div className={`h-full rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-zinc-800/80 p-6 md:p-8 flex flex-col items-start relative overflow-hidden group transition-all duration-300 ${feature.borderColor} hover:shadow-[0_8px_30px_rgba(245,158,11,0.03)]`}>
+                <div className={`h-full rounded-2xl bg-surface-container/40 backdrop-blur-md border border-zinc-800/80 p-6 md:p-8 flex flex-col items-start relative overflow-hidden group transition-all duration-300 ${feature.borderColor} hover:shadow-[0_8px_30px_rgba(245,158,11,0.03)]`}>
                   {/* Subtle dynamic glow */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${feature.glow} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
 
@@ -85,10 +85,10 @@ export function Features() {
                   </div>
 
                   {/* Text Content */}
-                  <h3 className="font-headline text-lg md:text-xl text-white font-semibold mb-3 relative z-10 group-hover:text-amber-400 transition-colors duration-300">
+                  <h3 className="font-headline text-lg md:text-xl text-on-surface font-semibold mb-3 relative z-10 group-hover:text-amber-400 transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="font-body text-zinc-400 text-sm leading-relaxed relative z-10">
+                  <p className="font-body text-on-surface-variant text-sm leading-relaxed relative z-10">
                     {feature.description}
                   </p>
                 </div>

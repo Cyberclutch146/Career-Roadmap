@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { auth } from '@/lib/firebase'
 import { signOut } from 'firebase/auth'
+import { useTheme } from 'next-themes'
 
 // Helper to get initials or fallback avatar
 function getUserAvatar(name?: string) {
@@ -19,6 +20,7 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const { user, logout } = useStore()
+  const { theme, setTheme } = useTheme()
   
   const [mounted, setMounted] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -123,7 +125,7 @@ export function Navbar() {
             onClick={() => router.push('/')}
             className="flex items-center transition-all duration-300 hover:opacity-80"
           >
-            <span className="font-serif italic font-bold tracking-tight text-white text-xl">
+            <span className="font-serif italic font-bold tracking-tight text-on-surface text-xl">
               Roadmap<span className="text-amber-500 font-sans not-italic">AI</span>
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 ml-0.5"></span>
             </span>
@@ -139,8 +141,8 @@ export function Navbar() {
                   onClick={() => router.push(link.path)}
                   className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ease-out ${
                     active
-                      ? 'text-white'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40'
+                      ? 'text-on-surface'
+                      : 'text-on-surface-variant hover:text-on-surface hover:bg-zinc-800/40'
                   }`}
                   style={active ? {
                     background: `linear-gradient(135deg, ${themeVars.primaryBase} 0%, ${themeVars.moss} 100%)`,
@@ -154,7 +156,7 @@ export function Navbar() {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center gap-2 text-white">
+          <div className="flex items-center gap-2 text-on-surface">
             {searchOpen ? (
               <div
                 className="flex items-center gap-2 rounded-full px-3.5 py-2 animate-in fade-in duration-200 hidden sm:flex"
@@ -165,7 +167,7 @@ export function Navbar() {
                   boxShadow: '0 2px 12px rgba(217, 119, 6, 0.08)',
                 }}
               >
-                <Search size={15} className="text-zinc-400" />
+                <Search size={15} className="text-on-surface-variant" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -173,10 +175,10 @@ export function Navbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearch}
-                  className="bg-transparent outline-none text-sm w-44 text-white placeholder:text-zinc-500"
+                  className="bg-transparent outline-none text-sm w-44 text-on-surface placeholder:text-zinc-500"
                 />
                 <button onClick={() => { setSearchOpen(false); setSearchQuery('') }} className="hover:scale-110 active:scale-95 transition-all p-0.5 rounded-full hover:bg-zinc-800/50">
-                  <X size={14} className="text-zinc-400" />
+                  <X size={14} className="text-on-surface-variant" />
                 </button>
               </div>
             ) : (
@@ -193,7 +195,7 @@ export function Navbar() {
                   style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)' }}
                 >
                   {profileMenuOpen ? (
-                    <ChevronDown size={18} className="text-white" />
+                    <ChevronDown size={18} className="text-on-surface" />
                   ) : (
                     <img
                       src={getUserAvatar(user.name)}
@@ -237,9 +239,9 @@ export function Navbar() {
                             />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-zinc-400">Signed in</p>
-                            <p className="mt-1 text-base font-semibold text-white truncate">{user.name}</p>
-                            <p className="text-xs text-zinc-400 truncate">{user.email}</p>
+                            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-on-surface-variant">Signed in</p>
+                            <p className="mt-1 text-base font-semibold text-on-surface truncate">{user.name}</p>
+                            <p className="text-xs text-on-surface-variant truncate">{user.email}</p>
                           </div>
                         </div>
                       </div>
@@ -253,30 +255,29 @@ export function Navbar() {
                           }}
                         >
                           <div className="flex items-center justify-between gap-3">
-                            <span className="text-sm font-semibold text-white">Theme</span>
+                            <span className="text-sm font-semibold text-on-surface">Theme</span>
                             <div
-                              className="relative grid w-36 grid-cols-2 rounded-full p-1 cursor-not-allowed opacity-70"
+                              className="relative grid w-36 grid-cols-2 rounded-full p-1"
                               style={{ background: `color-mix(in srgb, ${themeVars.surfaceBrightBase} 76%, transparent)`, border: `1px solid ${themeVars.glassBorder}` }}
-                              title="Light mode coming soon"
                             >
                               <motion.span
                                 className="absolute inset-y-1 w-[calc(50%-0.25rem)] rounded-full"
-                                animate={{ x: 'calc(100% + 0.25rem)' }}
+                                animate={{ x: theme === 'light' ? '0%' : 'calc(100% + 0.25rem)' }}
                                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                                 style={{ left: '0.25rem', background: `linear-gradient(135deg, ${themeVars.primaryBase}, ${themeVars.moss})`, boxShadow: '0 2px 8px rgba(217,119,6,0.22)' }}
                               />
                               <button
                                 type="button"
-                                disabled
-                                className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-2 py-1.5 text-[11px] font-bold transition-colors text-zinc-400`}
+                                onClick={() => setTheme('light')}
+                                className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-2 py-1.5 text-[11px] font-bold transition-colors ${theme === 'light' ? 'text-on-surface' : 'text-on-surface-variant hover:text-on-surface'}`}
                               >
                                 <Sun size={13} />
                                 Light
                               </button>
                               <button
                                 type="button"
-                                disabled
-                                className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-2 py-1.5 text-[11px] font-bold transition-colors text-white`}
+                                onClick={() => setTheme('dark')}
+                                className={`relative z-10 flex items-center justify-center gap-1.5 rounded-full px-2 py-1.5 text-[11px] font-bold transition-colors ${theme === 'dark' ? 'text-on-surface' : 'text-on-surface-variant hover:text-on-surface'}`}
                               >
                                 <Moon size={13} />
                                 Dark
@@ -293,9 +294,9 @@ export function Navbar() {
                             border: `1px solid ${themeVars.glassBorder}`,
                           }}
                         >
-                          <User size={17} className="text-zinc-400 mb-3" />
-                          <p className="text-sm font-semibold text-white">Library</p>
-                          <p className="text-[11px] text-zinc-400 mt-0.5">Your roadmaps</p>
+                          <User size={17} className="text-on-surface-variant mb-3" />
+                          <p className="text-sm font-semibold text-on-surface">Library</p>
+                          <p className="text-[11px] text-on-surface-variant mt-0.5">Your roadmaps</p>
                         </button>
 
                         <button
@@ -306,9 +307,9 @@ export function Navbar() {
                             border: `1px solid ${themeVars.glassBorder}`,
                           }}
                         >
-                          <Info size={17} className="text-zinc-400 mb-3" />
-                          <p className="text-sm font-semibold text-white">About</p>
-                          <p className="text-[11px] text-zinc-400 mt-0.5">How it works</p>
+                          <Info size={17} className="text-on-surface-variant mb-3" />
+                          <p className="text-sm font-semibold text-on-surface">About</p>
+                          <p className="text-[11px] text-on-surface-variant mt-0.5">How it works</p>
                         </button>
                       </div>
 
@@ -339,7 +340,7 @@ export function Navbar() {
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-red-500">Log Out</p>
-                            <p className="text-[11px] text-zinc-400">End this session</p>
+                            <p className="text-[11px] text-on-surface-variant">End this session</p>
                           </div>
                         </div>
                       </button>
@@ -350,12 +351,12 @@ export function Navbar() {
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Link href="/login" className="text-sm font-medium text-zinc-300 hover:text-white px-3 py-1.5 transition-colors">
+                <Link href="/login" className="text-sm font-medium text-on-surface hover:text-on-surface px-3 py-1.5 transition-colors">
                   Sign In
                 </Link>
                 <Link 
                   href="/login" 
-                  className="text-sm font-medium text-white px-4 py-1.5 rounded-full transition-all hover:opacity-90"
+                  className="text-sm font-medium text-on-surface px-4 py-1.5 rounded-full transition-all hover:opacity-90"
                   style={{
                     background: `linear-gradient(135deg, ${themeVars.primaryBase} 0%, ${themeVars.moss} 100%)`,
                     boxShadow: `0 2px 8px rgba(217, 119, 6, 0.25)`,
@@ -404,18 +405,18 @@ export function Navbar() {
               <div className="flex justify-end mb-8">
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-full bg-zinc-800/50 text-white hover:bg-zinc-700 transition-colors"
+                  className="p-2 rounded-full bg-zinc-800/50 text-on-surface hover:bg-surface-variant transition-colors"
                 >
                   <X size={20} />
                 </button>
               </div>
 
               {user && (
-                <motion.div variants={itemVariants} className="mb-8 flex items-center gap-3 pb-6 border-b border-white/10">
-                  <img src={getUserAvatar(user.name)} alt="Profile" className="w-12 h-12 rounded-xl object-cover border border-white/10" />
+                <motion.div variants={itemVariants} className="mb-8 flex items-center gap-3 pb-6 border-b border-outline/10">
+                  <img src={getUserAvatar(user.name)} alt="Profile" className="w-12 h-12 rounded-xl object-cover border border-outline/10" />
                   <div>
-                    <p className="text-white font-semibold text-lg">{user.name}</p>
-                    <p className="text-zinc-400 text-sm truncate w-40">{user.email}</p>
+                    <p className="text-on-surface font-semibold text-lg">{user.name}</p>
+                    <p className="text-on-surface-variant text-sm truncate w-40">{user.email}</p>
                   </div>
                 </motion.div>
               )}
@@ -429,7 +430,7 @@ export function Navbar() {
                         href={link.path}
                         onClick={() => setMobileMenuOpen(false)}
                         className={`block text-lg font-medium py-2 px-4 rounded-xl transition-colors ${
-                          active ? 'bg-amber-500/10 text-amber-500' : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                          active ? 'bg-amber-500/10 text-amber-500' : 'text-on-surface hover:bg-white/5 hover:text-on-surface'
                         }`}
                       >
                         {link.label}
@@ -440,7 +441,7 @@ export function Navbar() {
               </div>
 
               {user ? (
-                <motion.div variants={itemVariants} className="mt-8 pt-8 border-t border-white/10">
+                <motion.div variants={itemVariants} className="mt-8 pt-8 border-t border-outline/10">
                   <button
                     onClick={async () => {
                       setMobileMenuOpen(false);
@@ -454,11 +455,11 @@ export function Navbar() {
                   </button>
                 </motion.div>
               ) : (
-                <motion.div variants={itemVariants} className="mt-8 pt-8 border-t border-white/10 flex flex-col gap-4">
+                <motion.div variants={itemVariants} className="mt-8 pt-8 border-t border-outline/10 flex flex-col gap-4">
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-3 rounded-xl border border-white/10 text-white font-medium hover:bg-white/5 transition-colors"
+                    className="w-full text-center py-3 rounded-xl border border-outline/10 text-on-surface font-medium hover:bg-white/5 transition-colors"
                   >
                     Sign In
                   </Link>

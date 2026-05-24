@@ -5,6 +5,8 @@ import { AuthProvider } from '@/components/AuthProvider'
 import { MobileNav } from '@/components/MobileNav'
 import { ChatWidget } from '@/components/AIMentor'
 import Galaxy from '@/components/Galaxy'
+import { ThemeProvider } from '@/components/ThemeProvider'
+import { AppBackground } from '@/components/AppBackground'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -42,26 +44,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} overflow-x-hidden max-w-full`}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} overflow-x-hidden max-w-full`} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-on-surface pb-16 md:pb-0 overflow-x-hidden max-w-full antialiased">
-        {/* Galaxy Background */}
-        <div className="fixed inset-0 pointer-events-none -z-10 bg-black">
-          <Galaxy 
-            transparent={true} 
-            mouseInteraction={true} 
-            mouseRepulsion={true}
-            density={1.2}
-            glowIntensity={0.2}
-            saturation={0}
-            hueShift={240}
-            className="w-full h-full opacity-80"
-          />
-        </div>
-        <AuthProvider>
-          {children}
-          <MobileNav />
-          <ChatWidget />
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <AppBackground />
+          <AuthProvider>
+            {children}
+            <MobileNav />
+            <ChatWidget />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -21,7 +21,7 @@ function ActionRenderer({ action, onSend }: { action: { type: string; payload: a
   if (action.type === 'navigate_to_view') {
     return (
       <div className="mt-2 p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/50">
-        <p className="text-xs text-zinc-300 mb-2">I can take you there:</p>
+        <p className="text-xs text-on-surface mb-2">I can take you there:</p>
         <button 
           onClick={() => router.push(action.payload.view_name === 'dashboard' ? '/dashboard' : '/')}
           className="text-xs px-3 py-1.5 bg-amber-500 text-black rounded-lg hover:bg-amber-400 font-semibold"
@@ -36,10 +36,10 @@ function ActionRenderer({ action, onSend }: { action: { type: string; payload: a
     return (
       <div className="mt-2 p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
         <p className="text-xs text-amber-500 font-semibold mb-2">Mini Quiz Generated!</p>
-        <p className="text-xs text-zinc-300">Topic: {action.payload.topic}</p>
+        <p className="text-xs text-on-surface">Topic: {action.payload.topic}</p>
         <button 
           onClick={() => onSend(`Please give me a 3-question mini quiz about ${action.payload.topic}. Ask me one question at a time and wait for my answer before grading it.`)}
-          className="mt-2 text-xs px-3 py-1.5 bg-zinc-800 text-zinc-200 rounded-lg border border-zinc-700 hover:bg-zinc-700">
+          className="mt-2 text-xs px-3 py-1.5 bg-surface-container-high text-on-surface rounded-lg border border-outline hover:bg-surface-variant">
           Start Quiz
         </button>
       </div>
@@ -91,7 +91,7 @@ function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean
           inline ? (
             <code
               className={`px-1 py-0.5 rounded text-xs font-mono ${
-                isUser ? 'bg-white/20 text-white' : 'bg-zinc-800 text-amber-300'
+                isUser ? 'bg-surface-container-high text-on-surface' : 'bg-surface-container-high text-amber-300'
               }`}
             >
               {children}
@@ -99,7 +99,7 @@ function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean
           ) : (
             <pre
               className={`my-2 p-3 rounded-lg text-xs font-mono overflow-x-auto whitespace-pre-wrap ${
-                isUser ? 'bg-white/20 text-white' : 'bg-zinc-900 text-green-300 border border-zinc-800'
+                isUser ? 'bg-surface-container-high text-on-surface' : 'bg-surface-container text-green-300 border border-outline-variant'
               }`}
             >
               <code>{children}</code>
@@ -108,7 +108,7 @@ function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean
         blockquote: ({ children }) => (
           <blockquote
             className={`border-l-2 pl-3 my-1 italic text-sm ${
-              isUser ? 'border-white/40 text-white/80' : 'border-amber-500/40 text-zinc-400'
+              isUser ? 'border-white/40 text-on-surface/80' : 'border-amber-500/40 text-on-surface-variant'
             }`}
           >
             {children}
@@ -233,25 +233,25 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 40 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full sm:max-w-lg h-[85vh] sm:h-[36rem] bg-zinc-950 sm:rounded-2xl border border-zinc-800/60 shadow-2xl flex flex-col overflow-hidden"
+        className="w-full sm:max-w-lg h-[85vh] sm:h-[36rem] bg-zinc-950 sm:rounded-2xl border border-outline-variant/60 shadow-2xl flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800/50">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-outline-variant/50">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-amber-500" />
             </div>
             <div>
-              <h3 className="font-semibold text-sm text-zinc-200">AI Mentor</h3>
-              <p className="text-[11px] text-zinc-600">
+              <h3 className="font-semibold text-sm text-on-surface">AI Mentor</h3>
+              <p className="text-[11px] text-tertiary">
                 {roadmap ? 'Roadmap context active' : 'General assistant'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-600 hover:text-zinc-400 rounded-lg hover:bg-zinc-800/50 transition-colors"
+            className="p-1.5 text-tertiary hover:text-zinc-400 rounded-lg hover:bg-zinc-800/50 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -272,7 +272,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
                 className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 ${
                   message.role === 'user'
                     ? 'bg-amber-500 text-black'
-                    : 'bg-zinc-800 text-zinc-400'
+                    : 'bg-surface-container-high text-on-surface-variant'
                 }`}
               >
                 {message.role === 'user' ? (
@@ -285,7 +285,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
                 className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl ${
                   message.role === 'user'
                     ? 'bg-amber-500 text-black rounded-tr-md'
-                    : 'bg-zinc-900 text-zinc-300 border border-zinc-800/50 rounded-tl-md'
+                    : 'bg-surface-container text-on-surface border border-outline-variant/50 rounded-tl-md'
                 }`}
               >
                 <MarkdownMessage content={message.content} isUser={message.role === 'user'} />
@@ -296,10 +296,10 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
 
           {isLoading && (
             <div className="flex items-start gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-zinc-800 text-zinc-400 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-surface-container-high text-on-surface-variant flex items-center justify-center">
                 <Bot className="w-3.5 h-3.5" />
               </div>
-              <div className="bg-zinc-900 border border-zinc-800/50 px-3.5 py-2.5 rounded-2xl rounded-tl-md">
+              <div className="bg-surface-container border border-outline-variant/50 px-3.5 py-2.5 rounded-2xl rounded-tl-md">
                 <div className="flex gap-1">
                   <div className="w-1.5 h-1.5 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <div className="w-1.5 h-1.5 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -313,13 +313,13 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
         </div>
 
         {/* Input area */}
-        <div className="border-t border-zinc-800/50 p-3.5">
+        <div className="border-t border-outline-variant/50 p-3.5">
           <div className="flex flex-wrap gap-1.5 mb-2.5">
             {suggestions.map((question, index) => (
               <button
                 key={index}
                 onClick={() => handleSend(question)}
-                className="text-[11px] px-2.5 py-1 bg-zinc-900 text-zinc-500 border border-zinc-800/50 rounded-lg hover:text-amber-400 hover:border-amber-500/20 transition-colors"
+                className="text-[11px] px-2.5 py-1 bg-surface-container text-on-surface-variant border border-outline-variant/50 rounded-lg hover:text-amber-400 hover:border-amber-500/20 transition-colors"
               >
                 {question}
               </button>
@@ -331,7 +331,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask me anything..."
-              className="flex-1 px-3.5 py-2 bg-zinc-900 border border-zinc-800/50 rounded-xl text-sm text-zinc-200 placeholder:text-zinc-700 resize-none focus:outline-none focus:border-zinc-600 transition-colors"
+              className="flex-1 px-3.5 py-2 bg-surface-container border border-outline-variant/50 rounded-xl text-sm text-on-surface placeholder:text-zinc-700 resize-none focus:outline-none focus:border-zinc-600 transition-colors"
               rows={1}
             />
             <button

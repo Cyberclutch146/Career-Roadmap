@@ -32,7 +32,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative min-h-0 w-full flex flex-col justify-center border-b border-white/5 py-16 md:py-28 overflow-hidden">
+    <section id="how-it-works" className="relative min-h-0 w-full flex flex-col justify-center border-b border-outline-variant/50 py-16 md:py-28 overflow-hidden">
       {/* Subtle ambient glows in background */}
       <div className="absolute top-1/2 right-0 w-[400px] h-[400px] bg-orange-500/[0.01] rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/4 left-0 w-[300px] h-[300px] bg-amber-500/[0.015] rounded-full blur-[100px] pointer-events-none" />
@@ -45,10 +45,10 @@ export function HowItWorks() {
             <span className="font-label text-xs font-semibold text-amber-500 tracking-widest uppercase mb-3 block">
               The Process
             </span>
-            <h2 className="font-headline text-3xl md:text-5xl text-white font-bold leading-tight mb-4">
+            <h2 className="font-headline text-3xl md:text-5xl text-on-surface font-bold leading-tight mb-4">
               How it <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">works.</span>
             </h2>
-            <p className="font-body text-zinc-400 text-base md:text-lg leading-relaxed max-w-lg">
+            <p className="font-body text-on-surface-variant text-base md:text-lg leading-relaxed max-w-lg">
               From ambition to achievement in four simple steps. We take the complexity out of learning, creating a fully personalized, guided curriculum designed for your success.
             </p>
           </div>
@@ -80,17 +80,17 @@ export function HowItWorks() {
                       </div>
                       
                       {/* Floating Mini Icon Badge */}
-                      <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-400 group-hover:border-amber-500/30 group-hover:text-amber-400 transition-all duration-300 shadow-md">
+                      <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-surface-container border border-outline flex items-center justify-center text-on-surface-variant group-hover:border-amber-500/30 group-hover:text-amber-400 transition-all duration-300 shadow-md">
                         <Icon className="w-3 h-3" />
                       </div>
                     </div>
 
                     {/* Step Content */}
                     <div className="flex-1 pt-1 md:pt-1.5">
-                      <h3 className="text-base md:text-xl font-headline font-semibold text-white mb-2 group-hover:text-amber-400 transition-colors duration-300">
+                      <h3 className="text-base md:text-xl font-headline font-semibold text-on-surface mb-2 group-hover:text-amber-400 transition-colors duration-300">
                         {step.title}
                       </h3>
-                      <p className="font-body text-zinc-400 text-sm md:text-base leading-relaxed">
+                      <p className="font-body text-on-surface-variant text-sm md:text-base leading-relaxed">
                         {step.description}
                       </p>
                     </div>

@@ -422,7 +422,7 @@ export function LessonWorkspace({
         className="relative w-full h-full lg:max-w-6xl lg:h-[90vh] bg-zinc-950/70 backdrop-blur-3xl lg:rounded-3xl lg:ring-1 lg:ring-white/10 shadow-[0_16px_64px_-12px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden"
       >
       {/* Header */}
-      <div className="bg-white/[0.02] border-b border-white/5 p-6 flex items-center justify-between z-20">
+      <div className="bg-white/[0.02] border-b border-outline-variant/50 p-6 flex items-center justify-between z-20">
         <div className="flex items-center gap-3">
           <button
             onClick={onToggleComplete}
@@ -473,7 +473,7 @@ export function LessonWorkspace({
       </div>
 
       {/* Tabs list (iOS Segmented Control Style) */}
-      <div className="bg-zinc-950/40 border-b border-white/5 px-6 py-4 flex gap-2 overflow-x-auto scrollbar-hide shrink-0 z-10 backdrop-blur-md">
+      <div className="bg-surface-container/40 border-b border-outline-variant/50 px-6 py-4 flex gap-2 overflow-x-auto scrollbar-hide shrink-0 z-10 backdrop-blur-md">
         {[
           { id: 'content', label: 'Lesson & Resources', icon: BookOpen },
           { id: 'code', label: 'Playground', icon: Code },
@@ -486,8 +486,8 @@ export function LessonWorkspace({
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
             className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 text-sm font-medium whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-white/10 text-white shadow-sm ring-1 ring-white/20'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                ? 'bg-surface-variant text-on-surface shadow-sm ring-1 ring-white/20'
+                : 'text-on-surface-variant hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-primary' : ''}`} />
@@ -508,16 +508,16 @@ export function LessonWorkspace({
               className="space-y-6 max-w-4xl mx-auto"
             >
               {/* Lesson Description */}
-              <div className="bg-white/[0.02] p-8 rounded-2xl border border-white/5 ring-1 ring-white/5 shadow-sm">
-                <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4">Lesson Overview</h3>
-                <p className="text-white/80 leading-relaxed whitespace-pre-wrap text-base">{lesson.description}</p>
+              <div className="bg-white/[0.02] p-8 rounded-2xl border border-outline-variant/50 ring-1 ring-white/5 shadow-sm">
+                <h3 className="text-xs font-semibold text-on-surface-variant/70 uppercase tracking-widest mb-4">Lesson Overview</h3>
+                <p className="text-on-surface/80 leading-relaxed whitespace-pre-wrap text-base">{lesson.description}</p>
               </div>
 
               {/* YouTube split screen or integrated video player */}
               {youtubeId && (
-                <div className="bg-white/[0.02] p-8 rounded-2xl border border-white/5 ring-1 ring-white/5 shadow-sm space-y-4">
-                  <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest">Lesson Video</h3>
-                  <div className="aspect-video w-full bg-black rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                <div className="bg-white/[0.02] p-8 rounded-2xl border border-outline-variant/50 ring-1 ring-white/5 shadow-sm space-y-4">
+                  <h3 className="text-xs font-semibold text-on-surface-variant/70 uppercase tracking-widest">Lesson Video</h3>
+                  <div className="aspect-video w-full bg-background rounded-xl overflow-hidden border border-outline/10 shadow-lg">
                     <iframe
                       className="w-full h-full"
                       src={`https://www.youtube.com/embed/${youtubeId}`}
@@ -526,7 +526,7 @@ export function LessonWorkspace({
                       title={mainVideo?.title || 'YouTube Player'}
                     />
                   </div>
-                  <p className="text-xs text-white/40 italic">
+                  <p className="text-xs text-tertiary italic">
                     Source: <a href={mainVideo?.url} target="_blank" rel="noreferrer" className="text-primary hover:text-primary/80 transition-colors underline">{mainVideo?.title}</a>
                   </p>
                 </div>
@@ -534,18 +534,18 @@ export function LessonWorkspace({
 
               {/* Practice Exercises */}
               {lesson.practice_exercises && lesson.practice_exercises.length > 0 && (
-                <div className="bg-white/[0.02] p-8 rounded-2xl border border-white/5 ring-1 ring-white/5 shadow-sm">
-                  <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <div className="bg-white/[0.02] p-8 rounded-2xl border border-outline-variant/50 ring-1 ring-white/5 shadow-sm">
+                  <h3 className="text-xs font-semibold text-on-surface-variant/70 uppercase tracking-widest mb-6 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-primary" />
                     Practice Exercises
                   </h3>
                   <ul className="space-y-2">
                     {lesson.practice_exercises.map((exercise, idx) => (
                       <li key={idx} className="flex gap-4 items-start p-3 rounded-xl hover:bg-white/5 transition-colors duration-300 group">
-                        <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 text-white/70 flex items-center justify-center font-medium text-xs mt-0.5 group-hover:bg-primary group-hover:text-black group-hover:border-primary transition-all shadow-sm shrink-0">
+                        <span className="w-6 h-6 rounded-full bg-surface-variant/50 border border-outline/10 text-on-surface-variant flex items-center justify-center font-medium text-xs mt-0.5 group-hover:bg-primary group-hover:text-black group-hover:border-primary transition-all shadow-sm shrink-0">
                           {idx + 1}
                         </span>
-                        <span className="text-white/80 leading-relaxed pt-0.5 text-sm">{exercise}</span>
+                        <span className="text-on-surface/80 leading-relaxed pt-0.5 text-sm">{exercise}</span>
                       </li>
                     ))}
                   </ul>
@@ -554,8 +554,8 @@ export function LessonWorkspace({
 
               {/* Additional Resources */}
               {otherResources.length > 0 && (
-                <div className="bg-white/[0.02] p-8 rounded-2xl border border-white/5 ring-1 ring-white/5 shadow-sm">
-                  <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-6">Additional Readings & Resources</h3>
+                <div className="bg-white/[0.02] p-8 rounded-2xl border border-outline-variant/50 ring-1 ring-white/5 shadow-sm">
+                  <h3 className="text-xs font-semibold text-on-surface-variant/70 uppercase tracking-widest mb-6">Additional Readings & Resources</h3>
                   <div className="grid gap-3">
                     {otherResources.map((res, idx) => (
                       <a
@@ -563,11 +563,11 @@ export function LessonWorkspace({
                         href={res.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group flex items-start justify-between p-4 bg-white/[0.01] border border-white/5 rounded-xl hover:bg-white/[0.04] hover:border-white/10 transition-all duration-300 shadow-sm"
+                        className="group flex items-start justify-between p-4 bg-white/[0.01] border border-outline-variant/50 rounded-xl hover:bg-white/[0.04] hover:border-white/10 transition-all duration-300 shadow-sm"
                       >
                         <div>
-                          <h4 className="text-sm font-semibold text-white/90 group-hover:text-white transition-colors">{res.title}</h4>
-                          {res.description && <p className="text-xs text-white/50 mt-1.5">{res.description}</p>}
+                          <h4 className="text-sm font-semibold text-on-surface group-hover:text-on-surface transition-colors">{res.title}</h4>
+                          {res.description && <p className="text-xs text-on-surface-variant/70 mt-1.5">{res.description}</p>}
                         </div>
                         <span className="text-[10px] font-semibold text-primary uppercase tracking-wider bg-primary/10 px-2 py-1 rounded-md mt-0.5 ring-1 ring-primary/20">
                           {res.type}
@@ -588,7 +588,7 @@ export function LessonWorkspace({
               exit={{ opacity: 0, y: -10 }}
               className="h-full flex flex-col space-y-4"
             >
-              <div className="bg-zinc-900/60 rounded-xl border border-zinc-800/40 overflow-hidden flex flex-col flex-1 min-h-[300px]">
+              <div className="bg-surface-container/60 rounded-xl border border-outline-variant/40 overflow-hidden flex flex-col flex-1 min-h-[300px]">
                 {/* Sandbox tabs */}
                 <div className="bg-surface-container px-4 py-2 border-b border-border flex items-center justify-between">
                   <div className="flex gap-2">
@@ -598,8 +598,8 @@ export function LessonWorkspace({
                         onClick={() => setSandboxTab(tab)}
                         className={`text-xs px-3 py-1.5 rounded-md font-semibold uppercase tracking-wider transition-colors ${
                           sandboxTab === tab
-                            ? 'bg-zinc-800 text-zinc-100 shadow-sm border border-zinc-700'
-                            : 'text-zinc-500 hover:text-zinc-300'
+                            ? 'bg-surface-container-high text-on-surface shadow-sm border border-outline'
+                            : 'text-on-surface-variant hover:text-zinc-300'
                         }`}
                       >
                         {tab}
@@ -652,7 +652,7 @@ export function LessonWorkspace({
               </div>
 
               {/* Output Preview */}
-              <div className="flex flex-col h-[280px] bg-zinc-900/60 rounded-xl border border-zinc-800/40 overflow-hidden shadow-sm relative">
+              <div className="flex flex-col h-[280px] bg-surface-container/60 rounded-xl border border-outline-variant/40 overflow-hidden shadow-sm relative">
                 <div className="bg-surface-container px-4 py-2 border-b border-border flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                   Live Preview Output
                 </div>
@@ -691,7 +691,7 @@ export function LessonWorkspace({
                       <AlertCircle className="w-5 h-5 flex-shrink-0" />
                       <span className="font-semibold text-sm line-clamp-2">Error Detected! Let AI help you fix it.</span>
                     </div>
-                    <Button size="sm" onClick={handleDebug} disabled={isDebugging} className="flex-shrink-0 ml-4 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700">
+                    <Button size="sm" onClick={handleDebug} disabled={isDebugging} className="flex-shrink-0 ml-4 bg-surface-container-high hover:bg-surface-variant text-on-surface border border-outline">
                       {isDebugging ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2 text-indigo-400" />}
                       AI Debugger
                     </Button>
@@ -701,11 +701,11 @@ export function LessonWorkspace({
                   )}
                   {debugExplanation && (
                     <div className="mt-2 space-y-3">
-                      <div className="p-3 bg-zinc-950/80 rounded-lg text-sm text-zinc-300 border border-zinc-800/80 leading-relaxed whitespace-pre-line">
+                      <div className="p-3 bg-zinc-950/80 rounded-lg text-sm text-on-surface border border-zinc-800/80 leading-relaxed whitespace-pre-line">
                         {debugExplanation}
                       </div>
                       <div className="flex justify-end">
-                        <Button size="sm" variant="primary" onClick={applyDebugFix} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                        <Button size="sm" variant="primary" onClick={applyDebugFix} className="bg-indigo-600 hover:bg-indigo-700 text-on-surface">
                           <CheckCircle2 className="w-4 h-4 mr-2" />
                           Apply Fix
                         </Button>
@@ -726,7 +726,7 @@ export function LessonWorkspace({
               className="space-y-6"
             >
               {!interviewStarted ? (
-                <div className="bg-zinc-900/60 p-6 rounded-xl border border-zinc-800/40 text-center space-y-4 shadow-sm">
+                <div className="bg-surface-container/60 p-6 rounded-xl border border-outline-variant/40 text-center space-y-4 shadow-sm">
                   <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
                     <MessageSquare className="w-6 h-6" />
                   </div>
@@ -760,7 +760,7 @@ export function LessonWorkspace({
                         </div>
                         {/* Answer & Feedback */}
                         {item.answer && (
-                          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-2">
+                          <div className="bg-surface-container border border-outline-variant rounded-xl p-4 space-y-2">
                             <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                               Your Answer
                             </p>
@@ -796,7 +796,7 @@ export function LessonWorkspace({
                             placeholder="Type your answer here..."
                             rows={3}
                             disabled={isInterviewLoading}
-                            className="w-full text-sm p-3 border border-zinc-800 rounded-lg outline-none focus:border-primary resize-none bg-zinc-900 text-zinc-200 shadow-inner"
+                            className="w-full text-sm p-3 border border-outline-variant rounded-lg outline-none focus:border-primary resize-none bg-surface-container text-on-surface shadow-inner"
                           />
                           <div className="flex justify-end">
                             <Button
@@ -857,7 +857,7 @@ export function LessonWorkspace({
               exit={{ opacity: 0, y: -10 }}
               className="h-full flex flex-col space-y-4"
             >
-              <div className="flex-1 flex flex-col bg-zinc-900/60 rounded-xl border border-zinc-800/40 p-4 shadow-sm min-h-[350px]">
+              <div className="flex-1 flex flex-col bg-surface-container/60 rounded-xl border border-outline-variant/40 p-4 shadow-sm min-h-[350px]">
                 <div className="flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
                   <div className="flex items-center gap-3">
                     <span>Take notes as you learn</span>
@@ -927,16 +927,16 @@ export function LessonWorkspace({
               )}
               
               {!cheatSheetContent ? (
-                <div className="flex-1 flex flex-col items-center justify-center bg-zinc-900/60 rounded-xl border border-zinc-800/40 p-8 shadow-sm text-center">
+                <div className="flex-1 flex flex-col items-center justify-center bg-surface-container/60 rounded-xl border border-outline-variant/40 p-8 shadow-sm text-center">
                   <Sparkles className="w-12 h-12 text-indigo-400/50 mb-4" />
-                  <h3 className="font-headline font-semibold text-zinc-200 mb-2">No Cheat Sheet Generated</h3>
-                  <p className="text-zinc-500 text-sm max-w-sm mb-6">
+                  <h3 className="font-headline font-semibold text-on-surface mb-2">No Cheat Sheet Generated</h3>
+                  <p className="text-on-surface-variant text-sm max-w-sm mb-6">
                     Use AI to instantly generate a summarized, markdown-formatted cheat sheet from this lesson's content.
                   </p>
                   <Button 
                     onClick={generateCheatSheet} 
                     disabled={isGeneratingSummary}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-on-surface"
                   >
                     {isGeneratingSummary ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating...</>
@@ -946,9 +946,9 @@ export function LessonWorkspace({
                   </Button>
                 </div>
               ) : (
-                <div className="flex-1 flex flex-col bg-zinc-900/60 rounded-xl border border-zinc-800/40 p-6 shadow-sm overflow-y-auto">
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-zinc-800">
-                    <h3 className="font-headline font-semibold text-zinc-200 flex items-center gap-2">
+                <div className="flex-1 flex flex-col bg-surface-container/60 rounded-xl border border-outline-variant/40 p-6 shadow-sm overflow-y-auto">
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-outline-variant">
+                    <h3 className="font-headline font-semibold text-on-surface flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-indigo-400" />
                       Lesson Summary
                     </h3>

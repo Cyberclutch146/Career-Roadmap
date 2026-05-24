@@ -29,7 +29,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="relative min-h-0 md:min-h-[100dvh] w-full flex flex-col justify-center border-b border-white/5 py-16 md:py-24">
+    <section className="relative min-h-0 md:min-h-[100dvh] w-full flex flex-col justify-center border-b border-outline-variant/50 py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-5 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -37,10 +37,10 @@ export function Testimonials() {
           viewport={{ once: true }}
           className="text-center max-w-2xl mx-auto mb-10 md:mb-16"
         >
-          <h2 className="font-headline text-2xl md:text-5xl text-white font-bold leading-tight mb-3 md:mb-4">
+          <h2 className="font-headline text-2xl md:text-5xl text-on-surface font-bold leading-tight mb-3 md:mb-4">
             Loved by <span className="font-serif italic text-amber-400 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">learners</span> everywhere.
           </h2>
-          <p className="font-body text-zinc-400 text-base md:text-lg max-w-xl mx-auto">
+          <p className="font-body text-on-surface-variant text-base md:text-lg max-w-xl mx-auto">
             Join thousands of learners who have achieved their goals with RoadmapAI.
           </p>
         </motion.div>
@@ -54,7 +54,7 @@ export function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-6 hover:border-amber-500/30 hover:shadow-[0_0_30px_rgba(245,158,11,0.03)] transition-all duration-300 relative group h-full flex flex-col justify-between"
+              className="rounded-2xl bg-surface-container/60 border border-outline-variant p-6 hover:border-amber-500/30 hover:shadow-[0_0_30px_rgba(245,158,11,0.03)] transition-all duration-300 relative group h-full flex flex-col justify-between"
             >
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/[0.02] rounded-full blur-[40px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
@@ -65,7 +65,7 @@ export function Testimonials() {
                     <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
                   ))}
                 </div>
-                <p className="font-body text-zinc-400 text-sm leading-relaxed mb-6">
+                <p className="font-body text-on-surface-variant text-sm leading-relaxed mb-6">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
               </div>
@@ -75,8 +75,8 @@ export function Testimonials() {
                   <span className="text-sm font-label font-bold text-amber-400">{testimonial.avatar}</span>
                 </div>
                 <div>
-                  <div className="font-headline font-semibold text-white text-base">{testimonial.author}</div>
-                  <div className="font-body text-xs text-zinc-500">{testimonial.role}</div>
+                  <div className="font-headline font-semibold text-on-surface text-base">{testimonial.author}</div>
+                  <div className="font-body text-xs text-on-surface-variant">{testimonial.role}</div>
                 </div>
               </div>
             </motion.div>
@@ -92,7 +92,7 @@ export function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
-              className="rounded-2xl bg-zinc-900/60 border border-zinc-800 p-5 relative flex flex-col justify-between w-full"
+              className="rounded-2xl bg-surface-container/60 border border-outline-variant p-5 relative flex flex-col justify-between w-full"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -103,18 +103,18 @@ export function Testimonials() {
                     ))}
                   </div>
                 </div>
-                <p className="font-body text-zinc-300 text-sm leading-relaxed mb-4">
+                <p className="font-body text-on-surface text-sm leading-relaxed mb-4">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 pt-2 border-t border-zinc-800/60">
+              <div className="flex items-center gap-3 pt-2 border-t border-outline-variant/60">
                 <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
                   <span className="text-xs font-label font-bold text-amber-400">{testimonial.avatar}</span>
                 </div>
                 <div>
-                  <div className="font-headline font-semibold text-zinc-200 text-sm">{testimonial.author}</div>
-                  <div className="font-body text-xs text-zinc-500">{testimonial.role}</div>
+                  <div className="font-headline font-semibold text-on-surface text-sm">{testimonial.author}</div>
+                  <div className="font-body text-xs text-on-surface-variant">{testimonial.role}</div>
                 </div>
               </div>
             </motion.div>

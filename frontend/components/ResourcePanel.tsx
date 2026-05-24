@@ -45,7 +45,7 @@ export function ResourcePanel({ resources }: ResourcePanelProps) {
           <div key={key}>
             <div className="flex items-center gap-2 mb-3">
               <div className={`w-8 h-8 ${color} rounded-lg flex items-center justify-center`}>
-                <Icon className="w-4 h-4 text-white" />
+                <Icon className="w-4 h-4 text-on-surface" />
               </div>
               <h4 className="font-headline font-bold text-on-surface">{label}</h4>
             </div>

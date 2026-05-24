@@ -10,85 +10,85 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // === Core Surface System (Dark Mode) ===
-        background: '#0a0a0b',
+        // === Core Surface System ===
+        background: 'var(--background)',
         surface: {
-          DEFAULT: '#0a0a0b',
-          dim: '#0a0a0b',
-          bright: '#1c1c1e',
+          DEFAULT: 'var(--surface)',
+          dim: 'var(--surface-dim)',
+          bright: 'var(--surface-bright)',
           container: {
-            DEFAULT: '#141415',
-            lowest: '#050506',
-            low: '#0f0f10',
-            high: '#1c1c1e',
-            highest: '#2a2a2c',
+            DEFAULT: 'var(--surface-container)',
+            lowest: 'var(--surface-container-lowest)',
+            low: 'var(--surface-container-low)',
+            high: 'var(--surface-container-high)',
+            highest: 'var(--surface-container-highest)',
           },
-          variant: '#2a2a2c',
-          tint: '#f59e0b',
+          variant: 'var(--surface-variant)',
+          tint: 'var(--surface-tint)',
         },
-        // === Primary (Warm Amber) ===
+        // === Primary ===
         primary: {
-          DEFAULT: '#f59e0b',
-          container: '#d97706',
-          fixed: '#fef3c7',
-          'fixed-dim': '#f59e0b',
+          DEFAULT: 'var(--primary)',
+          container: 'var(--primary-container)',
+          fixed: 'var(--primary-fixed)',
+          'fixed-dim': 'var(--primary-fixed-dim)',
         },
         'on-primary': {
-          DEFAULT: '#000000',
-          container: '#000000',
-          fixed: '#000000',
-          'fixed-variant': '#000000',
+          DEFAULT: 'var(--on-primary)',
+          container: 'var(--on-primary-container)',
+          fixed: 'var(--on-primary-fixed)',
+          'fixed-variant': 'var(--on-primary-fixed-variant)',
         },
-        'inverse-primary': '#b45309',
-        // === Secondary (Orange) ===
+        'inverse-primary': 'var(--inverse-primary)',
+        // === Secondary ===
         secondary: {
-          DEFAULT: '#f97316',
-          container: '#ea580c',
-          fixed: '#ffedd5',
-          'fixed-dim': '#f97316',
+          DEFAULT: 'var(--secondary)',
+          container: 'var(--secondary-container)',
+          fixed: 'var(--secondary-fixed)',
+          'fixed-dim': 'var(--secondary-fixed-dim)',
         },
         'on-secondary': {
-          DEFAULT: '#000000',
-          container: '#000000',
-          fixed: '#000000',
-          'fixed-variant': '#000000',
+          DEFAULT: 'var(--on-secondary)',
+          container: 'var(--on-secondary-container)',
+          fixed: 'var(--on-secondary-fixed)',
+          'fixed-variant': 'var(--on-secondary-fixed-variant)',
         },
-        // === Tertiary (Muted Lavender / Gray) ===
+        // === Tertiary ===
         tertiary: {
-          DEFAULT: '#71717a',
-          container: '#3f3f46',
-          fixed: '#e4e4e7',
-          'fixed-dim': '#a1a1aa',
+          DEFAULT: 'var(--tertiary)',
+          container: 'var(--tertiary-container)',
+          fixed: 'var(--tertiary-fixed)',
+          'fixed-dim': 'var(--tertiary-fixed-dim)',
         },
         'on-tertiary': {
-          DEFAULT: '#ffffff',
-          container: '#ffffff',
-          fixed: '#09090b',
-          'fixed-variant': '#27272a',
+          DEFAULT: 'var(--on-tertiary)',
+          container: 'var(--on-tertiary-container)',
+          fixed: 'var(--on-tertiary-fixed)',
+          'fixed-variant': 'var(--on-tertiary-fixed-variant)',
         },
         // === On-Surface/Text ===
         'on-surface': {
-          DEFAULT: '#fafafa',
-          variant: '#a1a1aa',
+          DEFAULT: 'var(--on-surface)',
+          variant: 'var(--on-surface-variant)',
         },
-        'on-background': '#fafafa',
+        'on-background': 'var(--on-background)',
         // === Outline ===
         outline: {
-          DEFAULT: '#52525b',
-          variant: '#27272a',
+          DEFAULT: 'var(--outline)',
+          variant: 'var(--outline-variant)',
         },
         // === Error ===
         error: {
-          DEFAULT: '#ef4444',
-          container: '#991b1b',
+          DEFAULT: 'var(--error)',
+          container: 'var(--error-container)',
         },
         'on-error': {
-          DEFAULT: '#ffffff',
-          container: '#fecaca',
+          DEFAULT: 'var(--on-error)',
+          container: 'var(--on-error-container)',
         },
         // === Inverse ===
-        'inverse-surface': '#fafafa',
-        'inverse-on-surface': '#18181b',
+        'inverse-surface': 'var(--inverse-surface)',
+        'inverse-on-surface': 'var(--inverse-on-surface)',
 
         // === Legacy aliases (for gradual migration) ===
         success: {

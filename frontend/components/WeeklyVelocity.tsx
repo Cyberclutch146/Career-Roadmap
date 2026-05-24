@@ -72,25 +72,25 @@ export function WeeklyVelocity({ completions }: WeeklyVelocityProps) {
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--outline-variant)" vertical={false} />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fill: '#a1a1aa', fontSize: 11 }} 
-                  stroke="#27272a"
+                  tick={{ fill: 'var(--on-surface-variant)', fontSize: 11 }} 
+                  stroke="var(--outline-variant)"
                 />
                 <YAxis 
-                  tick={{ fill: '#a1a1aa', fontSize: 11 }} 
-                  stroke="#27272a"
+                  tick={{ fill: 'var(--on-surface-variant)', fontSize: 11 }} 
+                  stroke="var(--outline-variant)"
                   allowDecimals={false}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#141415',
-                    borderColor: '#27272a',
+                    backgroundColor: 'var(--surface-container)',
+                    borderColor: 'var(--outline-variant)',
                     borderRadius: '0.75rem',
-                    color: '#fafafa',
+                    color: 'var(--on-surface)',
                   }}
-                  cursor={{ fill: 'rgba(245, 158, 11, 0.05)' }}
+                  cursor={{ fill: 'var(--primary)', fillOpacity: 0.05 }}
                   labelFormatter={(_, items) => {
                     if (items && items.length > 0) {
                       return items[0].payload.rangeLabel
@@ -101,7 +101,7 @@ export function WeeklyVelocity({ completions }: WeeklyVelocityProps) {
                 />
                 <Bar 
                   dataKey="completions" 
-                  fill="#f59e0b" 
+                  fill="var(--primary)" 
                   radius={[4, 4, 0, 0]}
                   maxBarSize={40}
                 />

@@ -294,11 +294,11 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-10"
           >
-            <p className="text-zinc-600 text-xs font-medium uppercase tracking-widest mb-2">Dashboard</p>
-            <h1 className="text-2xl sm:text-3xl font-headline font-bold text-zinc-100 mb-1">
+            <p className="text-tertiary text-xs font-medium uppercase tracking-widest mb-2">Dashboard</p>
+            <h1 className="text-2xl sm:text-3xl font-headline font-bold text-on-surface mb-1">
               {user ? `${user.name}` : 'Your Dashboard'}
             </h1>
-            <p className="text-zinc-500 text-sm">
+            <p className="text-on-surface-variant text-sm">
               {savedRoadmaps.length} active roadmap{savedRoadmaps.length !== 1 ? 's' : ''} · {totalCompletedLessons} lessons completed
             </p>
           </motion.div>
@@ -315,12 +315,12 @@ export default function DashboardPage() {
               { value: totalCompletedLessons, label: 'Lessons', sub: 'completed' },
               { value: dayStreak, label: 'Day Streak', sub: dayStreak > 0 ? 'active' : 'start today' },
             ].map((stat) => (
-              <div key={stat.label} className="bg-[#0e0e0f] border border-zinc-800/60 rounded-2xl p-4 sm:p-5 shadow-sm">
-                <div className="text-2xl sm:text-3xl font-bold text-zinc-100 font-headline tabular-nums leading-none mb-1.5">
+              <div key={stat.label} className="bg-surface-container-low border border-outline-variant/60 rounded-2xl p-4 sm:p-5 shadow-sm">
+                <div className="text-2xl sm:text-3xl font-bold text-on-surface font-headline tabular-nums leading-none mb-1.5">
                   {stat.value}
                 </div>
-                <div className="text-xs text-zinc-500">
-                  <span className="text-zinc-400 font-medium">{stat.label}</span>
+                <div className="text-xs text-on-surface-variant">
+                  <span className="text-on-surface-variant font-medium">{stat.label}</span>
                   {' '}
                   <span>{stat.sub}</span>
                 </div>
@@ -351,16 +351,16 @@ export default function DashboardPage() {
             transition={{ delay: 0.1 }}
             className="mb-10"
           >
-            <div className="sm:hidden mb-4 flex justify-between items-center bg-zinc-900/40 border border-zinc-800/60 p-4 rounded-2xl shadow-sm">
+            <div className="sm:hidden mb-4 flex justify-between items-center bg-surface-container/40 border border-outline-variant/60 p-4 rounded-2xl shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
                   <Calendar className="w-4 h-4 text-amber-500" />
                 </div>
-                <span className="text-sm font-semibold text-zinc-200">Activity History</span>
+                <span className="text-sm font-semibold text-on-surface">Activity History</span>
               </div>
               <button 
                 onClick={() => setShowMobileStats(!showMobileStats)}
-                className="text-xs px-3.5 py-2 bg-zinc-800 text-zinc-200 rounded-xl hover:bg-zinc-700 font-semibold border border-zinc-700 shadow-sm transition-colors active:scale-95"
+                className="text-xs px-3.5 py-2 bg-surface-container-high text-on-surface rounded-xl hover:bg-surface-variant font-semibold border border-outline shadow-sm transition-colors active:scale-95"
               >
                 {showMobileStats ? 'Hide Stats' : 'View Stats'}
               </button>
@@ -380,12 +380,12 @@ export default function DashboardPage() {
             >
               {/* Section header with roadmap picker */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
-                <h2 className="text-lg font-headline font-bold text-zinc-200">Analytics</h2>
+                <h2 className="text-lg font-headline font-bold text-on-surface">Analytics</h2>
                 {savedRoadmaps.length > 1 && (
                   <div className="relative w-full sm:w-auto">
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="flex items-center justify-between w-full sm:w-auto min-w-[200px] max-w-full px-3.5 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs sm:text-sm text-zinc-300 hover:border-zinc-700 transition-colors shadow-sm"
+                      className="flex items-center justify-between w-full sm:w-auto min-w-[200px] max-w-full px-3.5 py-2 bg-surface-container border border-outline-variant rounded-xl text-xs sm:text-sm text-on-surface hover:border-outline transition-colors shadow-sm"
                     >
                       <span className="truncate pr-4 text-left">
                         {(() => {
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                           return rm.generated_roadmap.overview.title || rm.goal || 'Roadmap'
                         })()}
                       </span>
-                      <ChevronDown className={`w-4 h-4 text-zinc-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 text-on-surface-variant transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
                     {isDropdownOpen && (
                       <>
@@ -401,7 +401,7 @@ export default function DashboardPage() {
                           className="fixed inset-0 z-40"
                           onClick={() => setIsDropdownOpen(false)}
                         />
-                        <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-[350px] bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden z-50">
+                        <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-[350px] bg-surface-container border border-outline rounded-xl shadow-2xl overflow-hidden z-50">
                           <div className="max-h-[300px] overflow-y-auto overscroll-contain">
                             {savedRoadmaps.map((rm) => {
                               const title = rm.generated_roadmap.overview.title || rm.goal || 'Roadmap'
@@ -412,10 +412,10 @@ export default function DashboardPage() {
                                     setSelectedRoadmapId(rm.id)
                                     setIsDropdownOpen(false)
                                   }}
-                                  className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-zinc-800/50 last:border-0 ${
+                                  className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-outline-variant/50 last:border-0 ${
                                     selectedRoadmapId === rm.id 
                                       ? 'bg-amber-500/10 text-amber-500 font-medium' 
-                                      : 'text-zinc-300 hover:bg-zinc-800'
+                                      : 'text-on-surface hover:bg-surface-container-high'
                                   }`}
                                 >
                                   {title}
@@ -455,7 +455,7 @@ export default function DashboardPage() {
 
                 let estCompletionText = ''
                 let statusLabel = 'Not Started'
-                let statusColor = 'text-zinc-500'
+                let statusColor = 'text-on-surface-variant'
 
                 if (completedCount > 0) {
                   if (remainingLessons === 0) {
@@ -489,17 +489,17 @@ export default function DashboardPage() {
                 return (
                   <div className="space-y-5">
                     {/* Forecast — minimal strip, not a card */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 px-5 rounded-xl bg-zinc-900/60 border border-zinc-800/40">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 px-5 rounded-xl bg-surface-container/60 border border-outline-variant/40">
                       <div className="flex items-center gap-3 min-w-0">
                         <span className={`text-xs font-bold uppercase tracking-wider ${statusColor}`}>
                           {statusLabel}
                         </span>
-                        <span className="text-zinc-700">|</span>
-                        <span className="text-xs text-zinc-500 truncate">{estCompletionText}</span>
+                        <span className="text-outline">|</span>
+                        <span className="text-xs text-on-surface-variant truncate">{estCompletionText}</span>
                       </div>
-                      <div className="flex items-center gap-5 text-xs text-zinc-500 flex-shrink-0">
-                        <span><span className="text-zinc-300 font-bold tabular-nums">{remainingLessons}</span> left</span>
-                        <span>target <span className="text-zinc-300 font-medium">{formattedTargetDate}</span></span>
+                      <div className="flex items-center gap-5 text-xs text-on-surface-variant flex-shrink-0">
+                        <span><span className="text-on-surface font-bold tabular-nums">{remainingLessons}</span> left</span>
+                        <span>target <span className="text-on-surface font-medium">{formattedTargetDate}</span></span>
                       </div>
                     </div>
 
@@ -520,13 +520,13 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <h2 className="text-lg font-headline font-bold text-zinc-200 mb-4">Roadmaps</h2>
+            <h2 className="text-lg font-headline font-bold text-on-surface mb-4">Roadmaps</h2>
 
             {savedRoadmaps.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-zinc-800 py-16 text-center">
-                <BookOpen className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
-                <h3 className="text-sm font-semibold text-zinc-400 mb-1">No roadmaps yet</h3>
-                <p className="text-xs text-zinc-600 mb-5 max-w-xs mx-auto">
+              <div className="rounded-2xl border border-dashed border-outline-variant py-16 text-center">
+                <BookOpen className="w-8 h-8 text-outline mx-auto mb-3" />
+                <h3 className="text-sm font-semibold text-on-surface-variant mb-1">No roadmaps yet</h3>
+                <p className="text-xs text-tertiary mb-5 max-w-xs mx-auto">
                   Create your first learning roadmap to start tracking your progress.
                 </p>
                 <Link href="/generate">
@@ -564,7 +564,7 @@ function RoadmapRow({ roadmap, index }: { roadmap: Roadmap; index: number }) {
         initial={{ opacity: 0, x: -8 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.04 }}
-        className="group flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 hover:bg-zinc-900/60 transition-all cursor-pointer"
+        className="group flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl bg-surface-container/40 border border-outline-variant/40 hover:border-outline/50 hover:bg-zinc-900/60 transition-all cursor-pointer"
       >
         {/* Progress ring */}
         <div className="relative w-11 h-11 flex-shrink-0">
@@ -579,21 +579,21 @@ function RoadmapRow({ roadmap, index }: { roadmap: Roadmap; index: number }) {
               className="transition-all duration-500"
             />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-zinc-400 tabular-nums">
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-on-surface-variant tabular-nums">
             {progress}%
           </span>
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm text-zinc-200 group-hover:text-zinc-100 truncate transition-colors">
+          <h3 className="font-semibold text-sm text-on-surface group-hover:text-zinc-100 truncate transition-colors">
             {roadmap.goal}
           </h3>
-          <div className="flex items-center gap-2 mt-1 text-xs text-zinc-600">
+          <div className="flex items-center gap-2 mt-1 text-xs text-tertiary">
             <span className="capitalize">{roadmap.skill_level}</span>
-            <span className="text-zinc-800">·</span>
+            <span className="text-outline-variant">·</span>
             <span>{totalLessons} lessons</span>
-            <span className="text-zinc-800">·</span>
+            <span className="text-outline-variant">·</span>
             <span>{roadmap.target_months}mo</span>
           </div>
         </div>
@@ -603,7 +603,7 @@ function RoadmapRow({ roadmap, index }: { roadmap: Roadmap; index: number }) {
           <div className="w-24">
             <ProgressBar value={progress} size="sm" />
           </div>
-          <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-500 group-hover:translate-x-0.5 transition-all" />
+          <ChevronRight className="w-4 h-4 text-outline group-hover:text-zinc-500 group-hover:translate-x-0.5 transition-all" />
         </div>
       </motion.div>
     </Link>

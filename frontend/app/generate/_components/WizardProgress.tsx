@@ -14,7 +14,7 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
     <div className="w-full mb-4 md:mb-8 relative z-20">
       {/* Desktop Floating Pill Progress */}
       <div className="hidden md:flex justify-center">
-        <div className="bg-zinc-900/40 backdrop-blur-xl border border-zinc-800/50 rounded-full p-2 flex items-center gap-2 relative">
+        <div className="bg-surface-container/40 backdrop-blur-xl border border-outline-variant/50 rounded-full p-2 flex items-center gap-2 relative">
           {steps.map((step, idx) => {
             const stepNum = idx + 1
             const isActive = currentStep === stepNum
@@ -29,15 +29,15 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
                   className={`
                     relative flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300
                     ${isActive ? 'bg-amber-500/10 text-amber-500' : ''}
-                    ${isCompleted ? 'hover:bg-zinc-800/50 cursor-pointer text-zinc-300' : ''}
-                    ${!isActive && !isCompleted ? 'text-zinc-600 cursor-not-allowed' : ''}
+                    ${isCompleted ? 'hover:bg-zinc-800/50 cursor-pointer text-on-surface' : ''}
+                    ${!isActive && !isCompleted ? 'text-tertiary cursor-not-allowed' : ''}
                   `}
                 >
                   <div className={`
                     w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold
                     ${isActive ? 'bg-amber-500 text-black shadow-[0_0_10px_rgba(245,158,11,0.3)]' : ''}
-                    ${isCompleted ? 'bg-zinc-800 text-zinc-300' : ''}
-                    ${!isActive && !isCompleted ? 'bg-zinc-800/50 text-zinc-600' : ''}
+                    ${isCompleted ? 'bg-surface-container-high text-on-surface' : ''}
+                    ${!isActive && !isCompleted ? 'bg-zinc-800/50 text-tertiary' : ''}
                   `}>
                     {isCompleted ? <Check className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
                   </div>
@@ -72,10 +72,10 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
       {/* Mobile Progress — Compact Dot Stepper */}
       <div className="md:hidden">
         <div className="flex items-center justify-between px-1 mb-3">
-          <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+          <span className="text-[10px] font-mono text-on-surface-variant uppercase tracking-widest">
             Step {currentStep}/{steps.length}
           </span>
-          <span className="text-xs font-semibold text-zinc-200">
+          <span className="text-xs font-semibold text-on-surface">
             {steps[currentStep - 1].label}
           </span>
         </div>

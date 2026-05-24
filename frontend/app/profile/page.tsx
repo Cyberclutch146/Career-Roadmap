@@ -120,10 +120,10 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-2xl sm:text-3xl font-headline font-bold text-zinc-100 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-headline font-bold text-on-surface mb-2">
               Your Profile
             </h1>
-            <p className="text-zinc-500 text-sm">
+            <p className="text-on-surface-variant text-sm">
               Manage your account, stats, and saved roadmaps.
             </p>
           </motion.div>
@@ -138,7 +138,7 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-zinc-900/60 border border-zinc-800/40 rounded-2xl p-6 relative overflow-hidden"
+                className="bg-surface-container/60 border border-outline-variant/40 rounded-2xl p-6 relative overflow-hidden"
               >
                 <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/20 rounded-full flex items-center justify-center text-amber-500 mb-4">
                   <User className="w-8 h-8" />
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                       type="text" 
                       value={newName} 
                       onChange={(e) => setNewName(e.target.value)}
-                      className="bg-zinc-950 border border-zinc-700 rounded-md px-2 py-1 text-sm text-zinc-100 w-full focus:outline-none focus:border-amber-500"
+                      className="bg-zinc-950 border border-outline rounded-md px-2 py-1 text-sm text-on-surface w-full focus:outline-none focus:border-amber-500"
                       autoFocus
                     />
                     <button 
@@ -163,19 +163,19 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 mb-2 group">
-                    <h2 className="text-xl font-headline font-bold text-zinc-100">{user.name}</h2>
+                    <h2 className="text-xl font-headline font-bold text-on-surface">{user.name}</h2>
                     <button 
                       onClick={() => setIsEditingName(true)}
-                      className="text-zinc-600 hover:text-amber-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                      className="text-tertiary hover:text-amber-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 )}
                 
-                <p className="text-sm text-zinc-400 mb-4 truncate" title={user.email}>{user.email}</p>
+                <p className="text-sm text-on-surface-variant mb-4 truncate" title={user.email}>{user.email}</p>
                 
-                <div className="flex items-center gap-2 text-xs text-zinc-500 pt-4 border-t border-zinc-800/40">
+                <div className="flex items-center gap-2 text-xs text-on-surface-variant pt-4 border-t border-outline-variant/40">
                   <CalendarDays className="w-3.5 h-3.5" />
                   <span>Member since {memberSince}</span>
                 </div>
@@ -186,30 +186,30 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="bg-zinc-900/60 border border-zinc-800/40 rounded-2xl p-6"
+                className="bg-surface-container/60 border border-outline-variant/40 rounded-2xl p-6"
               >
-                <h3 className="text-sm font-semibold text-zinc-300 mb-4 uppercase tracking-wider">Achievements</h3>
+                <h3 className="text-sm font-semibold text-on-surface mb-4 uppercase tracking-wider">Achievements</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-zinc-400">
+                    <div className="flex items-center gap-2 text-on-surface-variant">
                       <Target className="w-4 h-4 text-emerald-400" />
                       <span className="text-sm">Roadmaps</span>
                     </div>
-                    <span className="font-bold text-zinc-200 tabular-nums">{savedRoadmaps.length}</span>
+                    <span className="font-bold text-on-surface tabular-nums">{savedRoadmaps.length}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-zinc-400">
+                    <div className="flex items-center gap-2 text-on-surface-variant">
                       <BookOpen className="w-4 h-4 text-blue-400" />
                       <span className="text-sm">Lessons</span>
                     </div>
-                    <span className="font-bold text-zinc-200 tabular-nums">{totalCompletedLessons}</span>
+                    <span className="font-bold text-on-surface tabular-nums">{totalCompletedLessons}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-zinc-400">
+                    <div className="flex items-center gap-2 text-on-surface-variant">
                       <Flame className="w-4 h-4 text-amber-500" />
                       <span className="text-sm">Day Streak</span>
                     </div>
-                    <span className="font-bold text-zinc-200 tabular-nums">{dayStreak}</span>
+                    <span className="font-bold text-on-surface tabular-nums">{dayStreak}</span>
                   </div>
                 </div>
               </motion.div>
@@ -219,13 +219,13 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-zinc-900/60 border border-zinc-800/40 rounded-2xl p-6 space-y-3"
+                className="bg-surface-container/60 border border-outline-variant/40 rounded-2xl p-6 space-y-3"
               >
-                <h3 className="text-sm font-semibold text-zinc-300 mb-4 uppercase tracking-wider">Settings</h3>
+                <h3 className="text-sm font-semibold text-on-surface mb-4 uppercase tracking-wider">Settings</h3>
                 
                 <Button 
                   variant="secondary" 
-                  className="w-full justify-start text-zinc-400 bg-zinc-800/50 hover:bg-zinc-800 border-none"
+                  className="w-full justify-start text-on-surface-variant bg-zinc-800/50 hover:bg-surface-container-high border-none"
                   onClick={() => alert("Password reset link would be sent to your email.")}
                 >
                   <Settings className="w-4 h-4 mr-2" />
@@ -249,10 +249,10 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="bg-zinc-900/60 border border-zinc-800/40 rounded-2xl p-6 min-h-full"
+                className="bg-surface-container/60 border border-outline-variant/40 rounded-2xl p-6 min-h-full"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-headline font-bold text-zinc-200">Your Library</h3>
+                  <h3 className="text-lg font-headline font-bold text-on-surface">Your Library</h3>
                   <Link href="/generate">
                     <Button size="sm" variant="ghost" className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10">
                       New Roadmap
@@ -261,9 +261,9 @@ export default function ProfilePage() {
                 </div>
 
                 {savedRoadmaps.length === 0 ? (
-                  <div className="text-center py-12 border border-dashed border-zinc-800 rounded-xl">
-                    <BookOpen className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
-                    <p className="text-sm text-zinc-400 mb-4">No roadmaps saved yet.</p>
+                  <div className="text-center py-12 border border-dashed border-outline-variant rounded-xl">
+                    <BookOpen className="w-8 h-8 text-outline mx-auto mb-3" />
+                    <p className="text-sm text-on-surface-variant mb-4">No roadmaps saved yet.</p>
                     <Link href="/generate">
                       <Button size="sm">Create Your First Roadmap</Button>
                     </Link>
@@ -278,15 +278,15 @@ export default function ProfilePage() {
                       return (
                         <div 
                           key={roadmap.id} 
-                          className="group relative flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors"
+                          className="group relative flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl bg-zinc-950 border border-outline-variant hover:border-outline transition-colors"
                         >
                           <div className="flex-1 min-w-0 pr-8 sm:pr-0">
                             <Link href={`/roadmap/${roadmap.id}`} className="block">
-                              <h4 className="font-semibold text-sm text-zinc-200 truncate group-hover:text-amber-500 transition-colors">
+                              <h4 className="font-semibold text-sm text-on-surface truncate group-hover:text-amber-500 transition-colors">
                                 {roadmap.goal}
                               </h4>
-                              <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-zinc-500">
-                                <span className="uppercase tracking-wider text-[10px] bg-zinc-800 px-2 py-0.5 rounded-md font-medium text-zinc-300">
+                              <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-on-surface-variant">
+                                <span className="uppercase tracking-wider text-[10px] bg-surface-container-high px-2 py-0.5 rounded-md font-medium text-on-surface">
                                   {roadmap.skill_level}
                                 </span>
                                 <span>{roadmap.target_months}mo</span>
@@ -299,13 +299,13 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
                             <div className="flex-1 sm:w-32">
                               <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-zinc-500">Progress</span>
-                                <span className="text-zinc-400 font-bold tabular-nums">{progress}%</span>
+                                <span className="text-on-surface-variant">Progress</span>
+                                <span className="text-on-surface-variant font-bold tabular-nums">{progress}%</span>
                               </div>
                               <ProgressBar value={progress} size="sm" />
                             </div>
                             <Link href={`/roadmap/${roadmap.id}`}>
-                              <button className="p-2 text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800 rounded-lg transition-colors">
+                              <button className="p-2 text-tertiary hover:text-zinc-300 hover:bg-surface-container-high rounded-lg transition-colors">
                                 <ChevronRight className="w-4 h-4" />
                               </button>
                             </Link>
@@ -313,7 +313,7 @@ export default function ProfilePage() {
 
                           <button 
                             onClick={() => handleDeleteRoadmap(roadmap.id)}
-                            className="absolute top-4 right-4 sm:-right-2 sm:-top-2 p-1.5 bg-zinc-900 border border-zinc-800 text-zinc-600 rounded-lg hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                            className="absolute top-4 right-4 sm:-right-2 sm:-top-2 p-1.5 bg-surface-container border border-outline-variant text-tertiary rounded-lg hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                             title="Delete roadmap"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
