@@ -184,6 +184,7 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     roadmap_context: Dict[str, Any]
     message: str = Field(..., min_length=1, max_length=2000)
+    history: List[Dict[str, Any]] = []
 
 
 class ChatResponse(BaseModel):

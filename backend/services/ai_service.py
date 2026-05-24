@@ -1196,14 +1196,18 @@ Return ONLY the JSON, no additional text or explanation."""
     async def generate_chat_response(
         self,
         roadmap_context: Dict[str, Any],
-        user_message: str
+        user_message: str,
+        history: List[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         system_instruction = f"""You are an AI mentor helping a student following this learning roadmap:
 Goal: {roadmap_context.get('goal', 'Learning')}
 Current Progress: {roadmap_context.get('progress', 'Just started')}
 
-You have access to tools. Use them when the user asks to mark something complete, navigate to a page, or if they need a quick quiz.
-Otherwise, provide a helpful, educational response (2-4 paragraphs max).
+You have access to tools. Use them ONLY when:
+- The user wants to navigate somewhere (`navigate_to_view`)
+- The user asks for practice exercises but hasn't started a quiz yet (`generate_mini_quiz`)
+
+CRITICAL: If the user explicitly asks you to "give me a 3-question mini quiz", or asks you to ask them questions, DO NOT use the `generate_mini_quiz` tool again. Instead, directly type out the first question in your response. Wait for them to answer before grading and asking the next.
 """
 
         tools = [
@@ -1257,8 +1261,14 @@ Otherwise, provide a helpful, educational response (2-4 paragraphs max).
                     tools=tools,
                     system_instruction=system_instruction
                 )
+                genai_history = []
+                if history:
+                    for msg in history:
+                        role = "user" if msg.get("role") == "user" else "model"
+                        content = msg.get("content", "")
+                        genai_history.append({"role": role, "parts": [content]})
                 
-                chat = agent_model.start_chat()
+                chat = agent_model.start_chat(history=genai_history)
                 response = await chat.send_message_async(user_message)
 
                 if response.parts:
@@ -1283,10 +1293,13 @@ Otherwise, provide a helpful, educational response (2-4 paragraphs max).
                             )
                             break
 
-                reply = response.text
+                try:
+                    reply = response.text
+                except Exception:
+                    reply = "I've started the action you requested!"
             except Exception as e:
                 print(f"Agentic loop error: {e}")
-                reply = f"I'd be happy to help with your learning journey! Regarding your question about {user_message[:50]}... - could you tell me more about what specific aspect you'd like to explore?"
+                reply = "I'd be happy to help with your learning journey! Could you tell me more about what specific aspect you'd like to explore?"
         else:
             reply = f"Great question about {user_message[:50]}! Based on your learning journey, I'd recommend reviewing the relevant chapter in your roadmap and practicing with hands-on exercises."
 

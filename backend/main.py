@@ -203,7 +203,8 @@ async def chat_with_mentor(
 
     response = await ai_service.generate_chat_response(
         roadmap_context=roadmap_context,
-        user_message=user_message
+        user_message=user_message,
+        history=chat_request.history
     )
 
     return ChatResponse(

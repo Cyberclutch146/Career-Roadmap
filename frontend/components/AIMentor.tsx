@@ -176,7 +176,10 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
     setIsLoading(true)
 
     try {
-      const payload: any = { message: textToSend }
+      const payload: any = { 
+        message: textToSend,
+        history: messages.map(m => ({ role: m.role, content: m.content }))
+      }
 
       if (roadmap) {
         payload.roadmap_context = {
