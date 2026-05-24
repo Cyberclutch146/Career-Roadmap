@@ -17,7 +17,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-headline text-[2rem] leading-[1.15] sm:text-headline-lg-mobile md:text-6xl text-on-surface font-bold"
+          className="font-headline text-3xl leading-[1.15] md:text-6xl text-on-surface font-bold"
         >
           Master any skill with <br className="hidden sm:block" />
           <span className="font-serif italic text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">adaptive pathways.</span>

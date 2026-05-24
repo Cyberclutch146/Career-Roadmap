@@ -153,7 +153,7 @@ Do not wrap the entire response in a markdown code block, just return raw markdo
                 assessment_instr += "Since they scored lower/medium, do not pre-complete lessons but ensure explanations and exercises are helpful and tailored to their current skill level."
 
 
-        return f"""You are an expert educational advisor creating a comprehensive learning roadmap.
+        return f"""You are an expert educational advisor creating a comprehensive learning roadmap. Maintain a professional, direct, and human tone. Do not use emojis.
 
 Create a detailed structured roadmap for someone who wants to: {goal}
 Current skill level: {skill_level}
@@ -1208,6 +1208,7 @@ You have access to tools. Use them ONLY when:
 - The user asks for practice exercises but hasn't started a quiz yet (`generate_mini_quiz`)
 
 CRITICAL: If the user explicitly asks you to "give me a 3-question mini quiz", or asks you to ask them questions, DO NOT use the `generate_mini_quiz` tool again. Instead, directly type out the first question in your response. Wait for them to answer before grading and asking the next.
+Maintain a professional, direct, and human tone. Do not use emojis. Do not say "As an AI" or "I'd be happy to help".
 """
 
         tools = [
@@ -1296,12 +1297,12 @@ CRITICAL: If the user explicitly asks you to "give me a 3-question mini quiz", o
                 try:
                     reply = response.text
                 except Exception:
-                    reply = "I've started the action you requested!"
+                    reply = "I've started the action you requested."
             except Exception as e:
                 print(f"Agentic loop error: {e}")
-                reply = "I'd be happy to help with your learning journey! Could you tell me more about what specific aspect you'd like to explore?"
+                reply = "I can help with that. Could you clarify what specific aspect you are exploring?"
         else:
-            reply = f"Great question about {user_message[:50]}! Based on your learning journey, I'd recommend reviewing the relevant chapter in your roadmap and practicing with hands-on exercises."
+            reply = "Based on your learning journey, I recommend reviewing the relevant chapter in your roadmap and practicing with hands-on exercises."
 
         suggestions = [
             "What should I learn next?",
@@ -1316,7 +1317,7 @@ CRITICAL: If the user explicitly asks you to "give me a 3-question mini quiz", o
         }
 
     async def generate_assessment_quiz(self, goal: str, skill_level: str) -> List[Dict[str, Any]]:
-        prompt = f"""You are an expert technical interviewer.
+        prompt = f"""You are an expert technical interviewer. Maintain a professional, direct, and human tone. Do not use emojis.
 Generate 5 multiple-choice questions to assess a user's knowledge for the goal: "{goal}" at a "{skill_level}" level.
 The questions should test key concepts of this domain.
 
@@ -1399,7 +1400,7 @@ Return only valid JSON, no markdown formatting (like ```json), no surrounding te
         current_question_index = len(history)
 
         if current_question_index == 0:
-            prompt = f"""You are an elite technical interviewer. Start a mock interview for a candidate learning "{roadmap_goal}", focusing on the phase: "{phase_name}" ({phase_description}).
+            prompt = f"""You are an elite technical interviewer. Maintain a professional, direct, and human tone. Do not use emojis. Start a mock interview for a candidate learning "{roadmap_goal}", focusing on the phase: "{phase_name}" ({phase_description}).
 Ask the FIRST question. Keep it clear, conceptual, and relevant to the phase's topics.
 Do not say hello or provide intro filler, just output the interview question directly in 1-2 sentences."""
             
@@ -1420,7 +1421,7 @@ Do not say hello or provide intro filler, just output the interview question dir
         
         last_question = history[-1]["question"]
         
-        eval_prompt = f"""You are an elite technical interviewer.
+        eval_prompt = f"""You are an elite technical interviewer. Maintain a professional, direct, and human tone. Do not use emojis.
 Candidate is interviewing for "{roadmap_goal}" in the phase "{phase_name}" ({phase_description}).
 
 Question asked: {last_question}
@@ -1442,7 +1443,7 @@ Output ONLY the feedback, no filler."""
         updated_history[-1]["feedback"] = feedback
 
         if current_question_index < total_questions:
-            next_prompt = f"""You are an elite technical interviewer.
+            next_prompt = f"""You are an elite technical interviewer. Maintain a professional, direct, and human tone. Do not use emojis.
 Candidate is interviewing for "{roadmap_goal}" in the phase "{phase_name}" ({phase_description}).
 Here is the interview history so far:
 {json.dumps(updated_history, indent=2)}
@@ -1468,7 +1469,7 @@ Output ONLY the question directly in 1-2 sentences, no filler."""
                 "history": updated_history
             }
         else:
-            summary_prompt = f"""You are an elite technical interviewer.
+            summary_prompt = f"""You are an elite technical interviewer. Maintain a professional, direct, and human tone. Do not use emojis.
 Candidate completed a mock interview for "{roadmap_goal}" in the phase "{phase_name}".
 Here is the full interview transcript:
 {json.dumps(updated_history, indent=2)}

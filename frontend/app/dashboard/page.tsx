@@ -22,6 +22,7 @@ import {
   Clock,
   Flame,
   ArrowUpRight,
+  ChevronDown,
 } from 'lucide-react'
 import type { Roadmap } from '@/types'
 import { ProgressCalendar, CompletionItem } from '@/components/ProgressCalendar'
@@ -34,6 +35,8 @@ export default function DashboardPage() {
   const [completions, setCompletions] = useState<CompletionItem[]>([])
   const [selectedRoadmapId, setSelectedRoadmapId] = useState<string>('')
   const [completedLessonsByRoadmap, setCompletedLessonsByRoadmap] = useState<Record<string, Set<string>>>({})
+  const [showMobileStats, setShowMobileStats] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   // Clear any active roadmap context when returning to dashboard
   useEffect(() => {
@@ -282,7 +285,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#0a0a0b]">
       <Navbar />
 
-      <div className="pt-24 pb-16">
+      <div className="pt-24 pb-32 md:pb-16">
         <div className="max-w-[1100px] mx-auto px-5 sm:px-8">
 
           {/* Header — left-aligned, no card wrapper */}
@@ -305,15 +308,14 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-zinc-800/30 rounded-2xl overflow-hidden border border-zinc-800/40 mb-8"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8"
           >
             {[
               { value: savedRoadmaps.length, label: 'Roadmaps', sub: 'active' },
               { value: totalCompletedLessons, label: 'Lessons', sub: 'completed' },
-              { value: dayStreak, label: 'Day Streak', sub: dayStreak > 0 ? '🔥' : 'start today' },
-              { value: formatTimeInvested(totalTimeMinutes), label: 'Time Invested', sub: 'learning' },
+              { value: dayStreak, label: 'Day Streak', sub: dayStreak > 0 ? 'active' : 'start today' },
             ].map((stat) => (
-              <div key={stat.label} className="bg-[#0e0e0f] p-5 sm:p-6">
+              <div key={stat.label} className="bg-[#0e0e0f] border border-zinc-800/60 rounded-2xl p-4 sm:p-5 shadow-sm">
                 <div className="text-2xl sm:text-3xl font-bold text-zinc-100 font-headline tabular-nums leading-none mb-1.5">
                   {stat.value}
                 </div>
@@ -347,8 +349,25 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
+            className="mb-10"
           >
-            <ProgressCalendar completions={completions} streak={dayStreak} />
+            <div className="sm:hidden mb-4 flex justify-between items-center bg-zinc-900/40 border border-zinc-800/60 p-4 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                  <Calendar className="w-4 h-4 text-amber-500" />
+                </div>
+                <span className="text-sm font-semibold text-zinc-200">Activity History</span>
+              </div>
+              <button 
+                onClick={() => setShowMobileStats(!showMobileStats)}
+                className="text-xs px-3.5 py-2 bg-zinc-800 text-zinc-200 rounded-xl hover:bg-zinc-700 font-semibold border border-zinc-700 shadow-sm transition-colors active:scale-95"
+              >
+                {showMobileStats ? 'Hide Stats' : 'View Stats'}
+              </button>
+            </div>
+            <div className={`${showMobileStats ? 'block' : 'hidden'} sm:block`}>
+              <ProgressCalendar completions={completions} streak={dayStreak} />
+            </div>
           </motion.div>
 
           {/* Analytics Section */}
@@ -363,17 +382,51 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
                 <h2 className="text-lg font-headline font-bold text-zinc-200">Analytics</h2>
                 {savedRoadmaps.length > 1 && (
-                  <select
-                    value={selectedRoadmapId}
-                    onChange={(e) => setSelectedRoadmapId(e.target.value)}
-                    className="px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-zinc-300 focus:outline-none focus:border-zinc-600 transition-colors"
-                  >
-                    {savedRoadmaps.map((rm) => (
-                      <option key={rm.id} value={rm.id}>
-                        {rm.generated_roadmap.overview.title || rm.goal}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative w-full sm:w-auto">
+                    <button
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="flex items-center justify-between w-full sm:w-auto min-w-[200px] max-w-full px-3.5 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs sm:text-sm text-zinc-300 hover:border-zinc-700 transition-colors shadow-sm"
+                    >
+                      <span className="truncate pr-4 text-left">
+                        {(() => {
+                          const rm = savedRoadmaps.find(r => r.id === selectedRoadmapId) || savedRoadmaps[0]
+                          return rm.generated_roadmap.overview.title || rm.goal || 'Roadmap'
+                        })()}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-zinc-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40"
+                          onClick={() => setIsDropdownOpen(false)}
+                        />
+                        <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-[350px] bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden z-50">
+                          <div className="max-h-[300px] overflow-y-auto overscroll-contain">
+                            {savedRoadmaps.map((rm) => {
+                              const title = rm.generated_roadmap.overview.title || rm.goal || 'Roadmap'
+                              return (
+                                <button
+                                  key={rm.id}
+                                  onClick={() => {
+                                    setSelectedRoadmapId(rm.id)
+                                    setIsDropdownOpen(false)
+                                  }}
+                                  className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-zinc-800/50 last:border-0 ${
+                                    selectedRoadmapId === rm.id 
+                                      ? 'bg-amber-500/10 text-amber-500 font-medium' 
+                                      : 'text-zinc-300 hover:bg-zinc-800'
+                                  }`}
+                                >
+                                  {title}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
 

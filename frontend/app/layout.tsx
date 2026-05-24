@@ -4,6 +4,7 @@ import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { MobileNav } from '@/components/MobileNav'
 import { ChatWidget } from '@/components/AIMentor'
+import Galaxy from '@/components/Galaxy'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -43,10 +44,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} overflow-x-hidden max-w-full`}>
       <body className="min-h-screen bg-background text-on-surface pb-16 md:pb-0 overflow-x-hidden max-w-full antialiased">
-        {/* Atmospheric Background Glow */}
-        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-          <div className="absolute top-[-15%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-500/[0.05] blur-[180px]" />
-          <div className="absolute bottom-[-20%] left-[-15%] w-[60vw] h-[60vw] rounded-full bg-orange-500/[0.03] blur-[200px]" />
+        {/* Galaxy Background */}
+        <div className="fixed inset-0 pointer-events-none -z-10 bg-black">
+          <Galaxy 
+            transparent={true} 
+            mouseInteraction={true} 
+            mouseRepulsion={true}
+            density={1.2}
+            glowIntensity={0.2}
+            saturation={0}
+            hueShift={240}
+            className="w-full h-full opacity-80"
+          />
         </div>
         <AuthProvider>
           {children}

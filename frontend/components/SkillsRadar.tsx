@@ -51,13 +51,13 @@ export function SkillsRadar({ roadmap, completedLessons }: SkillsRadarProps) {
         <CardDescription>Progress across learning phases</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] w-full">
+        <div className="w-full h-[220px] sm:h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
+            <RadarChart cx="50%" cy="50%" outerRadius="55%" data={data}>
               <PolarGrid stroke="#27272a" />
               <PolarAngleAxis 
                 dataKey="subject" 
-                tick={{ fill: '#a1a1aa', fontSize: 11 }} 
+                tick={{ fill: '#a1a1aa', fontSize: 10 }} 
               />
               <PolarRadiusAxis 
                 angle={30} 

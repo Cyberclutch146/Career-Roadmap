@@ -104,7 +104,7 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2.5 sm:gap-4 mt-4 md:mt-0">
+        <div className="flex flex-row flex-wrap items-center gap-2.5 sm:gap-4 mt-4 md:mt-0">
           <div className="flex items-center gap-2 bg-warning/10 border border-warning/20 px-3 py-1.5 rounded-full">
             <Flame className="w-5 h-5 text-warning fill-warning animate-pulse" />
             <span className="text-sm font-medium text-on-surface">
@@ -126,22 +126,22 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
         <p className="text-[10px] text-on-surface-variant/70 uppercase tracking-widest sm:hidden">Swipe to view history &rarr;</p>
       </div>
       <div className="overflow-x-auto pb-2 scrollbar-hide">
-        <div className="min-w-[640px] flex gap-2 justify-center sm:justify-start">
+        <div className="min-w-max flex gap-1.5 md:gap-2 justify-start">
           {/* Weekday labels */}
-          <div className="flex flex-col gap-1.5 text-[10px] text-on-surface-variant pr-2 select-none font-medium pt-0.5">
-            <span className="h-4 flex items-center">Sun</span>
-            <span className="h-4 flex items-center"></span>
-            <span className="h-4 flex items-center">Tue</span>
-            <span className="h-4 flex items-center"></span>
-            <span className="h-4 flex items-center">Thu</span>
-            <span className="h-4 flex items-center"></span>
-            <span className="h-4 flex items-center">Sat</span>
+          <div className="flex flex-col gap-1 md:gap-1.5 text-[9px] md:text-[10px] text-on-surface-variant pr-2 select-none font-medium pt-0.5">
+            <span className="h-3 md:h-4 flex items-center">Sun</span>
+            <span className="h-3 md:h-4 flex items-center"></span>
+            <span className="h-3 md:h-4 flex items-center">Tue</span>
+            <span className="h-3 md:h-4 flex items-center"></span>
+            <span className="h-3 md:h-4 flex items-center">Thu</span>
+            <span className="h-3 md:h-4 flex items-center"></span>
+            <span className="h-3 md:h-4 flex items-center">Sat</span>
           </div>
 
           {/* Grid columns */}
-          <div className="flex gap-1.5">
+          <div className="flex gap-1 md:gap-1.5">
             {weeks.map((week, weekIdx) => (
-              <div key={weekIdx} className="flex flex-col gap-1.5">
+              <div key={weekIdx} className="flex flex-col gap-1 md:gap-1.5">
                 {week.map((date) => {
                   const dateStr = date.toISOString().split('T')[0]
                   const items = completionsByDate[dateStr] || []
@@ -153,7 +153,7 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
                     <div key={dateStr} className="relative group">
                       <button
                         onClick={() => setSelectedDateStr(isSelected ? null : dateStr)}
-                        className={`w-4 h-4 rounded-[4px] border transition-all duration-150 ${getHeatmapColor(count)} ${
+                        className={`w-3 h-3 md:w-4 md:h-4 rounded-[2px] md:rounded-[4px] border transition-all duration-150 ${getHeatmapColor(count)} ${
                           isSelected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''
                         } ${isToday ? 'border-primary border-2' : 'border-outline-variant/30'}`}
                         title={`${count} lessons completed on ${formatDateFull(date)}`}
@@ -176,13 +176,13 @@ export function ProgressCalendar({ completions, streak }: ProgressCalendarProps)
       </div>
 
       {/* Legend */}
-      <div className="flex justify-end items-center gap-1.5 text-xs text-on-surface-variant mt-3 pr-4">
+      <div className="flex justify-end items-center gap-1 md:gap-1.5 text-[10px] md:text-xs text-on-surface-variant mt-3 pr-4">
         <span>Less</span>
-        <div className="w-3 h-3 rounded-[3px] bg-surface-container border border-outline-variant/30" />
-        <div className="w-3 h-3 rounded-[3px] bg-primary/20 border border-primary/30" />
-        <div className="w-3 h-3 rounded-[3px] bg-primary/40 border border-primary/50" />
-        <div className="w-3 h-3 rounded-[3px] bg-primary/70 border border-primary/70" />
-        <div className="w-3 h-3 rounded-[3px] bg-primary border border-primary" />
+        <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-[2px] md:rounded-[3px] bg-surface-container border border-outline-variant/30" />
+        <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-[2px] md:rounded-[3px] bg-primary/20 border border-primary/30" />
+        <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-[2px] md:rounded-[3px] bg-primary/40 border border-primary/50" />
+        <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-[2px] md:rounded-[3px] bg-primary/70 border border-primary/70" />
+        <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-[2px] md:rounded-[3px] bg-primary border border-primary" />
         <span>More</span>
       </div>
 

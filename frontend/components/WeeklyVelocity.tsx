@@ -64,13 +64,13 @@ export function WeeklyVelocity({ completions }: WeeklyVelocityProps) {
         <CardDescription>Lessons completed per week</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] w-full flex items-center justify-center">
+        <div className="w-full flex items-center justify-center">
           {!hasCompletions ? (
-            <div className="text-center text-on-surface-variant/60 text-sm">
+            <div className="text-center text-on-surface-variant/60 text-sm py-32">
               No completion data available.
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
                 <XAxis 

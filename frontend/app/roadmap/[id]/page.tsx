@@ -754,7 +754,7 @@ export default function RoadmapPage() {
         </MobileSidebar>
 
         <main className="flex-1 lg:ml-72">
-          <div className="max-w-reading mx-auto px-4 sm:px-6 py-8">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

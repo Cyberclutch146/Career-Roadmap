@@ -4,10 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
 import { Hero } from '@/components/Hero'
-import { Features } from '@/components/Features'
 import { HowItWorks } from '@/components/HowItWorks'
-import { ExampleRoadmap } from '@/components/ExampleRoadmap'
-import { Testimonials } from '@/components/Testimonials'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
 import { ArrowRight } from 'lucide-react'
@@ -20,10 +17,7 @@ export default function Home() {
     <main className="min-h-screen w-full overflow-x-hidden">
       <Navbar />
       <Hero />
-      <Features />
       <HowItWorks />
-      <ExampleRoadmap />
-      <Testimonials />
 
       <section className="relative min-h-0 md:min-h-[100dvh] w-full flex flex-col justify-center py-16 md:py-24">
         <div className="max-w-4xl mx-auto text-center px-4 md:px-6">
