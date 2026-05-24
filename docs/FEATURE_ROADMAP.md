@@ -241,11 +241,11 @@
 
 ## Recommended Implementation Order
 
-### Sprint 1 — "Dashboard Glow-Up" (6–8 hours)
+### Sprint 1 — "Dashboard Glow-Up" ✅ [COMPLETED]
 
 ```
-A1  →  Skills Radar Integration (already built, just wire it up)
-A3  →  Progress Analytics (velocity chart + time invested + forecast)
+A1  →  Skills Radar Integration (Completed)
+A3  →  Progress Analytics (velocity chart + time invested + forecast - Completed)
 ```
 
 **Why first:** Instant visual upgrade, zero new dependencies, uses existing data. Makes the dashboard feel premium.
@@ -274,7 +274,7 @@ C3  →  Offline-to-Cloud Sync (guest → authenticated migration)
 ```
 B3  →  Resource Bookmarking
 C2  →  Calendar Sync
-C4  →  Dark Mode
+C4  →  Dark Mode (✅ Partially Completed - LessonWorkspace & UI converted)
 ```
 
 **Why last:** These are polish features. Important, but the app is already strong without them.

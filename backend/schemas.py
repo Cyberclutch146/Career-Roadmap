@@ -142,6 +142,29 @@ class RoadmapResponse(BaseModel):
     updated_at: Optional[datetime] = None
 
 
+class DebugRequest(BaseModel):
+    js_code: str
+    html_code: str
+    css_code: str
+    error_message: str
+
+
+class DebugResponse(BaseModel):
+    explanation: str
+    fixed_code: str
+
+
+class SummarizeRequest(BaseModel):
+    lesson_title: str
+    lesson_description: str
+    resources: List[ResourceItem] = []
+    exercises: List[str] = []
+
+
+class SummarizeResponse(BaseModel):
+    markdown_summary: str
+
+
 class RoadmapCreateResponse(BaseModel):
     id: str
     message: str

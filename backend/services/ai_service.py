@@ -45,6 +45,94 @@ class AIService:
         else:
             return self._get_fallback_roadmap(goal, skill_level, target_months)
 
+    async def debug_code(
+        self,
+        js_code: str,
+        html_code: str,
+        css_code: str,
+        error_message: str
+    ) -> Dict[str, str]:
+        prompt = f"""You are an expert JavaScript debugger. A student encountered an error while running their code in the browser playground.
+
+### Error Message:
+{error_message}
+
+### JavaScript Code:
+```javascript
+{js_code}
+```
+
+### HTML Code:
+```html
+{html_code}
+```
+
+### CSS Code:
+```css
+{css_code}
+```
+
+Analyze the error and provide a fix. Return the response strictly as a JSON object with this exact schema:
+{{
+    "explanation": "A clear, beginner-friendly explanation of why the error occurred and how you fixed it.",
+    "fixed_code": "The corrected complete JavaScript code only (no markdown code blocks, just the raw code)."
+}}
+"""
+        if self.model:
+            try:
+                response = await self.model.generate_content_async(prompt)
+                try:
+                    json_str = response.text.strip()
+                    if json_str.startswith("```json"): json_str = json_str[7:]
+                    if json_str.startswith("```"): json_str = json_str[3:]
+                    if json_str.endswith("```"): json_str = json_str[:-3]
+                    return json.loads(json_str.strip())
+                except Exception:
+                    return {
+                        "explanation": "I found the error, but failed to format the response properly.",
+                        "fixed_code": js_code
+                    }
+            except Exception as e:
+                print(f"Gemini error in debug_code: {e}")
+                return {"explanation": "An error occurred connecting to the AI.", "fixed_code": js_code}
+        return {"explanation": "AI model is not available.", "fixed_code": js_code}
+
+    async def summarize_lesson(
+        self,
+        lesson_title: str,
+        lesson_description: str,
+        resources: List[Dict[str, Any]],
+        exercises: List[str]
+    ) -> str:
+        prompt = f"""You are an expert technical educator. Create a highly condensed, bulleted "Cheat Sheet" or summary for this lesson.
+
+Lesson Title: {lesson_title}
+Lesson Description: {lesson_description}
+Resources: {json.dumps(resources)}
+Practice Exercises: {json.dumps(exercises)}
+
+Generate a clean, structured Markdown cheat sheet. It should include:
+- A brief 1-sentence recap.
+- 3-5 core takeaways (bullet points).
+- Key terminology/concepts used in this lesson.
+- Actionable next steps based on the practice exercises.
+Do not wrap the entire response in a markdown code block, just return raw markdown text.
+"""
+        if self.model:
+            try:
+                response = await self.model.generate_content_async(prompt)
+                return response.text.strip()
+            except Exception as e:
+                print(f"Gemini error in summarize_lesson: {e}")
+                return "An error occurred generating the summary."
+        return "AI model is not available."
+
+    def _create_chat_prompt(self, context: Dict[str, Any], message: str) -> str:
+        return f"Context: {json.dumps(context)}\nUser: {message}"
+
+    def _get_fallback_chat_response(self) -> Dict[str, Any]:
+        return {"response": "I am currently unable to provide tailored advice. Please check your API configuration."}
+
     def _create_roadmap_prompt(
         self,
         goal: str,

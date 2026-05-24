@@ -43,7 +43,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchRoadmaps = async () => {
       const syncWithFirestore = shouldSyncWithFirestore(user)
-      if (syncWithFirestore) {
+      if (user && syncWithFirestore) {
         try {
           const { collection, getDocs } = await import('firebase/firestore')
           const { db } = await import('@/lib/firebase')
@@ -128,20 +128,37 @@ export default function DashboardPage() {
       if (typeof window !== 'undefined') {
         try {
           const allCompletions: CompletionItem[] = []
-          const roadmaps: Roadmap[] = []
+          const roadmapsMap = new Map<string, Roadmap>()
           const completedByRm: Record<string, Set<string>> = {}
           
           const keys = Object.keys(window.localStorage)
           
+          // First pass: Load all roadmaps
+          for (const key of keys) {
+            if (key.startsWith('roadmap_')) {
+              const roadmapId = key.replace('roadmap_', '')
+              const savedRoadmapRaw = window.localStorage.getItem(key)
+              if (savedRoadmapRaw) {
+                const rData = JSON.parse(savedRoadmapRaw) as Roadmap
+                roadmapsMap.set(roadmapId, {
+                  ...rData,
+                  id: roadmapId,
+                  completed_lessons_count: 0
+                } as Roadmap)
+                completedByRm[roadmapId] = new Set<string>()
+              }
+            }
+          }
+
+          // Second pass: Load progress dates and update counts
           for (const key of keys) {
             if (key.startsWith('progress_dates_')) {
               const roadmapId = key.replace('progress_dates_', '')
               const savedDatesRaw = window.localStorage.getItem(key)
-              const savedRoadmapRaw = window.localStorage.getItem(`roadmap_${roadmapId}`)
+              const rData = roadmapsMap.get(roadmapId)
               
-              if (savedDatesRaw && savedRoadmapRaw) {
+              if (savedDatesRaw && rData) {
                 const savedDates = JSON.parse(savedDatesRaw) as { [lessonId: string]: string }
-                const rData = JSON.parse(savedRoadmapRaw) as Roadmap
                 const completedSet = new Set<string>()
                 
                 Object.entries(savedDates).forEach(([lessonId, completedAt]) => {
@@ -172,29 +189,12 @@ export default function DashboardPage() {
                 })
 
                 completedByRm[roadmapId] = completedSet
-                
-                roadmaps.push({
-                  ...rData,
-                  id: roadmapId,
-                  completed_lessons_count: completedSet.size
-                } as Roadmap)
-              }
-            } else if (key.startsWith('roadmap_')) {
-              const roadmapId = key.replace('roadmap_', '')
-              if (!roadmaps.some(r => r.id === roadmapId)) {
-                const savedRoadmapRaw = window.localStorage.getItem(key)
-                if (savedRoadmapRaw) {
-                  const rData = JSON.parse(savedRoadmapRaw) as Roadmap
-                  roadmaps.push({
-                    ...rData,
-                    id: roadmapId,
-                    completed_lessons_count: 0
-                  } as Roadmap)
-                  completedByRm[roadmapId] = new Set<string>()
-                }
+                rData.completed_lessons_count = completedSet.size
               }
             }
           }
+
+          const roadmaps = Array.from(roadmapsMap.values())
 
           roadmaps.sort((a, b) => {
             const timeA = new Date(a.created_at || 0).getTime()

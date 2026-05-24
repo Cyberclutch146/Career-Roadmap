@@ -14,7 +14,7 @@ interface AIMentorProps {
   onClose: () => void
 }
 
-function ActionRenderer({ action }: { action: { type: string; payload: any } }) {
+function ActionRenderer({ action, onSend }: { action: { type: string; payload: any }, onSend: (msg: string) => void }) {
   const router = useRouter()
   if (!action) return null
   
@@ -37,7 +37,9 @@ function ActionRenderer({ action }: { action: { type: string; payload: any } }) 
       <div className="mt-2 p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
         <p className="text-xs text-amber-500 font-semibold mb-2">Mini Quiz Generated!</p>
         <p className="text-xs text-zinc-300">Topic: {action.payload.topic}</p>
-        <button className="mt-2 text-xs px-3 py-1.5 bg-zinc-800 text-zinc-200 rounded-lg border border-zinc-700 hover:bg-zinc-700">
+        <button 
+          onClick={() => onSend(`Please give me a 3-question mini quiz about ${action.payload.topic}. Ask me one question at a time and wait for my answer before grading it.`)}
+          className="mt-2 text-xs px-3 py-1.5 bg-zinc-800 text-zinc-200 rounded-lg border border-zinc-700 hover:bg-zinc-700">
           Start Quiz
         </button>
       </div>
@@ -284,7 +286,7 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
                 }`}
               >
                 <MarkdownMessage content={message.content} isUser={message.role === 'user'} />
-                {message.action && <ActionRenderer action={message.action} />}
+                {message.action && <ActionRenderer action={message.action} onSend={handleSend} />}
               </div>
             </motion.div>
           ))}

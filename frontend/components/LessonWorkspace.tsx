@@ -77,6 +77,26 @@ export function LessonWorkspace({
   const [finalEvaluation, setFinalEvaluation] = useState('')
   const [isInterviewLoading, setIsInterviewLoading] = useState(false)
 
+  // Debugger state
+  const [executionError, setExecutionError] = useState<string | null>(null)
+  const [isDebugging, setIsDebugging] = useState(false)
+  const [debugExplanation, setDebugExplanation] = useState<string | null>(null)
+  const [debugFixedCode, setDebugFixedCode] = useState<string | null>(null)
+  const [rateLimitNote, setRateLimitNote] = useState<string | null>(null)
+
+  // Summarizer state
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'EXECUTION_ERROR') {
+        setExecutionError(event.data.error)
+      }
+    }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [])
+
   // Load Note on Mount or Lesson Change
   useEffect(() => {
     const fetchNote = async () => {
@@ -137,6 +157,7 @@ export function LessonWorkspace({
             } catch (err) {
               console.error(err);
               document.body.innerHTML += '<div style="color:red; margin-top:15px; font-weight:bold;">Error: ' + err.message + '</div>';
+              window.parent.postMessage({ type: 'EXECUTION_ERROR', error: err.message }, '*');
             }
           </script>
         </body>
@@ -193,6 +214,9 @@ export function LessonWorkspace({
   // Run Code logic
   const runCode = () => {
     setIsExecutingCode(true)
+    setExecutionError(null)
+    setDebugExplanation(null)
+    setDebugFixedCode(null)
     setTimeout(() => {
       setSrcDoc(`
         <html>
@@ -207,6 +231,7 @@ export function LessonWorkspace({
               } catch (err) {
                 console.error(err);
                 document.body.innerHTML += '<div style="color:red; margin-top:15px; font-weight:bold;">Error: ' + err.message + '</div>';
+                window.parent.postMessage({ type: 'EXECUTION_ERROR', error: err.message }, '*');
               }
             </script>
           </body>
@@ -214,6 +239,67 @@ export function LessonWorkspace({
       `)
       setTimeout(() => setIsExecutingCode(false), 200)
     }, 100)
+  }
+
+  const handleDebug = async () => {
+    if (!executionError) return
+    setIsDebugging(true)
+    setRateLimitNote(null)
+    try {
+      const response = await api.post('/api/debug', {
+        js_code: jsCode,
+        html_code: htmlCode,
+        css_code: cssCode,
+        error_message: executionError
+      })
+      setDebugExplanation(response.data.explanation)
+      setDebugFixedCode(response.data.fixed_code)
+    } catch (e: any) {
+      if (e.response?.status === 429) {
+        setRateLimitNote('Rate limit exceeded (5/min). Please try again in a minute. (Note: Since this is a portfolio project, strict limits apply!)')
+      } else {
+        setRateLimitNote('An error occurred while debugging.')
+      }
+      console.error(e)
+    } finally {
+      setIsDebugging(false)
+    }
+  }
+
+  const applyDebugFix = () => {
+    if (debugFixedCode) {
+      setJsCode(debugFixedCode)
+      setExecutionError(null)
+      setDebugExplanation(null)
+      setDebugFixedCode(null)
+      setSandboxTab('js')
+    }
+  }
+
+  const generateCheatSheet = async () => {
+    setIsGeneratingSummary(true)
+    setRateLimitNote(null)
+    try {
+      const response = await api.post('/api/summarize', {
+        lesson_title: lesson.title,
+        lesson_description: lesson.description,
+        resources: lesson.resources,
+        exercises: lesson.practice_exercises || []
+      })
+      const newSummary = response.data.markdown_summary
+      const updatedNotes = noteContent ? noteContent + '\\n\\n---\\n\\n' + newSummary : newSummary
+      handleNoteChange(updatedNotes)
+      setActiveTab('notes')
+    } catch (e: any) {
+      if (e.response?.status === 429) {
+        setRateLimitNote('Rate limit exceeded (3/min). Please try again later. (Note: Since this is a portfolio project, strict limits apply!)')
+      } else {
+        setRateLimitNote('An error occurred while generating the cheat sheet.')
+      }
+      console.error(e)
+    } finally {
+      setIsGeneratingSummary(false)
+    }
   }
 
   // Mock Interview Handlers
@@ -560,6 +646,38 @@ export function LessonWorkspace({
                   )}
                 </div>
               </div>
+
+              {/* AI Debugger UI */}
+              {executionError && (
+                <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex flex-col gap-3 shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2 text-red-400">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                      <span className="font-semibold text-sm line-clamp-2">Error Detected! Let AI help you fix it.</span>
+                    </div>
+                    <Button size="sm" onClick={handleDebug} disabled={isDebugging} className="flex-shrink-0 ml-4 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700">
+                      {isDebugging ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2 text-indigo-400" />}
+                      AI Debugger
+                    </Button>
+                  </div>
+                  {rateLimitNote && isDebugging === false && (
+                    <p className="text-xs text-red-400">{rateLimitNote}</p>
+                  )}
+                  {debugExplanation && (
+                    <div className="mt-2 space-y-3">
+                      <div className="p-3 bg-zinc-950/80 rounded-lg text-sm text-zinc-300 border border-zinc-800/80 leading-relaxed whitespace-pre-line">
+                        {debugExplanation}
+                      </div>
+                      <div className="flex justify-end">
+                        <Button size="sm" variant="primary" onClick={applyDebugFix} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Apply Fix
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -705,7 +823,13 @@ export function LessonWorkspace({
             >
               <div className="flex-1 flex flex-col bg-zinc-900/60 rounded-xl border border-zinc-800/40 p-4 shadow-sm min-h-[350px]">
                 <div className="flex items-center justify-between text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
-                  <span>Take notes as you learn</span>
+                  <div className="flex items-center gap-3">
+                    <span>Take notes as you learn</span>
+                    <Button variant="secondary" size="sm" className="h-7 text-[10px] px-2.5 py-0 border-zinc-700 hover:bg-zinc-800 text-zinc-300" onClick={generateCheatSheet} disabled={isGeneratingSummary}>
+                      {isGeneratingSummary ? <Loader2 className="w-3 h-3 mr-1.5 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1.5 text-indigo-400" />}
+                      Generate Cheat Sheet
+                    </Button>
+                  </div>
                   <AnimatePresence>
                     {noteStatus !== 'idle' && (
                       <motion.div
@@ -740,6 +864,11 @@ export function LessonWorkspace({
                     )}
                   </AnimatePresence>
                 </div>
+                {rateLimitNote && !isGeneratingSummary && (
+                  <div className="mb-3 p-2 bg-red-500/10 border border-red-500/20 rounded-lg text-xs text-red-400 font-medium">
+                    {rateLimitNote}
+                  </div>
+                )}
                 <div className="flex-1 min-h-[400px]">
                   <RichTextEditor
                     content={noteContent}

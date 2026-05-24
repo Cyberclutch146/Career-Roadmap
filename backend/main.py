@@ -16,7 +16,11 @@ from schemas import (
     AssessmentRequest,
     AssessmentResponse,
     InterviewChatRequest,
-    InterviewChatResponse
+    InterviewChatResponse,
+    DebugRequest,
+    DebugResponse,
+    SummarizeRequest,
+    SummarizeResponse
 )
 from services.ai_service import AIService
 from services.auth import get_optional_user
@@ -145,6 +149,43 @@ async def interview_chat(
         history=result["history"]
     )
 
+
+# ---------------------------------------------------------------------------
+# Developer Magic: Debugger & Summarizer
+# ---------------------------------------------------------------------------
+
+@app.post("/api/debug", response_model=DebugResponse)
+@limiter.limit("5/minute")
+async def debug_code(
+    request: Request,
+    body: DebugRequest,
+    current_user: Optional[Dict[str, Any]] = Depends(get_optional_user)
+):
+    result = await ai_service.debug_code(
+        js_code=body.js_code,
+        html_code=body.html_code,
+        css_code=body.css_code,
+        error_message=body.error_message
+    )
+    return DebugResponse(
+        explanation=result["explanation"],
+        fixed_code=result["fixed_code"]
+    )
+
+@app.post("/api/summarize", response_model=SummarizeResponse)
+@limiter.limit("3/minute")
+async def summarize_lesson(
+    request: Request,
+    body: SummarizeRequest,
+    current_user: Optional[Dict[str, Any]] = Depends(get_optional_user)
+):
+    markdown = await ai_service.summarize_lesson(
+        lesson_title=body.lesson_title,
+        lesson_description=body.lesson_description,
+        resources=[r.model_dump() for r in body.resources],
+        exercises=body.exercises
+    )
+    return SummarizeResponse(markdown_summary=markdown)
 
 # ---------------------------------------------------------------------------
 # Chat / AI Mentor
