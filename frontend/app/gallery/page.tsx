@@ -25,6 +25,8 @@ import {
   Zap,
 } from 'lucide-react'
 import type { Roadmap } from '@/types'
+import { logger } from '@/lib/logger'
+
 
 export default function GalleryPage() {
   const { user } = useStore()
@@ -66,7 +68,7 @@ export default function GalleryPage() {
         setRoadmaps(items)
         setFilteredRoadmaps(items)
       } catch (err) {
-        console.error("Failed to load public roadmaps:", err)
+        logger.error("Failed to load public roadmaps:", err)
       } finally {
         setIsLoading(false)
       }
@@ -133,7 +135,7 @@ export default function GalleryPage() {
       setClonedRoadmaps(prev => new Set([...prev, roadmap.id]))
       alert("Roadmap cloned to your library successfully!")
     } catch (err) {
-      console.error("Failed to clone roadmap:", err)
+      logger.error("Failed to clone roadmap:", err)
       alert("Failed to clone roadmap. Please try again.")
     } finally {
       setCloningId(null)

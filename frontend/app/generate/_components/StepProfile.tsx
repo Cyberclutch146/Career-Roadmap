@@ -13,13 +13,13 @@ interface StepProfileProps {
   onBack: () => void
 }
 
-const SKILL_LEVELS: { id: SkillLevel; label: string; desc: string; icon: any }[] = [
+const SKILL_LEVELS: { id: SkillLevel; label: string; desc: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'beginner', label: 'Beginner', desc: 'Starting from scratch', icon: BookOpen },
   { id: 'intermediate', label: 'Intermediate', desc: 'Have some basic experience', icon: Layers },
   { id: 'advanced', label: 'Advanced', desc: 'Looking to master advanced topics', icon: Zap },
 ]
 
-const LEARNING_STYLES: { id: LearningStyle; label: string; desc: string; icon: any }[] = [
+const LEARNING_STYLES: { id: LearningStyle; label: string; desc: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'visual', label: 'Visual', desc: 'Diagrams, videos, charts', icon: Eye },
   { id: 'auditory', label: 'Auditory', desc: 'Lectures and discussions', icon: Headphones },
   { id: 'reading', label: 'Reading/Writing', desc: 'Text-heavy resources', icon: PenTool },

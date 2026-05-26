@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { X, Send, Bot, User, Sparkles, Brain } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useStore } from '@/store'
-import type { Roadmap, ChatMessage } from '@/types'
+import type { Roadmap, ChatMessage, ChatAction, Phase } from '@/types'
 import ReactMarkdown from 'react-markdown'
 
 interface AIMentorProps {
@@ -14,7 +14,7 @@ interface AIMentorProps {
   onClose: () => void
 }
 
-function ActionRenderer({ action, onSend }: { action: { type: string; payload: any }, onSend: (msg: string) => void }) {
+function ActionRenderer({ action, onSend }: { action: ChatAction, onSend: (msg: string) => void }) {
   const router = useRouter()
   if (!action) return null
   
@@ -87,7 +87,7 @@ function MarkdownMessage({ content, isUser }: { content: string; isUser: boolean
           <ol className="list-decimal list-inside space-y-0.5 text-sm my-1">{children}</ol>
         ),
         li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-        code: ({ inline, children }: any) =>
+        code: ({ inline, children }: { inline?: boolean; children?: React.ReactNode }) =>
           inline ? (
             <code
               className={`px-1 py-0.5 rounded text-xs font-mono ${
@@ -176,7 +176,11 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
     setIsLoading(true)
 
     try {
-      const payload: any = { 
+      const payload: {
+        message: string
+        history: { role: string; content: string }[]
+        roadmap_context?: { goal: string; progress: string; phases: Phase[] }
+      } = { 
         message: textToSend,
         history: messages.map(m => ({ role: m.role, content: m.content }))
       }

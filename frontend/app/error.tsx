@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { AlertTriangle } from 'lucide-react'
+import { logger } from '@/lib/logger'
+
 
 export default function GlobalError({
   error,
@@ -13,7 +15,7 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Unhandled error:', error)
+    logger.error('Unhandled error:', error)
   }, [error])
 
   return (

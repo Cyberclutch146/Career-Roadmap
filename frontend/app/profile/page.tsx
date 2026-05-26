@@ -27,6 +27,8 @@ import {
 } from 'lucide-react'
 import type { Roadmap } from '@/types'
 import { shouldSyncWithFirestore } from '@/lib/sync'
+import { logger } from '@/lib/logger'
+
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -51,7 +53,7 @@ export default function ProfilePage() {
       logout()
       router.push('/login')
     } catch (error) {
-      console.error('Logout failed:', error)
+      logger.error('Logout failed:', error)
     }
   }
 
@@ -78,7 +80,7 @@ export default function ProfilePage() {
       }
       setIsEditingName(false)
     } catch (error) {
-      console.error('Failed to update name:', error)
+      logger.error('Failed to update name:', error)
     } finally {
       setIsSavingName(false)
     }
@@ -102,7 +104,7 @@ export default function ProfilePage() {
       
       setSavedRoadmaps(savedRoadmaps.filter(r => r.id !== roadmapId))
     } catch (e) {
-      console.error('Failed to delete roadmap:', e)
+      logger.error('Failed to delete roadmap:', e)
     }
   }
 

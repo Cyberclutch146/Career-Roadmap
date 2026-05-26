@@ -8,6 +8,7 @@ import { Target, User, Clock, Award, HelpCircle } from 'lucide-react'
 import { useStore } from '@/store'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
+import { logger } from '@/lib/logger'
 import type { RoadmapFormData, SkillLevel, LearningStyle, Roadmap } from '@/types'
 import type { AxiosError } from 'axios'
 
@@ -78,7 +79,7 @@ export default function GeneratePage() {
     setStep((s) => Math.max(s - 1, 1))
   }
 
-  const updateFormData = (key: keyof RoadmapFormData, value: any) => {
+  const updateFormData = (key: keyof RoadmapFormData, value: RoadmapFormData[keyof RoadmapFormData]) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
   }
 
@@ -96,7 +97,7 @@ export default function GeneratePage() {
       setQuizScore(null)
       setShowQuizModal(true)
     } catch (err) {
-      console.error(err)
+      logger.error('Failed to generate assessment quiz. Please try again.')
       setLocalError('Failed to generate assessment quiz. Please try again.')
     } finally {
       setIsQuizLoading(false)

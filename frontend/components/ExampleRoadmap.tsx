@@ -4,6 +4,14 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle2, Circle, Clock, BookOpen, Zap, ExternalLink, Play, ChevronRight } from 'lucide-react'
 
+interface SampleLesson {
+  id: string
+  title: string
+  duration: string
+  type: string
+  completed: boolean
+}
+
 // Curated preview roadmaps
 const sampleRoadmaps = [
   {
@@ -165,7 +173,7 @@ export function ExampleRoadmap() {
     return completed
   })
   
-  const [selectedLesson, setSelectedLesson] = useState<any>(
+  const [selectedLesson, setSelectedLesson] = useState<SampleLesson | null>(
     sampleRoadmaps[0].phases[1].chapters[0].lessons[2] // Select an active incomplete lesson
   )
   const [showMobileExample, setShowMobileExample] = useState(false)

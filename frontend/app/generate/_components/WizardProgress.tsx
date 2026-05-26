@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 
 interface WizardProgressProps {
-  steps: { label: string; icon: any }[]
+  steps: { label: string; icon: React.ComponentType<{ className?: string }> }[]
   currentStep: number
   onStepClick: (step: number) => void
 }
