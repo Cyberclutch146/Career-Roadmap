@@ -29,7 +29,7 @@ export function StepReview({
 }: StepReviewProps) {
   
   const SummaryRow = ({ label, value, step }: { label: string, value: string, step: number }) => (
-    <div className="flex items-start justify-between py-2.5 md:py-3 border-b border-outline-variant/50 last:border-0 group">
+    <div className="flex items-start justify-between py-2.5 md:py-3 group">
       <div className="min-w-0 flex-1">
         <div className="text-[9px] md:text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant mb-0.5 md:mb-1">{label}</div>
         <div className="text-xs md:text-sm font-medium text-on-surface break-words">{value}</div>
@@ -55,7 +55,7 @@ export function StepReview({
 
       <div className="space-y-4 md:space-y-6">
         {/* Pre-Assessment Card */}
-        <div className="bg-surface-container/40 border border-outline-variant rounded-xl md:rounded-2xl p-4 md:p-5 relative overflow-hidden group hover:border-amber-500/30 transition-colors duration-300">
+        <div className="bg-surface-container/40 rounded-xl md:rounded-2xl p-4 md:p-5 relative overflow-hidden group transition-colors duration-300">
           <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           <div className="flex flex-col gap-3 md:gap-4 relative z-10">
             <div className="flex items-start justify-between gap-3">
@@ -96,7 +96,7 @@ export function StepReview({
         </div>
 
         {/* Summary Table */}
-        <div className="bg-zinc-900/30 border border-outline-variant/50 rounded-xl md:rounded-2xl p-4 md:p-5">
+        <div className="bg-zinc-900/30 rounded-xl md:rounded-2xl p-4 md:p-5">
           <SummaryRow label="The Goal" value={formData.goal} step={1} />
           <SummaryRow label="Skill Level" value={formData.skill_level.charAt(0).toUpperCase() + formData.skill_level.slice(1)} step={2} />
           <SummaryRow label="Learning Style" value={formData.learning_style.charAt(0).toUpperCase() + formData.learning_style.slice(1)} step={2} />
@@ -104,7 +104,7 @@ export function StepReview({
         </div>
       </div>
 
-      <div className="pt-5 md:pt-8 border-t border-outline-variant/50 flex gap-3 justify-between">
+      <div className="pt-5 md:pt-8 flex gap-3 justify-between">
         <Button onClick={() => goToStep(3)} variant="ghost" disabled={isGenerating} className="flex-1 sm:flex-none sm:w-auto text-on-surface-variant hover:text-zinc-200 active:scale-95">
           Back
         </Button>

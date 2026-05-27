@@ -14,7 +14,7 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
     <div className="w-full mb-4 md:mb-8 relative z-20">
       {/* Desktop Floating Pill Progress */}
       <div className="hidden md:flex justify-center">
-        <div className="bg-surface-container/40 backdrop-blur-xl border border-outline-variant/50 rounded-full p-2 flex items-center gap-2 relative">
+        <div className="bg-surface-container/40 backdrop-blur-xl rounded-full p-2 flex items-center gap-2 relative">
           {steps.map((step, idx) => {
             const stepNum = idx + 1
             const isActive = currentStep === stepNum

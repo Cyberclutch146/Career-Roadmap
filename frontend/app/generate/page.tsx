@@ -210,7 +210,7 @@ export default function GeneratePage() {
               </motion.div>
             )}
 
-            <div className="bg-surface-container/40 backdrop-blur-xl border border-outline-variant/50 rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-10 shadow-2xl overflow-y-auto max-h-[75vh] md:max-h-[65vh] min-h-[60vh] md:min-h-[400px]">
+            <div className="bg-surface-container/40 backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-10 shadow-2xl overflow-y-auto max-h-[75vh] md:max-h-[65vh] min-h-[60vh] md:min-h-[400px]">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={step}
