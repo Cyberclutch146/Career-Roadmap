@@ -28,6 +28,8 @@ import type { Roadmap } from '@/types'
 import { ProgressCalendar, CompletionItem } from '@/components/ProgressCalendar'
 import { SkillsRadar } from '@/components/SkillsRadar'
 import { WeeklyVelocity } from '@/components/WeeklyVelocity'
+import { logger } from '@/lib/logger'
+
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -123,7 +125,7 @@ export default function DashboardPage() {
           setCompletions(allCompletions)
           return;
         } catch (err) {
-          console.error("Failed to fetch roadmaps from Firestore", err)
+          logger.error("Failed to fetch roadmaps from Firestore", err)
         }
       }
 
@@ -214,7 +216,7 @@ export default function DashboardPage() {
           allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
           setCompletions(allCompletions)
         } catch (e) {
-          console.error("Failed to fetch guest completions:", e)
+          logger.error("Failed to fetch guest completions:", e)
         }
       }
     }

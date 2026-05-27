@@ -9,6 +9,8 @@ import Link from 'next/link'
 import { auth } from '@/lib/firebase'
 import { signOut } from 'firebase/auth'
 import { useTheme } from 'next-themes'
+import { logger } from '@/lib/logger'
+
 
 // Helper to get initials or fallback avatar
 function getUserAvatar(name?: string) {
@@ -321,7 +323,7 @@ export function Navbar() {
                           try {
                             await signOut(auth);
                           } catch (e) {
-                            console.error("Signout error", e);
+                            logger.error("Signout error", e);
                           }
                           logout();
                         }}

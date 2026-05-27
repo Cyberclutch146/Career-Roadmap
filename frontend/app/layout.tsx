@@ -7,6 +7,7 @@ import { ChatWidget } from '@/components/AIMentor'
 import Galaxy from '@/components/Galaxy'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { AppBackground } from '@/components/AppBackground'
+import { Toaster } from 'sonner'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -47,6 +48,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} overflow-x-hidden max-w-full`} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-on-surface pb-16 md:pb-0 overflow-x-hidden max-w-full antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <Toaster richColors position="bottom-right" theme="dark" />
           <AppBackground />
           <AuthProvider>
             {children}

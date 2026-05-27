@@ -3,7 +3,10 @@ from fastapi import HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import firebase_admin
 from firebase_admin import auth, credentials
+import logging
 import os
+
+logger = logging.getLogger(__name__)
 
 security = HTTPBearer()
 
@@ -15,8 +18,14 @@ if not firebase_admin._apps:
     try:
         cred = credentials.ApplicationDefault()
         firebase_admin.initialize_app(cred)
-    except Exception:
-        # Fallback to default init
+    except (ValueError, Exception) as e:
+        # ApplicationDefault raises ValueError when credentials are not found.
+        # Fall back to default init (e.g., using GOOGLE_APPLICATION_CREDENTIALS env var).
+        logger.warning(
+            "ApplicationDefault credentials not available (%s); "
+            "falling back to default init.",
+            e
+        )
         firebase_admin.initialize_app()
 
 async def get_current_user(

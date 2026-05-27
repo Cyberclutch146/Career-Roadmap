@@ -54,11 +54,12 @@ export default function LoginPage() {
       }
       
       router.push('/dashboard')
-    } catch (err: any) {
-      let msg = err.message
-      if (err.code === 'auth/email-already-in-use') msg = 'Email is already registered.'
-      if (err.code === 'auth/wrong-password') msg = 'Incorrect password.'
-      if (err.code === 'auth/user-not-found') msg = 'No account found with this email.'
+    } catch (err: unknown) {
+      const firebaseErr = err as { code?: string; message?: string }
+      let msg = firebaseErr.message
+      if (firebaseErr.code === 'auth/email-already-in-use') msg = 'Email is already registered.'
+      if (firebaseErr.code === 'auth/wrong-password') msg = 'Incorrect password.'
+      if (firebaseErr.code === 'auth/user-not-found') msg = 'No account found with this email.'
       setError(msg || 'An error occurred. Please try again.')
     } finally {
       setIsLoading(false)
@@ -72,9 +73,10 @@ export default function LoginPage() {
       const provider = new GoogleAuthProvider()
       await signInWithPopup(auth, provider)
       router.push('/dashboard')
-    } catch (err: any) {
-      let msg = err.message
-      if (err.code === 'auth/popup-closed-by-user') msg = 'Sign-in popup was closed.'
+    } catch (err: unknown) {
+      const firebaseErr = err as { code?: string; message?: string }
+      let msg = firebaseErr.message
+      if (firebaseErr.code === 'auth/popup-closed-by-user') msg = 'Sign-in popup was closed.'
       setError(msg || 'Google authentication failed.')
     } finally {
       setIsLoading(false)

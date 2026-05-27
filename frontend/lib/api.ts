@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { auth } from './firebase'
+import { logger } from './logger'
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -22,7 +24,7 @@ api.interceptors.request.use(async (config) => {
           config.headers.Authorization = `Bearer ${token}`
         }
       } catch (e) {
-        console.error("Error getting Firebase token", e)
+        logger.error('[API] Error getting Firebase token', e)
       }
     }
   }

@@ -1,10 +1,14 @@
 import os
+import re
 import json
+import logging
 import google.generativeai as genai
 from typing import Dict, Any, List, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
@@ -38,9 +42,9 @@ class AIService:
             try:
                 response = await self.model.generate_content_async(prompt)
                 roadmap_text = response.text
-                return self._parse_roadmap_response(roadmap_text)
+                return self._parse_roadmap_response(roadmap_text, goal, skill_level, target_months)
             except Exception as e:
-                print(f"Gemini API error: {e}")
+                logger.error("Gemini API error during roadmap generation", exc_info=True)
                 return self._get_fallback_roadmap(goal, skill_level, target_months)
         else:
             return self._get_fallback_roadmap(goal, skill_level, target_months)
@@ -87,13 +91,13 @@ Analyze the error and provide a fix. Return the response strictly as a JSON obje
                     if json_str.startswith("```"): json_str = json_str[3:]
                     if json_str.endswith("```"): json_str = json_str[:-3]
                     return json.loads(json_str.strip())
-                except Exception:
+                except json.JSONDecodeError:
                     return {
                         "explanation": "I found the error, but failed to format the response properly.",
                         "fixed_code": js_code
                     }
             except Exception as e:
-                print(f"Gemini error in debug_code: {e}")
+                logger.error("Gemini error in debug_code", exc_info=True)
                 return {"explanation": "An error occurred connecting to the AI.", "fixed_code": js_code}
         return {"explanation": "AI model is not available.", "fixed_code": js_code}
 
@@ -123,7 +127,7 @@ Do not wrap the entire response in a markdown code block, just return raw markdo
                 response = await self.model.generate_content_async(prompt)
                 return response.text.strip()
             except Exception as e:
-                print(f"Gemini error in summarize_lesson: {e}")
+                logger.error("Gemini error in summarize_lesson", exc_info=True)
                 return "An error occurred generating the summary."
         return "AI model is not available."
 
@@ -303,7 +307,13 @@ Important:
 
 Return ONLY the JSON, no additional text or explanation."""
 
-    def _parse_roadmap_response(self, response_text: str) -> Dict[str, Any]:
+    def _parse_roadmap_response(
+        self,
+        response_text: str,
+        goal: str,
+        skill_level: str,
+        target_months: int
+    ) -> Dict[str, Any]:
         try:
             json_str = response_text.strip()
             if json_str.startswith("```json"):
@@ -315,9 +325,13 @@ Return ONLY the JSON, no additional text or explanation."""
 
             roadmap = json.loads(json_str.strip())
             return roadmap
-        except json.JSONDecodeError as e:
-            print(f"JSON parsing error: {e}")
-            return self._get_fallback_roadmap("Learn Programming", "beginner", 6)
+        except json.JSONDecodeError:
+            logger.error(
+                "Failed to parse Gemini roadmap JSON; falling back to template "
+                "for goal=%r skill_level=%r target_months=%d",
+                goal, skill_level, target_months
+            )
+            return self._get_fallback_roadmap(goal, skill_level, target_months)
 
     def _get_fallback_roadmap(
         self,
@@ -329,17 +343,17 @@ Return ONLY the JSON, no additional text or explanation."""
         weeks = target_months * 4
 
         phases = []
-        if "full stack" in goal.lower():
+        if re.search(r'full[\s\-]?stack', goal, re.IGNORECASE):
             phases = self._generate_fullstack_roadmap(weeks)
-        elif "dsa" in goal.lower() or "placements" in goal.lower():
+        elif re.search(r'\bdsa\b|placements?', goal, re.IGNORECASE):
             phases = self._generate_dsa_roadmap(weeks)
-        elif "ai" in goal.lower() or "machine learning" in goal.lower():
+        elif re.search(r'\bai\b|machine\s+learning', goal, re.IGNORECASE):
             phases = self._generate_ai_roadmap(weeks)
-        elif "cybersecurity" in goal.lower():
+        elif re.search(r'cyber\s*security', goal, re.IGNORECASE):
             phases = self._generate_cybersecurity_roadmap(weeks)
-        elif "react" in goal.lower():
+        elif re.search(r'\breact\b', goal, re.IGNORECASE):
             phases = self._generate_react_roadmap(weeks)
-        elif "gate cse" in goal.lower():
+        elif re.search(r'gate[\s\-]?cse', goal, re.IGNORECASE):
             phases = self._generate_gate_cse_roadmap(weeks)
         else:
             phases = self._generate_programming_roadmap(weeks, goal)
@@ -1299,7 +1313,7 @@ Maintain a professional, direct, and human tone. Do not use emojis. Do not say "
                 except Exception:
                     reply = "I've started the action you requested."
             except Exception as e:
-                print(f"Agentic loop error: {e}")
+                logger.error("Agentic chat loop error", exc_info=True)
                 reply = "I can help with that. Could you clarify what specific aspect you are exploring?"
         else:
             reply = "Based on your learning journey, I recommend reviewing the relevant chapter in your roadmap and practicing with hands-on exercises."
@@ -1346,7 +1360,7 @@ Return only valid JSON, no markdown formatting (like ```json), no surrounding te
                     text = text[:-3]
                 return json.loads(text.strip())
             except Exception as e:
-                print(f"Error generating assessment: {e}")
+                logger.error("Assessment quiz generation failed", exc_info=True)
         
         # Fallback assessment questions
         return [
@@ -1410,7 +1424,7 @@ Do not say hello or provide intro filler, just output the interview question dir
                     response = await self.model.generate_content_async(prompt)
                     question = response.text.strip()
                 except Exception as e:
-                    print(f"Error starting interview: {e}")
+                    logger.error("Interview start failed", exc_info=True)
             
             return {
                 "next_question": question,
@@ -1436,7 +1450,7 @@ Output ONLY the feedback, no filler."""
                 response = await self.model.generate_content_async(eval_prompt)
                 feedback = response.text.strip()
             except Exception as e:
-                print(f"Error evaluating answer: {e}")
+                logger.error("Interview answer evaluation failed", exc_info=True)
         
         updated_history = list(history)
         updated_history[-1]["answer"] = user_answer
@@ -1458,7 +1472,7 @@ Output ONLY the question directly in 1-2 sentences, no filler."""
                     response = await self.model.generate_content_async(next_prompt)
                     next_question = response.text.strip()
                 except Exception as e:
-                    print(f"Error asking next question: {e}")
+                    logger.error("Interview next question failed", exc_info=True)
             
             updated_history.append({"question": next_question, "answer": None, "feedback": None})
             
@@ -1489,7 +1503,7 @@ Output the evaluation in clean Markdown format. Keep it concise, professional, a
                     response = await self.model.generate_content_async(summary_prompt)
                     final_evaluation = response.text.strip()
                 except Exception as e:
-                    print(f"Error generating final evaluation: {e}")
+                    logger.error("Interview final evaluation failed", exc_info=True)
             
             return {
                 "next_question": None,

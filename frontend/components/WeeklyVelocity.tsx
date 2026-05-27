@@ -97,7 +97,10 @@ export function WeeklyVelocity({ completions }: WeeklyVelocityProps) {
                     }
                     return ''
                   }}
-                  formatter={(value: any) => [`${value} ${value === 1 ? 'lesson' : 'lessons'}`, 'Velocity']}
+                  formatter={(value: unknown) => {
+                    const num = typeof value === 'number' ? value : Number(value)
+                    return [`${num} ${num === 1 ? 'lesson' : 'lessons'}`, 'Velocity']
+                  }}
                 />
                 <Bar 
                   dataKey="completions" 

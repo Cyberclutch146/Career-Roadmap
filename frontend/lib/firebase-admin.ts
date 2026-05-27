@@ -1,4 +1,6 @@
 import * as admin from 'firebase-admin';
+import { logger } from './logger';
+
 
 if (!admin.apps.length) {
   try {
@@ -21,12 +23,12 @@ if (!admin.apps.length) {
       admin.initializeApp({
         credential,
       });
-      console.log('Firebase Admin initialized successfully.');
+      logger.info('[Firebase Admin] Initialized successfully.')
     } else {
-      console.warn('Firebase Admin credentials not found. Initialization deferred/skipped.');
+      logger.warn('[Firebase Admin] Credentials not found. Initialization deferred/skipped.')
     }
   } catch (error) {
-    console.error('Firebase admin initialization error', error);
+    logger.error('[Firebase Admin] Initialization error:', error)
   }
 }
 

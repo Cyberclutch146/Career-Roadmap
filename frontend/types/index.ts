@@ -95,11 +95,16 @@ export interface User {
   last_active?: string
 }
 
+export interface ChatAction {
+  type: string
+  payload: Record<string, string>
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   timestamp: string
-  action?: { type: string; payload: any }
+  action?: ChatAction
 }
 
 export interface RoadmapFormData {

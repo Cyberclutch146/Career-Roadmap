@@ -74,7 +74,7 @@ export function SkillsRadar({ roadmap, completedLessons }: SkillsRadarProps) {
                   color: 'var(--on-surface)',
                 }}
                 itemStyle={{ color: 'var(--primary)' }}
-                formatter={(value: any) => [`${value}%`, 'Mastery']}
+                formatter={(value: unknown) => [`${value}%`, 'Mastery']}
                 labelFormatter={(label, payload) => {
                   if (payload && payload.length > 0) {
                     return payload[0].payload.fullSubject

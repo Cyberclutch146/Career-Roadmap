@@ -29,6 +29,13 @@ import {
   Bookmark,
 } from 'lucide-react'
 import type { Lesson, Roadmap, ResourceItem } from '@/types'
+import { logger } from '@/lib/logger'
+
+interface InterviewHistoryItem {
+  question: string
+  answer: string | null
+  feedback: string | null
+}
 
 interface LessonWorkspaceProps {
   lesson: Lesson
@@ -76,7 +83,7 @@ export function LessonWorkspace({
 
   // Interview state
   const [interviewStarted, setInterviewStarted] = useState(false)
-  const [interviewHistory, setInterviewHistory] = useState<any[]>([])
+  const [interviewHistory, setInterviewHistory] = useState<InterviewHistoryItem[]>([])
   const [userAnswer, setUserAnswer] = useState('')
   const [currentQuestion, setCurrentQuestion] = useState('')
   const [feedback, setFeedback] = useState('')
@@ -129,8 +136,8 @@ export function LessonWorkspace({
           } else {
             setCheatSheetContent('')
           }
-        } catch (e) {
-          console.error("Error loading note or cheat sheet:", e)
+        } catch (e: unknown) {
+          logger.error('Error loading note or cheat sheet', e)
         }
       } else {
         const localNote = window.localStorage.getItem(`note_${roadmap.id}_${lesson.id}`)
@@ -203,8 +210,8 @@ export function LessonWorkspace({
             updated_at: new Date().toISOString()
           }, { merge: true })
           setNoteStatus('saved')
-        } catch (e) {
-          console.error(e)
+        } catch (e: unknown) {
+          logger.error('Failed to save note to Firestore', e)
           setNoteStatus('error')
         }
       } else {
@@ -237,8 +244,8 @@ export function LessonWorkspace({
             updated_at: new Date().toISOString()
           }, { merge: true })
           setCheatSheetStatus('saved')
-        } catch (e) {
-          console.error(e)
+        } catch (e: unknown) {
+          logger.error('Failed to save cheat sheet to Firestore', e)
           setCheatSheetStatus('error')
         }
       } else {
@@ -307,13 +314,14 @@ export function LessonWorkspace({
       })
       setDebugExplanation(response.data.explanation)
       setDebugFixedCode(response.data.fixed_code)
-    } catch (e: any) {
-      if (e.response?.status === 429) {
+    } catch (e: unknown) {
+      const status = (e as { response?: { status?: number } }).response?.status
+      if (status === 429) {
         setRateLimitNote('Rate limit exceeded (5/min). Please try again in a minute. (Note: Since this is a portfolio project, strict limits apply!)')
       } else {
         setRateLimitNote('An error occurred while debugging.')
       }
-      console.error(e)
+      logger.error('AI debugger request failed', e)
     } finally {
       setIsDebugging(false)
     }
@@ -342,13 +350,14 @@ export function LessonWorkspace({
       const newSummary = response.data.markdown_summary
       handleCheatSheetChange(newSummary)
       setActiveTab('cheatsheet')
-    } catch (e: any) {
-      if (e.response?.status === 429) {
+    } catch (e: unknown) {
+      const status = (e as { response?: { status?: number } }).response?.status
+      if (status === 429) {
         setRateLimitNote('Rate limit exceeded (3/min). Please try again later. (Note: Since this is a portfolio project, strict limits apply!)')
       } else {
         setRateLimitNote('An error occurred while generating the cheat sheet.')
       }
-      console.error(e)
+      logger.error('Cheat sheet generation failed', e)
     } finally {
       setIsGeneratingSummary(false)
     }
@@ -369,8 +378,8 @@ export function LessonWorkspace({
       setCurrentQuestion(data.next_question)
       setInterviewHistory(data.history || [])
       setInterviewStarted(true)
-    } catch (e) {
-      console.error("Failed to start mock interview:", e)
+    } catch (e: unknown) {
+      logger.error('Failed to start mock interview', e)
     } finally {
       setIsInterviewLoading(false)
     }
@@ -398,8 +407,8 @@ export function LessonWorkspace({
         setCurrentQuestion('')
         setFinalEvaluation(data.final_evaluation)
       }
-    } catch (e) {
-      console.error("Failed to submit interview answer:", e)
+    } catch (e: unknown) {
+      logger.error('Failed to submit interview answer', e)
     } finally {
       setIsInterviewLoading(false)
     }

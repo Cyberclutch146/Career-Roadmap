@@ -33,6 +33,8 @@ import {
   Menu
 } from 'lucide-react'
 import type { Roadmap, Phase, Chapter, Lesson } from '@/types'
+import { logger } from '@/lib/logger'
+
 
 export default function RoadmapPage() {
   const params = useParams()
@@ -75,7 +77,7 @@ export default function RoadmapPage() {
             loadedRoadmap = JSON.parse(savedRoadmapRaw) as Roadmap
           }
         } catch (e) {
-          console.error("Failed to load local roadmap:", e)
+          logger.error("Failed to load local roadmap:", e)
         }
 
         // 1. Try owner collection if user is logged in (disabled for offline mode)
@@ -105,7 +107,7 @@ export default function RoadmapPage() {
               loadedRoadmap = { ...docSnap.data(), id: docSnap.id } as Roadmap
             }
           } catch (err) {
-            console.error("Failed to fetch public roadmap:", err)
+            logger.error("Failed to fetch public roadmap:", err)
           }
         }
 
@@ -191,7 +193,7 @@ export default function RoadmapPage() {
           } catch { /* silently fail */ }
         }
       } catch (error) {
-        console.error('Failed to load roadmap:', error)
+        logger.error('Failed to load roadmap:', error)
         router.push('/generate')
       } finally {
         setIsLoading(false)
@@ -250,7 +252,7 @@ export default function RoadmapPage() {
         }
         window.localStorage.setItem(datesKey, JSON.stringify(savedDates))
       } catch (e) {
-        console.error("Failed to save progress locally:", e)
+        logger.error("Failed to save progress locally:", e)
       }
     }
   }
@@ -278,7 +280,7 @@ export default function RoadmapPage() {
           await deleteDoc(bDoc)
         }
       } catch (e) {
-        console.error('Failed to save bookmark:', e)
+        logger.error('Failed to save bookmark:', e)
         setBookmarkedLessons(bookmarkedLessons) // rollback
       }
     } else {
@@ -286,7 +288,7 @@ export default function RoadmapPage() {
         const bKey = `bookmarks_${roadmap.id}`
         window.localStorage.setItem(bKey, JSON.stringify(Array.from(newBookmarks)))
       } catch (e) {
-        console.error('Failed to save bookmark locally:', e)
+        logger.error('Failed to save bookmark locally:', e)
       }
     }
   }
@@ -324,7 +326,7 @@ export default function RoadmapPage() {
         alert("Roadmap is now private.")
       }
     } catch (err) {
-      console.error("Failed to share roadmap:", err)
+      logger.error("Failed to share roadmap:", err)
       alert("Failed to update sharing settings.")
     } finally {
       setIsSharing(false)
