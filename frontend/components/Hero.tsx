@@ -8,7 +8,7 @@ export function Hero() {
   const { user } = useStore()
   const targetHref = user ? '/dashboard' : '/login'
   return (
-    <section className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden blueprint-grid border-b border-outline-variant/50 pt-20">
+    <section className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden blueprint-grid pt-20">
       {/* Ambient background glow */}
       <div className="absolute top-0 right-0 w-[400px] md:w-[800px] h-[200px] md:h-[350px] bg-primary/[0.04] rounded-full blur-[100px] md:blur-[140px] pointer-events-none" />
 

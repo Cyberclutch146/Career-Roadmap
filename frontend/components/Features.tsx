@@ -40,7 +40,7 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="relative min-h-0 w-full flex flex-col justify-center border-b border-outline-variant/50 py-16 md:py-24">
+    <section id="features" className="relative min-h-0 w-full flex flex-col justify-center py-16 md:py-24">
       {/* Ambient background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/[0.02] rounded-full blur-[120px] pointer-events-none" />
 

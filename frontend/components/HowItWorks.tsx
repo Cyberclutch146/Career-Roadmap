@@ -32,7 +32,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative min-h-0 w-full flex flex-col justify-center border-b border-outline-variant/50 py-16 md:py-28 overflow-hidden">
+    <section id="how-it-works" className="relative min-h-0 w-full flex flex-col justify-center py-16 md:py-28 overflow-hidden">
       {/* Subtle ambient glows in background */}
       <div className="absolute top-1/2 right-0 w-[400px] h-[400px] bg-orange-500/[0.01] rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/4 left-0 w-[300px] h-[300px] bg-amber-500/[0.015] rounded-full blur-[100px] pointer-events-none" />
