@@ -3,7 +3,7 @@ import { auth } from './firebase'
 import { logger } from './logger'
 
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
 // Public routes that should NOT trigger a redirect on 401
 const PUBLIC_PATHS = ['/', '/login']

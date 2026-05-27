@@ -7,6 +7,10 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import uuid
 import os
+import sys
+
+# Ensure the api directory is on the path so relative imports work in Vercel
+sys.path.insert(0, os.path.dirname(__file__))
 
 from schemas import (
     RoadmapGenerationRequest,
@@ -31,7 +35,7 @@ from services.auth import get_optional_user
 limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
-    title="RoadmapAI Microservice",
+    title="RoadmapAI API",
     description="AI-powered educational roadmap generator",
     version="2.0.0"
 )
@@ -40,7 +44,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ---------------------------------------------------------------------------
-# CORS — configurable via environment for production deployments
+# CORS — allow same-origin (Vercel) and localhost for dev
 # ---------------------------------------------------------------------------
 _raw_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
 CORS_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()]
@@ -60,17 +64,16 @@ ai_service = AIService()
 # Info
 # ---------------------------------------------------------------------------
 
-@app.get("/")
+@app.get("/api")
 async def root():
     return {
-        "message": "Welcome to RoadmapAI Microservice",
+        "message": "Welcome to RoadmapAI API",
         "version": "2.0.0",
-        "docs": "/docs",
         "ai_available": ai_service.is_available()
     }
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     return {
         "status": "healthy",
@@ -150,7 +153,6 @@ async def interview_chat(
         history=result["history"]
     )
 
-
 # ---------------------------------------------------------------------------
 # Developer Magic: Debugger & Summarizer
 # ---------------------------------------------------------------------------
@@ -213,7 +215,3 @@ async def chat_with_mentor(
         suggestions=response["suggestions"],
         action=response.get("action")
     )
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
