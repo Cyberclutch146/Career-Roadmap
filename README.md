@@ -373,6 +373,8 @@ All documentation lives in the [`docs/`](docs/) directory:
 | **[P3 Exploratory](docs/IMPL_P3_EXPLORATORY.md)** | Implementation plan for 12 exploratory features (~160h). |
 | **[Roadmap Wizard](docs/IMPL_ROADMAP_WIZARD.md)** | Multi-step generation wizard implementation plan. |
 | **[Agentic Chatbot](docs/IMPL_AGENTIC_CHATBOT.md)** | Agentic RAG chatbot with ReAct loop and function calling. |
+| **[Codebase Audit](docs/CODEBASE_AUDIT.md)** | Full codebase deep-dive: 17 issues (3 critical, 5 high) with fix plans. |
+| **[UI Audit](docs/UI_AUDIT.md)** | UI deep-dive: 30 issues across visual bugs, UX, design consistency, and accessibility. |
 
 ---
 
