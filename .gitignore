@@ -29,21 +29,8 @@ next-env.d.ts
 *.tsbuildinfo
 
 # ==============================
-# Python
+# Python (removed — backend migrated to Next.js API routes)
 # ==============================
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-.venv/
-ENV/
-pip-log.txt
-pip-delete-this-directory.txt
-*.egg-info/
-.eggs/
 
 # ==============================
 # Testing & Coverage

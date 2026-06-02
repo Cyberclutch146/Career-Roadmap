@@ -1,9 +1,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Gemini_2.0-Flash-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini" />
   <img src="https://img.shields.io/badge/Firebase-Auth_+_Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
   <img src="https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Full_Stack-Next.js_API_Routes-000?style=for-the-badge&logo=vercel&logoColor=white" alt="Full Stack" />
 </p>
 
 # RoadmapAI
@@ -75,9 +75,10 @@
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | Next.js 14, TypeScript (strict), TailwindCSS, Framer Motion, Zustand, Recharts, Monaco Editor, TipTap, Axios, Lucide React |
-| **Backend** | FastAPI, Pydantic v2, SlowAPI (rate limiting), Firebase Admin SDK |
-| **AI** | Google Gemini 2.0 Flash (via `google-generativeai` SDK, async) |
+| **Full-Stack Framework** | Next.js 14 (App Router) — serves both the UI and API routes in one deployment |
+| **Frontend** | TypeScript (strict), TailwindCSS, Framer Motion, Zustand, Recharts, Monaco Editor, TipTap, Axios, Lucide React |
+| **Backend (API Routes)** | Next.js Route Handlers (`app/api/*`) — serverless functions handling all AI and data endpoints |
+| **AI** | Google Gemini 2.0 Flash (via `@google/generative-ai` SDK) |
 | **Auth & Database** | Firebase Authentication (Email/Password + Google SSO) + Cloud Firestore |
 | **Fonts** | Merriweather (headings), Inter (body), JetBrains Mono (code) — via `next/font` |
 
@@ -89,8 +90,7 @@
 
 | Requirement | Version | Notes |
 |---|---|---|
-| Node.js | 18+ | For the Next.js frontend |
-| Python | 3.9+ | For the FastAPI backend |
+| Node.js | 18+ | Required for Next.js |
 | Firebase Project | — | Firestore + Authentication enabled |
 | Gemini API Key | — | *Optional* — get one free at [aistudio.google.com](https://aistudio.google.com/app/apikey) |
 
@@ -101,7 +101,7 @@
 git clone https://github.com/Cyberclutch146/Career-Roadmap.git
 cd Career-Roadmap
 
-# One-command setup — installs everything, generates configs, starts both servers
+# One-command setup — installs everything and starts the dev server
 .\roadmap
 ```
 
@@ -109,44 +109,17 @@ cd Career-Roadmap
 
 ### Manual Setup
 
-#### 1. Backend
-
 ```bash
-cd backend
-
-# Create and activate virtual environment
-python -m venv venv
-# Windows:
-venv\Scripts\activate
-# macOS / Linux:
-source venv/bin/activate
+cd frontend
 
 # Install dependencies
-pip install -r requirements.txt
+npm install
 
 # Create environment file
-cp .env.example .env
-# Edit .env with your GEMINI_API_KEY (optional)
-```
-
-#### 2. Frontend
-
-```bash
-cd frontend
-npm install
 cp .env.example .env.local
-# Edit .env.local with your Firebase config + backend URL
-```
+# Edit .env.local with your Gemini API key and Firebase config
 
-#### 3. Run
-
-```bash
-# Terminal 1 — Backend (port 8000)
-cd backend
-uvicorn main:app --reload --port 8000
-
-# Terminal 2 — Frontend (port 3000)
-cd frontend
+# Start the dev server
 npm run dev
 ```
 
@@ -156,54 +129,41 @@ Open **http://localhost:3000** in your browser.
 
 ## ⚙️ Environment Variables
 
-### Backend (`backend/.env`)
+All configuration lives in a single file: `frontend/.env.local`
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `GEMINI_API_KEY` | No | — | Google Gemini API key. Without it, roadmaps use built-in templates |
-| `CORS_ORIGINS` | No | `http://localhost:3000,http://127.0.0.1:3000` | Comma-separated allowed frontend origins |
-| `GOOGLE_APPLICATION_CREDENTIALS` | No | — | Path to Firebase Admin service account JSON |
-
-### Frontend (`frontend/.env.local`)
-
-| Variable | Default | Description |
+| Variable | Required | Description |
 |---|---|---|
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Backend API base URL |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | — | Firebase project API key |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | — | Firebase auth domain |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | — | Firebase project ID |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | — | Firebase storage bucket |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | — | Firebase messaging sender ID |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | — | Firebase app ID |
+| `GEMINI_API_KEY` | No | Google Gemini API key (server-side). Without it, roadmaps use built-in templates |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Yes | Firebase project API key |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Yes | Firebase auth domain |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Yes | Firebase project ID |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Yes | Firebase storage bucket |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Yes | Firebase messaging sender ID |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Yes | Firebase app ID |
 
-> **Security:** `.env` and `.env.local` are git-ignored. Only `.env.example` files are tracked. Never commit real secrets.
+> **Security:** `.env.local` is git-ignored. Only `.env.example` is tracked. Never commit real secrets.
 
 ---
 
 ## 📡 API Reference
 
-All endpoints are browsable at **http://localhost:8000/docs** (Swagger UI).
-
-### Core
-
-| Method | Endpoint | Auth | Rate Limit | Description |
-|---|---|---|---|---|
-| `GET` | `/` | No | — | API info + version |
-| `GET` | `/health` | No | — | Health check |
+All API endpoints are served as Next.js Route Handlers under `/api/*`. No separate backend server is needed.
 
 ### Roadmaps
 
-| Method | Endpoint | Auth | Rate Limit | Description |
-|---|---|---|---|---|
-| `POST` | `/api/roadmaps/generate` | Optional | 5/min | Generate a new AI roadmap |
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/roadmaps/generate` | Generate a new AI-powered roadmap |
 
 ### AI Services
 
-| Method | Endpoint | Auth | Rate Limit | Description |
-|---|---|---|---|---|
-| `POST` | `/api/chat` | Optional | 20/min | Send message to AI mentor |
-| `POST` | `/api/assessment/generate` | Optional | 10/min | Generate skill assessment quiz |
-| `POST` | `/api/interview/chat` | Optional | 20/min | AI mock interview conversation |
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/chat` | Send message to AI mentor |
+| `POST` | `/api/assessment/generate` | Generate skill assessment quiz |
+| `POST` | `/api/interview/chat` | AI mock interview conversation |
+| `POST` | `/api/debug` | AI-powered code debugger |
+| `POST` | `/api/summarize` | AI lesson summarizer |
 
 ---
 
@@ -211,93 +171,81 @@ All endpoints are browsable at **http://localhost:8000/docs** (Swagger UI).
 
 ```
 Career-Roadmap/
-├── backend/
-│   ├── main.py                    # FastAPI app — routes, CORS, rate limiting
-│   ├── schemas.py                 # Pydantic v2 request/response models
-│   ├── services/
-│   │   ├── __init__.py
-│   │   ├── ai_service.py          # Gemini integration + fallback templates
-│   │   └── auth.py                # Firebase Admin token verification
-│   ├── tests/
-│   │   └── test_api.py            # pytest suite
-│   ├── firebase.json              # Firebase project config
-│   ├── firestore.rules            # Firestore security rules
-│   ├── requirements.txt
-│   └── .env.example
-│
-├── frontend/
+├── frontend/                          # Full-stack Next.js application
 │   ├── app/
-│   │   ├── layout.tsx             # Root layout (fonts, metadata, AuthProvider, ChatWidget)
-│   │   ├── page.tsx               # Landing page (full-viewport sections)
-│   │   ├── globals.css            # Tailwind dark theme + design tokens
-│   │   ├── error.tsx              # Global error boundary
-│   │   ├── loading.tsx            # Animated loading skeleton
+│   │   ├── layout.tsx                 # Root layout (fonts, metadata, AuthProvider, ChatWidget)
+│   │   ├── page.tsx                   # Landing page (full-viewport sections)
+│   │   ├── globals.css                # Tailwind dark theme + design tokens
+│   │   ├── error.tsx                  # Global error boundary
+│   │   ├── loading.tsx                # Animated loading skeleton
 │   │   ├── generate/
-│   │   │   ├── page.tsx           # Multi-step generation wizard orchestrator
-│   │   │   └── _components/
-│   │   │       ├── WizardProgress.tsx   # Desktop progress bar + mobile step track
-│   │   │       ├── StepGoal.tsx         # Step 1 — Goal input + AI suggestions
-│   │   │       ├── StepProfile.tsx      # Step 2 — Skill level + learning style
-│   │   │       ├── StepCommitment.tsx   # Step 3 — Study hours + target duration
-│   │   │       ├── StepReview.tsx       # Step 4 — Summary + assessment + generate
-│   │   │       └── ConfettiBurst.tsx    # Success celebration animation
-│   │   ├── roadmap/[id]/page.tsx  # Interactive roadmap workspace
-│   │   ├── dashboard/page.tsx     # User dashboard + analytics
-│   │   ├── gallery/page.tsx       # Public roadmap gallery
-│   │   ├── login/page.tsx         # Auth (Email/Password + Google SSO)
-│   │   └── api/auth/             # Next.js API routes (OTP send/verify)
+│   │   │   ├── page.tsx               # Multi-step generation wizard orchestrator
+│   │   │   └── _components/           # Wizard step components
+│   │   ├── roadmap/[id]/page.tsx      # Interactive roadmap workspace
+│   │   ├── dashboard/page.tsx         # User dashboard + analytics
+│   │   ├── gallery/page.tsx           # Public roadmap gallery
+│   │   ├── login/page.tsx             # Auth (Email/Password + Google SSO)
+│   │   └── api/                       # ← Server-side API routes (replaces old Python backend)
+│   │       ├── roadmaps/generate/route.ts   # Roadmap generation endpoint
+│   │       ├── assessment/generate/route.ts # Skill assessment quiz endpoint
+│   │       ├── interview/chat/route.ts      # Mock interview endpoint
+│   │       ├── chat/route.ts                # AI mentor chat endpoint
+│   │       ├── debug/route.ts               # Code debugger endpoint
+│   │       ├── summarize/route.ts           # Lesson summarizer endpoint
+│   │       └── auth/                        # Auth-related API routes
 │   │
 │   ├── components/
-│   │   ├── ui/                    # Button, Card, Input, Select, ProgressBar
-│   │   ├── Navbar.tsx             # Floating glassmorphic pill + mobile sidebar
-│   │   ├── MobileNav.tsx          # Bottom tab bar for mobile
-│   │   ├── MobileSidebar.tsx      # Framer Motion slide-out drawer
-│   │   ├── Footer.tsx             # Site footer
-│   │   ├── Hero.tsx               # Landing hero section
-│   │   ├── Features.tsx           # Feature grid (desktop) / accordion (mobile)
-│   │   ├── HowItWorks.tsx         # Step grid (desktop) / carousel (mobile)
-│   │   ├── ExampleRoadmap.tsx     # Interactive demo on landing
-│   │   ├── Testimonials.tsx       # Testimonials grid / carousel
-│   │   ├── ChapterList.tsx        # Roadmap phase/chapter renderer
-│   │   ├── ResourcePanel.tsx      # Resource cards by type
-│   │   ├── LessonWorkspace.tsx    # Tabbed workspace (Content, Code, Interview, Notes)
-│   │   ├── AIMentor.tsx           # AI mentor chat interface + global FAB widget
-│   │   ├── RichTextEditor.tsx     # TipTap editor wrapper
-│   │   ├── ProgressCalendar.tsx   # GitHub-style heatmap + streak
-│   │   ├── SkillsRadar.tsx        # Recharts radar chart
-│   │   ├── WeeklyVelocity.tsx     # Recharts weekly lesson velocity chart
-│   │   └── AuthProvider.tsx       # Firebase auth + route protection
+│   │   ├── ui/                        # Button, Card, Input, Select, ProgressBar
+│   │   ├── Navbar.tsx                 # Floating glassmorphic pill + mobile sidebar
+│   │   ├── MobileNav.tsx              # Bottom tab bar for mobile
+│   │   ├── MobileSidebar.tsx          # Framer Motion slide-out drawer
+│   │   ├── Footer.tsx                 # Site footer
+│   │   ├── Hero.tsx                   # Landing hero section
+│   │   ├── Features.tsx               # Feature grid (desktop) / accordion (mobile)
+│   │   ├── HowItWorks.tsx             # Step grid (desktop) / carousel (mobile)
+│   │   ├── ExampleRoadmap.tsx         # Interactive demo on landing
+│   │   ├── Testimonials.tsx           # Testimonials grid / carousel
+│   │   ├── ChapterList.tsx            # Roadmap phase/chapter renderer
+│   │   ├── ResourcePanel.tsx          # Resource cards by type
+│   │   ├── LessonWorkspace.tsx        # Tabbed workspace (Content, Code, Interview, Notes)
+│   │   ├── AIMentor.tsx               # AI mentor chat interface + global FAB widget
+│   │   ├── RichTextEditor.tsx         # TipTap editor wrapper
+│   │   ├── ProgressCalendar.tsx       # GitHub-style heatmap + streak
+│   │   ├── SkillsRadar.tsx            # Recharts radar chart
+│   │   ├── WeeklyVelocity.tsx         # Recharts weekly lesson velocity chart
+│   │   └── AuthProvider.tsx           # Firebase auth + route protection
 │   │
 │   ├── lib/
-│   │   ├── api.ts                 # Axios instance + 401 interceptor
-│   │   ├── firebase.ts            # Firebase client initialization
-│   │   ├── firebase-admin.ts      # Firebase Admin SDK (server-side)
-│   │   ├── sampleRoadmaps.ts     # Pre-built fallback roadmap data
-│   │   └── utils.ts               # Formatting helpers
+│   │   ├── aiService.ts               # ← Gemini AI integration (TypeScript, server-side)
+│   │   ├── api.ts                     # Axios instance + 401 interceptor
+│   │   ├── firebase.ts                # Firebase client initialization
+│   │   ├── firebase-admin.ts          # Firebase Admin SDK (server-side)
+│   │   ├── sampleRoadmaps.ts          # Pre-built fallback roadmap data
+│   │   └── utils.ts                   # Formatting helpers
 │   │
-│   ├── store/index.ts             # Zustand state management
-│   ├── types/index.ts             # TypeScript interfaces
-│   └── .env.example
+│   ├── store/index.ts                 # Zustand state management
+│   ├── types/index.ts                 # TypeScript interfaces
+│   └── .env.example                   # Environment variable template
 │
-├── docs/
-│   ├── SPEC.md                    # Design specification & visual system
-│   ├── PROJECT_STATUS.md          # Current project state & feature breakdown
-│   ├── TODO.md                    # Development task tracker (all sprints)
-│   ├── FEATURE_ROADMAP.md         # Core 10 feature specifications
-│   ├── FUTURE_FEATURES.md         # 50 AI/ML future features strategy
-│   ├── IMPLEMENTATION_PLAN.md     # Sprint execution guide
-│   ├── UI_OVERHAUL_PLAN.md        # UI/UX improvement strategy
-│   ├── IMPL_P0_CRITICAL.md       # P0 implementation plan (~120h)
-│   ├── IMPL_P1_HIGH.md           # P1 implementation plan (~180h)
-│   ├── IMPL_P2_MEDIUM.md         # P2 implementation plan (~200h)
-│   ├── IMPL_P3_EXPLORATORY.md    # P3 implementation plan (~160h)
-│   ├── IMPL_ROADMAP_WIZARD.md    # Multi-step wizard implementation plan
-│   └── IMPL_AGENTIC_CHATBOT.md   # Agentic RAG chatbot implementation plan
+├── docs/                              # Project documentation
+│   ├── SPEC.md                        # Design specification & visual system
+│   ├── PROJECT_STATUS.md              # Current project state & feature breakdown
+│   ├── TODO.md                        # Development task tracker (all sprints)
+│   ├── FEATURE_ROADMAP.md             # Core 10 feature specifications
+│   ├── FUTURE_FEATURES.md             # 50 AI/ML future features strategy
+│   ├── IMPLEMENTATION_PLAN.md         # Sprint execution guide
+│   ├── UI_OVERHAUL_PLAN.md            # UI/UX improvement strategy
+│   ├── IMPL_P0_CRITICAL.md            # P0 implementation plan (~120h)
+│   ├── IMPL_P1_HIGH.md                # P1 implementation plan (~180h)
+│   ├── IMPL_P2_MEDIUM.md              # P2 implementation plan (~200h)
+│   ├── IMPL_P3_EXPLORATORY.md         # P3 implementation plan (~160h)
+│   ├── IMPL_ROADMAP_WIZARD.md         # Multi-step wizard implementation plan
+│   └── IMPL_AGENTIC_CHATBOT.md        # Agentic RAG chatbot implementation plan
 │
-├── roadmap.ps1 / roadmap.bat     # One-command start scripts
-├── setup.ps1                      # Guided setup wizard
+├── roadmap.ps1 / roadmap.bat          # One-command start scripts
+├── setup.ps1                          # Guided setup wizard
 ├── .gitignore
-└── README.md                      # ← You are here
+└── README.md                          # ← You are here
 ```
 
 ---
@@ -366,57 +314,38 @@ users/{userId}/
 | **Firebase Authentication** | Email/Password + Google SSO with `onAuthStateChanged` session management |
 | **Route Protection** | `AuthProvider.tsx` redirects unauthenticated users on private routes |
 | **Firestore Security Rules** | Per-user data isolation — users can only read/write their own documents |
-| **Rate Limiting** | SlowAPI: 5/min on generation, 10/min on assessment, 20/min on chat endpoints |
-| **CORS** | Configurable allowed origins via `CORS_ORIGINS` environment variable |
-| **Security Headers** | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy` |
-| **No secrets in git** | `.env` files git-ignored; `.env.example` uses placeholders |
+| **Security Headers** | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy` (via `next.config.js`) |
+| **No secrets in git** | `.env.local` git-ignored; `.env.example` uses placeholders |
+| **Server-side API keys** | `GEMINI_API_KEY` is only accessible in server-side API routes, never exposed to the browser |
 
 ---
 
 ## 🧪 Testing
 
-### Backend
-
-```bash
-cd backend
-pip install pytest pytest-asyncio httpx
-pytest -v
-```
-
-The test suite covers:
-- Input validation (empty goal, invalid skill levels)
-- Authentication token verification
-- Health endpoint responses
-- Rate limiting behavior
-
-### Frontend
-
 ```bash
 cd frontend
 npm run typecheck  # TypeScript strict mode check
 npm run lint       # ESLint (strict config)
+npm run build      # Full production build (catches all compilation errors)
 ```
 
 ---
 
 ## 🚢 Deployment
 
-### Backend (Railway / Render)
+### Vercel (Recommended)
 
-1. Create a new project and connect the GitHub repository
-2. Set root directory to `backend`
-3. Build command: `pip install -r requirements.txt`
-4. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Set environment variables: `GEMINI_API_KEY`, `CORS_ORIGINS`, `GOOGLE_APPLICATION_CREDENTIALS`
-
-### Frontend (Vercel / Firebase Hosting)
-
-1. Create a new project and connect the repository
+1. Connect the GitHub repository to a new Vercel project
 2. Set root directory to `frontend`
-3. Framework preset: **Next.js**
-4. Set environment variables: `NEXT_PUBLIC_API_URL` and all `NEXT_PUBLIC_FIREBASE_*` variables
+3. Framework preset: **Next.js** (auto-detected)
+4. Set environment variables in Vercel dashboard:
+   - `GEMINI_API_KEY` — your Google Gemini API key
+   - All `NEXT_PUBLIC_FIREBASE_*` variables
+5. Deploy — that's it! Both the UI and API routes deploy together as one unit.
 
-### Database (Firebase)
+> **No separate backend deployment needed.** All AI endpoints run as Vercel Serverless Functions automatically.
+
+### Firebase (Database & Auth)
 
 1. Create a Firebase Project at [console.firebase.google.com](https://console.firebase.google.com)
 2. Enable **Authentication** (Email/Password + Google providers)
@@ -477,6 +406,7 @@ Development is organized into **4 sprints** covering 10 planned core features, f
 - [x] Weekly Velocity Chart *(Sprint 1)*
 - [x] Completion Forecast *(Sprint 1)*
 - [x] Time Invested Estimator *(Sprint 1)*
+- [x] **Unified Full-Stack Architecture** *(Backend migrated to Next.js API Routes)*
 - [ ] AI Chapter Quizzes *(Sprint 2)*
 - [ ] Achievement Badge System *(Sprint 2)*
 - [ ] PDF Export *(Sprint 3)*

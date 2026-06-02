@@ -1,5 +1,5 @@
 # RoadmapAI Setup Script
-# Run this script to set up and start everything
+# Run this script for a guided setup with prompts.
 
 param(
     [string]$GeminiApiKey = ""
@@ -8,7 +8,6 @@ param(
 $ErrorActionPreference = "Stop"
 
 $PROJECT_ROOT = $PSScriptRoot
-$BACKEND_DIR = Join-Path $PROJECT_ROOT "backend"
 $FRONTEND_DIR = Join-Path $PROJECT_ROOT "frontend"
 
 Write-Host "`n========================================" -ForegroundColor Cyan
@@ -16,7 +15,7 @@ Write-Host "  RoadmapAI Setup Script" -ForegroundColor Cyan
 Write-Host "========================================`n" -ForegroundColor Cyan
 
 # Step 1: Check prerequisites
-Write-Host "[1/5] Checking prerequisites..." -ForegroundColor Yellow
+Write-Host "[1/3] Checking prerequisites..." -ForegroundColor Yellow
 
 $nodeVersion = & node --version 2>$null
 if (-not $nodeVersion) {
@@ -25,135 +24,57 @@ if (-not $nodeVersion) {
 }
 Write-Host "  Node.js: $nodeVersion" -ForegroundColor Green
 
-$pythonVersion = & python --version 2>$null
-if (-not $pythonVersion) {
-    Write-Host "ERROR: Python is not installed. Please install Python 3.9+ first." -ForegroundColor Red
-    exit 1
-}
-Write-Host "  Python: $pythonVersion" -ForegroundColor Green
-
-# Step 2: Set up backend
-Write-Host "`n[2/5] Setting up backend..." -ForegroundColor Yellow
-
-# Create .env file for backend
-$envContent = @"
-# RoadmapAI Backend Environment Variables
-GEMINI_API_KEY=$GeminiApiKey
-CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-"@
-
-Set-Content -Path (Join-Path $BACKEND_DIR ".env") -Value $envContent -Force
-Write-Host "  Created backend/.env" -ForegroundColor Green
-
-# Create virtual environment and install dependencies
-Push-Location $BACKEND_DIR
-
-if (Test-Path "venv") {
-    Write-Host "  Using existing virtual environment..." -ForegroundColor Gray
-} else {
-    Write-Host "  Creating virtual environment..." -ForegroundColor Gray
-    python -m venv venv
-}
-
-# Activate venv and install requirements
-$venvActivate = if ($IsWindows -or (-not $IsMacOS -and -not $IsLinux)) { "venv\Scripts\Activate.ps1" } else { "venv/bin/activate" }
-& (Join-Path $PWD $venvActivate) -ErrorAction SilentlyContinue
-
-Write-Host "  Installing Python dependencies..." -ForegroundColor Gray
-python -m pip install --upgrade pip -q
-pip install -r requirements.txt -q
-
-Pop-Location
-
-# Step 3: Set up frontend
-Write-Host "`n[3/5] Setting up frontend..." -ForegroundColor Yellow
-
-# Create .env.local for frontend
-$frontendEnvContent = @"
-NEXT_PUBLIC_API_URL=http://localhost:8000
-"@
-
-Set-Content -Path (Join-Path $FRONTEND_DIR ".env.local") -Value $frontendEnvContent -Force
-Write-Host "  Created frontend/.env.local" -ForegroundColor Green
+# Step 2: Install dependencies
+Write-Host "`n[2/3] Installing dependencies..." -ForegroundColor Yellow
 
 Push-Location $FRONTEND_DIR
 Write-Host "  Installing Node dependencies..." -ForegroundColor Gray
 npm install --silent 2>$null
 Pop-Location
 
-# Step 4: Create start script
-Write-Host "`n[4/5] Creating convenience scripts..." -ForegroundColor Yellow
+# Step 3: Create .env.local
+Write-Host "`n[3/3] Configuring environment..." -ForegroundColor Yellow
 
-$startBackendContent = @'
-@echo off
-cd /d "%~dp0backend"
-call venv\Scripts\activate
-uvicorn main:app --reload --port 8000
-'@
+$envPath = Join-Path $FRONTEND_DIR ".env.local"
 
-$startFrontendContent = @'
-@echo off
-cd /d "%~dp0frontend"
-npm run dev
-'@
-
-Set-Content -Path (Join-Path $PROJECT_ROOT "start-backend.bat") -Value $startBackendContent -Force
-Set-Content -Path (Join-Path $PROJECT_ROOT "start-frontend.bat") -Value $startFrontendContent -Force
-Write-Host "  Created start-backend.bat and start-frontend.bat" -ForegroundColor Green
-
-# Step 5: Start services
-Write-Host "`n[5/5] Starting services..." -ForegroundColor Yellow
-
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  Starting Backend Server (Port 8000)" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
-
-# Start backend in background
-$backendJob = Start-Job -ScriptBlock {
-    param($dir)
-    Set-Location $dir
-    if (Test-Path ".\venv\Scripts\Activate.ps1") {
-        & ".\venv\Scripts\Activate.ps1"
+if (-not (Test-Path $envPath)) {
+    if (-not $GeminiApiKey) {
+        Write-Host "`n  Enter your Gemini API key (or press Enter to skip):" -ForegroundColor White
+        Write-Host "  Get one free at https://aistudio.google.com/app/apikey" -ForegroundColor Gray
+        $GeminiApiKey = Read-Host "  GEMINI_API_KEY"
     }
-    uvicorn main:app --reload --port 8000
-} -ArgumentList $BACKEND_DIR
 
-Write-Host "Backend starting in background (Job ID: $($backendJob.Id))" -ForegroundColor Green
-Write-Host "API will be available at: http://localhost:8000" -ForegroundColor Cyan
-Write-Host "API docs at: http://localhost:8000/docs`n" -ForegroundColor Cyan
+    $envContent = @"
+# RoadmapAI Environment Variables
+GEMINI_API_KEY=$GeminiApiKey
 
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Starting Frontend Server (Port 3000)" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+# Firebase Configuration — fill these in with your project's values
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+"@
+    Set-Content -Path $envPath -Value $envContent -Force
+    Write-Host "  Created frontend/.env.local" -ForegroundColor Green
+    Write-Host "  >> Remember to add your Firebase config to .env.local!" -ForegroundColor Yellow
+} else {
+    Write-Host "  frontend/.env.local already exists, skipping." -ForegroundColor Gray
+}
 
-Write-Host "[*] Opening browser..." -ForegroundColor Yellow
-Start-Sleep -Seconds 3
-Start-Process "http://localhost:3000"
-
+# Done — start the server
 Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  RoadmapAI is starting up!" -ForegroundColor Cyan
+Write-Host "  Setup complete!" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host @"
 
 Quick Start:
-1. Wait ~30 seconds for servers to start
-2. Open http://localhost:3000 in your browser
-3. Click 'Generate Your Roadmap'
-4. Enter your learning goal
+  cd frontend
+  npm run dev
 
-For AI-generated roadmaps, add your Gemini API key to backend/.env
+Then open http://localhost:3000 in your browser.
 
-Press Ctrl+C to stop both servers.
+For AI-generated roadmaps, make sure GEMINI_API_KEY is set in frontend/.env.local
 
 "@ -ForegroundColor White
-
-# Start frontend in foreground
-Push-Location $FRONTEND_DIR
-try {
-    npm run dev
-} finally {
-    Pop-Location
-    Write-Host "`n[*] Stopping backend server..." -ForegroundColor Yellow
-    Stop-Job -Job $backendJob
-    Remove-Job -Job $backendJob
-}

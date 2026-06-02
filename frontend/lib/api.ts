@@ -2,14 +2,11 @@ import axios from 'axios'
 import { auth } from './firebase'
 import { logger } from './logger'
 
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || ''
-
 // Public routes that should NOT trigger a redirect on 401
 const PUBLIC_PATHS = ['/', '/login']
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: '', // Using relative URL to hit Next.js API routes natively
   headers: {
     'Content-Type': 'application/json',
   },
