@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { useStore } from '@/store'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -111,7 +112,7 @@ export default function ProfilePage() {
   if (!user) return null; // Let AuthProvider handle redirect
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
       <div className="pt-24 pb-16 flex-grow">
@@ -228,7 +229,7 @@ export default function ProfilePage() {
                 <Button 
                   variant="secondary" 
                   className="w-full justify-start text-on-surface-variant bg-zinc-800/50 hover:bg-surface-container-high border-none"
-                  onClick={() => alert("Password reset link would be sent to your email.")}
+                  onClick={() => toast.success("Password reset link would be sent to your email.")}
                 >
                   <Settings className="w-4 h-4 mr-2" />
                   Reset Password

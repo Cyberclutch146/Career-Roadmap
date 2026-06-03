@@ -52,10 +52,10 @@ export function Features() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-2xl mx-auto"
         >
-          <h2 className="font-headline text-2xl md:text-5xl text-on-surface font-bold leading-tight mb-3 md:mb-4">
+          <h2 className="font-headline text-2xl md:text-4xl text-on-surface font-bold leading-tight mb-3 md:mb-4">
             Intelligence at <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">every step.</span>
           </h2>
-          <p className="font-body text-on-surface-variant text-base md:text-lg max-w-xl mx-auto">
+          <p className="font-body text-on-surface-variant text-sm md:text-base max-w-xl mx-auto">
             The architecture of your success, built on deep learning models that understand educational progression.
           </p>
         </motion.div>

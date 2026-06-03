@@ -1,4 +1,4 @@
-# UI Deep-Dive Audit — Improvements & Fixes
+  # UI Deep-Dive Audit — Improvements & Fixes
 
 > **Date:** June 2, 2026
 > **Scope:** Visual design, interaction patterns, accessibility, responsiveness, and performance audit

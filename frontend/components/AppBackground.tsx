@@ -16,15 +16,6 @@ export function AppBackground() {
     return <div className="fixed inset-0 pointer-events-none -z-10 bg-background" />
   }
 
-  if (resolvedTheme === 'light') {
-    return (
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden bg-background">
-        <div className="absolute top-[-15%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-500/[0.1] blur-[180px]" />
-        <div className="absolute bottom-[-20%] left-[-15%] w-[60vw] h-[60vw] rounded-full bg-orange-500/[0.08] blur-[200px]" />
-      </div>
-    )
-  }
-
   return (
     <div className="fixed inset-0 pointer-events-none -z-10 bg-background">
       <Galaxy 

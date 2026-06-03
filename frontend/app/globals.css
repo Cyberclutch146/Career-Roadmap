@@ -6,63 +6,6 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --surface: #ffffff;
-    --surface-dim: #f4f4f5;
-    --surface-bright: #ffffff;
-    --surface-container-lowest: #ffffff;
-    --surface-container-low: #fafafa;
-    --surface-container: #f4f4f5;
-    --surface-container-high: #e4e4e7;
-    --surface-container-highest: #d4d4d8;
-    --surface-variant: #e4e4e7;
-    --surface-tint: #d97706;
-
-    --primary: #d97706;
-    --primary-container: #fef3c7;
-    --primary-fixed: #fef3c7;
-    --primary-fixed-dim: #f59e0b;
-    --on-primary: #ffffff;
-    --on-primary-container: #78350f;
-    --on-primary-fixed: #78350f;
-    --on-primary-fixed-variant: #92400e;
-    --inverse-primary: #f59e0b;
-
-    --secondary: #ea580c;
-    --secondary-container: #ffedd5;
-    --secondary-fixed: #ffedd5;
-    --secondary-fixed-dim: #f97316;
-    --on-secondary: #ffffff;
-    --on-secondary-container: #7c2d12;
-    --on-secondary-fixed: #7c2d12;
-    --on-secondary-fixed-variant: #9a3412;
-
-    --tertiary: #52525b;
-    --tertiary-container: #f4f4f5;
-    --tertiary-fixed: #e4e4e7;
-    --tertiary-fixed-dim: #a1a1aa;
-    --on-tertiary: #ffffff;
-    --on-tertiary-container: #18181b;
-    --on-tertiary-fixed: #18181b;
-    --on-tertiary-fixed-variant: #27272a;
-
-    --on-surface: #18181b;
-    --on-surface-variant: #52525b;
-    --on-background: #18181b;
-
-    --outline: #a1a1aa;
-    --outline-variant: #e4e4e7;
-
-    --error: #dc2626;
-    --error-container: #fee2e2;
-    --on-error: #ffffff;
-    --on-error-container: #7f1d1d;
-
-    --inverse-surface: #27272a;
-    --inverse-on-surface: #f4f4f5;
-  }
-
-  .dark {
     --background: #0a0a0b;
     --surface: #0a0a0b;
     --surface-dim: #0a0a0b;
@@ -94,7 +37,7 @@
     --on-secondary-fixed: #000000;
     --on-secondary-fixed-variant: #000000;
 
-    --tertiary: #71717a;
+    --tertiary: #8a8a94;
     --tertiary-container: #3f3f46;
     --tertiary-fixed: #e4e4e7;
     --tertiary-fixed-dim: #a1a1aa;
@@ -118,6 +61,7 @@
     --inverse-surface: #fafafa;
     --inverse-on-surface: #18181b;
   }
+
   html {
     scroll-behavior: smooth;
   }
@@ -126,7 +70,12 @@
     @apply bg-background text-on-surface font-sans antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-headline font-bold;
   }
 
@@ -154,6 +103,7 @@
 }
 
 @layer components {
+
   /* === Glass Card (Signature component) === */
   .glass-card {
     backdrop-filter: blur(32px);
@@ -165,26 +115,30 @@
     @apply glass-card hover:border-primary transition-all duration-300 hover:shadow-glow;
   }
 
+  /* === Liquid Glass (Dashboard specific) === */
+  .liquid-glass-card {
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.1), inset 0px -1px 1px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.4);
+    @apply rounded-2xl border-none;
+  }
+
+  .liquid-glass-hover {
+    @apply liquid-glass-card hover:bg-white/[0.04] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(245,158,11,0.15)];
+  }
+
   /* === Buttons === */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3
-           bg-primary text-on-primary font-label font-semibold rounded-full
-           transition-all duration-200 hover:bg-primary-container hover:shadow-glow active:scale-98
-           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-primary text-on-primary font-label font-semibold rounded-full transition-all duration-200 hover:bg-primary-container hover:shadow-glow active:scale-98 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3
-           border border-outline text-on-surface font-label font-medium rounded-full
-           hover:bg-surface-container-high transition-all duration-200 backdrop-blur-md hover:text-on-surface hover:border-outline
-           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+    @apply inline-flex items-center justify-center px-6 py-3 border border-outline text-on-surface font-label font-medium rounded-full hover:bg-surface-container-high transition-all duration-200 backdrop-blur-md hover:text-on-surface hover:border-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center px-4 py-2
-           text-on-surface-variant font-label font-medium rounded-lg
-           hover:bg-surface-container hover:text-on-surface transition-all duration-200;
+    @apply inline-flex items-center justify-center px-4 py-2 text-on-surface-variant font-label font-medium rounded-lg hover:bg-surface-container hover:text-on-surface transition-all duration-200;
   }
 
   /* === Cards === */
@@ -198,9 +152,7 @@
 
   /* === Input Fields === */
   .input-field {
-    @apply w-full px-4 py-3 bg-surface-container backdrop-blur-xl border border-outline rounded-lg
-           text-on-surface placeholder-on-surface-variant
-           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200;
+    @apply w-full px-4 py-3 bg-surface-container backdrop-blur-xl border border-outline rounded-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200;
   }
 
   .label {
@@ -236,13 +188,11 @@
   }
 
   .lesson-item {
-    @apply flex items-center gap-4 p-4 rounded-lg border border-transparent
-           hover:bg-surface-container hover:border-white/5 transition-all duration-150 cursor-pointer;
+    @apply flex items-center gap-4 p-4 rounded-lg border border-transparent hover:bg-surface-container hover:border-white/5 transition-all duration-150 cursor-pointer;
   }
 
   .resource-card {
-    @apply flex items-start gap-3 p-4 glass-card rounded-lg
-           hover:bg-surface-container-high transition-colors duration-200;
+    @apply flex items-start gap-3 p-4 glass-card rounded-lg hover:bg-surface-container-high transition-colors duration-200;
   }
 
   /* === Glossy Button Hover === */
@@ -270,16 +220,33 @@
     @apply text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary;
   }
 
-  .animate-stagger > * {
+  .animate-stagger>* {
     animation: slideUp 0.4s ease-out backwards;
   }
 
-  .animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
-  .animate-stagger > *:nth-child(2) { animation-delay: 100ms; }
-  .animate-stagger > *:nth-child(3) { animation-delay: 200ms; }
-  .animate-stagger > *:nth-child(4) { animation-delay: 300ms; }
-  .animate-stagger > *:nth-child(5) { animation-delay: 400ms; }
-  .animate-stagger > *:nth-child(6) { animation-delay: 500ms; }
+  .animate-stagger>*:nth-child(1) {
+    animation-delay: 0ms;
+  }
+
+  .animate-stagger>*:nth-child(2) {
+    animation-delay: 100ms;
+  }
+
+  .animate-stagger>*:nth-child(3) {
+    animation-delay: 200ms;
+  }
+
+  .animate-stagger>*:nth-child(4) {
+    animation-delay: 300ms;
+  }
+
+  .animate-stagger>*:nth-child(5) {
+    animation-delay: 400ms;
+  }
+
+  .animate-stagger>*:nth-child(6) {
+    animation-delay: 500ms;
+  }
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -291,17 +258,28 @@
   }
 
   .blueprint-grid {
-    background-image: 
+    background-image:
       linear-gradient(rgba(245, 158, 11, 0.02) 1px, transparent 1px),
       linear-gradient(90deg, rgba(245, 158, 11, 0.02) 1px, transparent 1px);
     background-size: 60px 60px;
   }
 
   .glow-amber {
-    background: radial-gradient(
-      ellipse 600px 400px at 50% 0%,
-      rgba(245, 158, 11, 0.06),
-      transparent
-    );
+    background: radial-gradient(ellipse 600px 400px at 50% 0%,
+        rgba(245, 158, 11, 0.06),
+        transparent);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--surface-variant);
+    border-radius: 4px;
   }
 }

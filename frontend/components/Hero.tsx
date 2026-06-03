@@ -17,7 +17,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-headline text-3xl leading-[1.15] md:text-6xl text-on-surface font-bold"
+          className="font-headline text-4xl leading-[1.15] md:text-5xl text-on-surface font-bold"
         >
           Master any skill with <br className="hidden sm:block" />
           <span className="font-serif italic text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">adaptive pathways.</span>
@@ -27,7 +27,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="font-body text-on-surface-variant text-base md:text-xl max-w-2xl leading-relaxed px-2"
+          className="font-body text-on-surface-variant text-sm md:text-base max-w-2xl leading-relaxed px-2"
         >
           Input your career or learning goal, and our intelligence engine maps out the exact steps, 
           curated resources, and milestones needed to get there.

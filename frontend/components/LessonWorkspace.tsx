@@ -482,7 +482,7 @@ export function LessonWorkspace({
       </div>
 
       {/* Tabs list (iOS Segmented Control Style) */}
-      <div className="bg-surface-container/40 border-b border-outline-variant/50 px-6 py-4 flex gap-2 overflow-x-auto scrollbar-hide shrink-0 z-10 backdrop-blur-md">
+      <div className="bg-surface-container/40 border-b border-outline-variant/50 px-6 py-4 flex gap-2 overflow-x-auto snap-x snap-mandatory shrink-0 z-10 backdrop-blur-md custom-scrollbar">
         {[
           { id: 'content', label: 'Lesson & Resources', icon: BookOpen },
           { id: 'code', label: 'Playground', icon: Code },
@@ -493,7 +493,7 @@ export function LessonWorkspace({
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 text-sm font-medium whitespace-nowrap ${
+            className={`snap-start px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 text-sm font-medium whitespace-nowrap ${
               activeTab === tab.id
                 ? 'bg-surface-variant text-on-surface shadow-sm ring-1 ring-white/20'
                 : 'text-on-surface-variant hover:text-zinc-200 hover:bg-white/5'

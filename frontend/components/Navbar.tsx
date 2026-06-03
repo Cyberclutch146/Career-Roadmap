@@ -6,6 +6,7 @@ import { useStore } from '@/store'
 import { useState, useRef, useEffect, MouseEvent as ReactMouseEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
+import { Logo } from '@/components/Logo'
 import { auth } from '@/lib/firebase'
 import { signOut } from 'firebase/auth'
 import { useTheme } from 'next-themes'
@@ -57,6 +58,7 @@ export function Navbar() {
 
   const handleSearch = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
+      router.push(`/gallery?q=${encodeURIComponent(searchQuery)}`)
       setSearchOpen(false)
       setSearchQuery('')
     }
@@ -127,10 +129,7 @@ export function Navbar() {
             onClick={() => router.push('/')}
             className="flex items-center transition-all duration-300 hover:opacity-80"
           >
-            <span className="font-serif italic font-bold tracking-tight text-on-surface text-xl">
-              Roadmap<span className="text-amber-500 font-sans not-italic">AI</span>
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 ml-0.5"></span>
-            </span>
+            <Logo />
           </button>
 
           {/* Desktop Nav Links */}
@@ -179,12 +178,12 @@ export function Navbar() {
                   onKeyDown={handleSearch}
                   className="bg-transparent outline-none text-sm w-44 text-on-surface placeholder:text-zinc-500"
                 />
-                <button onClick={() => { setSearchOpen(false); setSearchQuery('') }} className="hover:scale-110 active:scale-95 transition-all p-0.5 rounded-full hover:bg-zinc-800/50">
+                <button onClick={() => { setSearchOpen(false); setSearchQuery('') }} className="hover:scale-110 active:scale-95 transition-all p-0.5 rounded-full hover:bg-zinc-800/50" aria-label="Close search">
                   <X size={14} className="text-on-surface-variant" />
                 </button>
               </div>
             ) : (
-              <button onClick={() => setSearchOpen(true)} className="hidden sm:block p-2 rounded-full hover:bg-zinc-800/50 transition-all duration-200 active:scale-95">
+              <button onClick={() => setSearchOpen(true)} className="hidden sm:block p-2 rounded-full hover:bg-zinc-800/50 transition-all duration-200 active:scale-95" aria-label="Search">
                 <Search size={16} />
               </button>
             )}
@@ -373,6 +372,7 @@ export function Navbar() {
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="md:hidden p-2 rounded-full hover:bg-zinc-800/50 transition-all active:scale-95"
+              aria-label="Open menu"
             >
               <Menu size={20} />
             </button>
@@ -408,6 +408,7 @@ export function Navbar() {
                 <button
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-2 rounded-full bg-zinc-800/50 text-on-surface hover:bg-surface-variant transition-colors"
+                  aria-label="Close menu"
                 >
                   <X size={20} />
                 </button>

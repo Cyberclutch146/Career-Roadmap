@@ -52,26 +52,26 @@ export default function DashboardPage() {
         try {
           const { collection, getDocs } = await import('firebase/firestore')
           const { db } = await import('@/lib/firebase')
-          
+
           const roadmapsRef = collection(db, 'users', user.id, 'roadmaps')
           const querySnapshot = await getDocs(roadmapsRef)
           const roadmaps: Roadmap[] = []
           const allCompletions: CompletionItem[] = []
           const completedByRm: Record<string, Set<string>> = {}
-          
+
           for (const docSnap of querySnapshot.docs) {
             const rData = docSnap.data() as Roadmap
             const progressRef = collection(db, 'users', user.id, 'roadmaps', docSnap.id, 'progress')
             const progressSnapshot = await getDocs(progressRef)
             let completedCount = 0
             const completedSet = new Set<string>()
-            
+
             progressSnapshot.forEach(pDoc => {
               const pData = pDoc.data()
               if (pData.completed) {
                 completedCount++
                 completedSet.add(pDoc.id)
-                
+
                 // Find lesson title and duration
                 let lessonTitle = 'Completed Lesson'
                 let durationMinutes = 30 // default fallback
@@ -97,29 +97,29 @@ export default function DashboardPage() {
                 })
               }
             })
-            
+
             completedByRm[docSnap.id] = completedSet
-            
+
             roadmaps.push({
               ...rData,
               id: docSnap.id,
               completed_lessons_count: completedCount
             } as Roadmap)
           }
-          
+
           // Sort by created_at descending
           roadmaps.sort((a, b) => {
             const timeA = new Date(a.created_at || 0).getTime()
             const timeB = new Date(b.created_at || 0).getTime()
             return timeB - timeA
           })
-          
+
           setSavedRoadmaps(roadmaps)
           setCompletedLessonsByRoadmap(completedByRm)
           if (roadmaps.length > 0) {
             setSelectedRoadmapId(roadmaps[0].id)
           }
-          
+
           // Sort completions descending by date
           allCompletions.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
           setCompletions(allCompletions)
@@ -135,9 +135,9 @@ export default function DashboardPage() {
           const allCompletions: CompletionItem[] = []
           const roadmapsMap = new Map<string, Roadmap>()
           const completedByRm: Record<string, Set<string>> = {}
-          
+
           const keys = Object.keys(window.localStorage)
-          
+
           // First pass: Load all roadmaps
           for (const key of keys) {
             if (key.startsWith('roadmap_')) {
@@ -161,14 +161,14 @@ export default function DashboardPage() {
               const roadmapId = key.replace('progress_dates_', '')
               const savedDatesRaw = window.localStorage.getItem(key)
               const rData = roadmapsMap.get(roadmapId)
-              
+
               if (savedDatesRaw && rData) {
                 const savedDates = JSON.parse(savedDatesRaw) as { [lessonId: string]: string }
                 const completedSet = new Set<string>()
-                
+
                 Object.entries(savedDates).forEach(([lessonId, completedAt]) => {
                   completedSet.add(lessonId)
-                  
+
                   let lessonTitle = 'Completed Lesson'
                   let durationMinutes = 30 // default fallback
                   for (const phase of rData.generated_roadmap.phases) {
@@ -182,7 +182,7 @@ export default function DashboardPage() {
                       }
                     }
                   }
-                  
+
                   allCompletions.push({
                     roadmapId,
                     roadmapTitle: rData.generated_roadmap.overview.title,
@@ -206,7 +206,7 @@ export default function DashboardPage() {
             const timeB = new Date(b.created_at || 0).getTime()
             return timeB - timeA
           })
-          
+
           setSavedRoadmaps(roadmaps)
           setCompletedLessonsByRoadmap(completedByRm)
           if (roadmaps.length > 0) {
@@ -230,32 +230,32 @@ export default function DashboardPage() {
 
   const calculateStreak = () => {
     if (!completions.length) return 0;
-    
+
     const uniqueDates = Array.from(new Set(completions.map(c => c.completedAt.split('T')[0])))
       .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-    
+
     if (uniqueDates.length === 0) return 0;
 
     let streak = 0;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    
+
     const latestDate = new Date(uniqueDates[0]);
     latestDate.setHours(0, 0, 0, 0);
-    
+
     if (latestDate.getTime() !== today.getTime() && latestDate.getTime() !== yesterday.getTime()) {
       return 0;
     }
-    
+
     let currentDateToCheck = latestDate;
-    
+
     for (const dateStr of uniqueDates) {
       const d = new Date(dateStr);
       d.setHours(0, 0, 0, 0);
-      
+
       if (d.getTime() === currentDateToCheck.getTime()) {
         streak++;
         currentDateToCheck.setDate(currentDateToCheck.getDate() - 1);
@@ -263,7 +263,7 @@ export default function DashboardPage() {
         break;
       }
     }
-    
+
     return streak;
   }
 
@@ -284,7 +284,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b]">
+    <div className="min-h-screen bg-transparent relative overflow-hidden">
+      {/* Animated Dashboard Background */}
+      <div className="fixed inset-0 pointer-events-none -z-20 opacity-30">
+        <div className="absolute top-[10%] left-[20%] w-[50vw] h-[50vw] bg-amber-500/20 rounded-full mix-blend-screen filter blur-[120px] animate-blob" />
+        <div className="absolute top-[50%] right-[20%] w-[40vw] h-[40vw] bg-orange-600/20 rounded-full mix-blend-screen filter blur-[120px] animate-blob" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-[-10%] left-[30%] w-[60vw] h-[60vw] bg-yellow-500/10 rounded-full mix-blend-screen filter blur-[120px] animate-blob" style={{ animationDelay: '4s' }} />
+      </div>
+
       <Navbar />
 
       <div className="pt-24 pb-32 md:pb-16">
@@ -317,7 +324,7 @@ export default function DashboardPage() {
               { value: totalCompletedLessons, label: 'Lessons', sub: 'completed' },
               { value: dayStreak, label: 'Day Streak', sub: dayStreak > 0 ? 'active' : 'start today' },
             ].map((stat) => (
-              <div key={stat.label} className="bg-surface-container-low border border-outline-variant/60 rounded-2xl p-4 sm:p-5 shadow-sm">
+              <div key={stat.label} className="liquid-glass-card p-4 sm:p-5">
                 <div className="text-2xl sm:text-3xl font-bold text-on-surface font-headline tabular-nums leading-none mb-1.5">
                   {stat.value}
                 </div>
@@ -353,14 +360,14 @@ export default function DashboardPage() {
             transition={{ delay: 0.1 }}
             className="mb-10"
           >
-            <div className="sm:hidden mb-4 flex justify-between items-center bg-surface-container/40 border border-outline-variant/60 p-4 rounded-2xl shadow-sm">
+            <div className="sm:hidden mb-4 flex justify-between items-center liquid-glass-card p-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
                   <Calendar className="w-4 h-4 text-amber-500" />
                 </div>
                 <span className="text-sm font-semibold text-on-surface">Activity History</span>
               </div>
-              <button 
+              <button
                 onClick={() => setShowMobileStats(!showMobileStats)}
                 className="text-xs px-3.5 py-2 bg-surface-container-high text-on-surface rounded-xl hover:bg-surface-variant font-semibold border border-outline shadow-sm transition-colors active:scale-95"
               >
@@ -368,7 +375,15 @@ export default function DashboardPage() {
               </button>
             </div>
             <div className={`${showMobileStats ? 'block' : 'hidden'} sm:block`}>
-              <ProgressCalendar completions={completions} streak={dayStreak} />
+              {completions.length === 0 ? (
+                <div className="p-8 text-center liquid-glass-card">
+                  <Calendar className="w-8 h-8 text-amber-500/50 mx-auto mb-3" />
+                  <h3 className="text-on-surface font-semibold mb-1">Your Journey Begins</h3>
+                  <p className="text-on-surface-variant text-sm">Your activity history will appear here once you start learning.</p>
+                </div>
+              ) : (
+                <ProgressCalendar completions={completions} streak={dayStreak} />
+              )}
             </div>
           </motion.div>
 
@@ -387,7 +402,7 @@ export default function DashboardPage() {
                   <div className="relative w-full sm:w-auto">
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="flex items-center justify-between w-full sm:w-auto min-w-[200px] max-w-full px-3.5 py-2 bg-surface-container border border-outline-variant rounded-xl text-xs sm:text-sm text-on-surface hover:border-outline transition-colors shadow-sm"
+                      className="flex items-center justify-between w-full sm:w-auto min-w-[200px] max-w-full px-3.5 py-2 liquid-glass-hover text-xs sm:text-sm text-on-surface"
                     >
                       <span className="truncate pr-4 text-left">
                         {(() => {
@@ -399,11 +414,11 @@ export default function DashboardPage() {
                     </button>
                     {isDropdownOpen && (
                       <>
-                        <div 
+                        <div
                           className="fixed inset-0 z-40"
                           onClick={() => setIsDropdownOpen(false)}
                         />
-                        <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-[350px] bg-surface-container border border-outline rounded-xl shadow-2xl overflow-hidden z-50">
+                        <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-[350px] liquid-glass-card overflow-hidden z-50">
                           <div className="max-h-[300px] overflow-y-auto overscroll-contain">
                             {savedRoadmaps.map((rm) => {
                               const title = rm.generated_roadmap.overview.title || rm.goal || 'Roadmap'
@@ -414,11 +429,10 @@ export default function DashboardPage() {
                                     setSelectedRoadmapId(rm.id)
                                     setIsDropdownOpen(false)
                                   }}
-                                  className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-outline-variant/50 last:border-0 ${
-                                    selectedRoadmapId === rm.id 
-                                      ? 'bg-amber-500/10 text-amber-500 font-medium' 
+                                  className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-outline-variant/50 last:border-0 ${selectedRoadmapId === rm.id
+                                      ? 'bg-amber-500/10 text-amber-500 font-medium'
                                       : 'text-on-surface hover:bg-surface-container-high'
-                                  }`}
+                                    }`}
                                 >
                                   {title}
                                 </button>
@@ -491,7 +505,7 @@ export default function DashboardPage() {
                 return (
                   <div className="space-y-5">
                     {/* Forecast — minimal strip, not a card */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 px-5 rounded-xl bg-surface-container/60 border border-outline-variant/40">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 px-5 liquid-glass-card">
                       <div className="flex items-center gap-3 min-w-0">
                         <span className={`text-xs font-bold uppercase tracking-wider ${statusColor}`}>
                           {statusLabel}
@@ -507,8 +521,18 @@ export default function DashboardPage() {
 
                     {/* Charts side by side */}
                     <div className="grid md:grid-cols-2 gap-5">
-                      <SkillsRadar roadmap={selectedRoadmap} completedLessons={completedSet} />
-                      <WeeklyVelocity completions={roadmapCompletions} />
+                      {completedCount === 0 ? (
+                        <div className="md:col-span-2 p-8 text-center liquid-glass-card">
+                          <Target className="w-8 h-8 text-amber-500/50 mx-auto mb-3" />
+                          <h3 className="text-on-surface font-semibold mb-1">No activity yet</h3>
+                          <p className="text-on-surface-variant text-sm">Complete your first lesson to see your progress insights!</p>
+                        </div>
+                      ) : (
+                        <>
+                          <SkillsRadar roadmap={selectedRoadmap} completedLessons={completedSet} />
+                          <WeeklyVelocity completions={roadmapCompletions} />
+                        </>
+                      )}
                     </div>
                   </div>
                 )
@@ -565,8 +589,10 @@ function RoadmapRow({ roadmap, index }: { roadmap: Roadmap; index: number }) {
       <motion.div
         initial={{ opacity: 0, x: -8 }}
         animate={{ opacity: 1, x: 0 }}
+        whileHover={{ y: -2, scale: 1.01 }}
+        whileTap={{ scale: 0.98 }}
         transition={{ delay: index * 0.04 }}
-        className="group flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl bg-surface-container/40 border border-outline-variant/40 hover:border-outline/50 hover:bg-zinc-900/60 transition-all cursor-pointer"
+        className="group flex items-center gap-4 sm:gap-5 p-4 sm:p-5 liquid-glass-hover cursor-pointer"
       >
         {/* Progress ring */}
         <div className="relative w-11 h-11 flex-shrink-0">

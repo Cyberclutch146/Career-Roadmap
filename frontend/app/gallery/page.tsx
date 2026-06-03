@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { useStore } from '@/store'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
@@ -112,7 +113,7 @@ export default function GalleryPage() {
     e.stopPropagation()
 
     if (!user) {
-      alert("Please sign in to save roadmaps to your library.")
+      toast.error("Please sign in to save roadmaps to your library.")
       return
     }
 
@@ -133,10 +134,10 @@ export default function GalleryPage() {
 
       await setDoc(userRoadmapRef, cloned)
       setClonedRoadmaps(prev => new Set([...prev, roadmap.id]))
-      alert("Roadmap cloned to your library successfully!")
+      toast.success("Roadmap cloned to your library successfully!")
     } catch (err) {
       logger.error("Failed to clone roadmap:", err)
-      alert("Failed to clone roadmap. Please try again.")
+      toast.error("Failed to clone roadmap. Please try again.")
     } finally {
       setCloningId(null)
     }
@@ -152,7 +153,7 @@ export default function GalleryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b] flex flex-col justify-between">
+    <div className="min-h-screen bg-background flex flex-col justify-between">
       <Navbar />
 
       <div className="pt-24 pb-16 flex-grow">
@@ -228,10 +229,34 @@ export default function GalleryPage() {
 
           {/* Roadmap Grid */}
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
-              <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-              <span className="text-tertiary text-sm">Discovering roadmaps...</span>
-            </div>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                visible: {
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
+            >
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <motion.div
+                  key={i}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  className="rounded-2xl border border-outline-variant/50 p-5 bg-surface-container/30 h-48 animate-pulse"
+                >
+                  <div className="w-1/3 h-5 bg-surface-variant rounded mb-4" />
+                  <div className="w-3/4 h-6 bg-surface-variant rounded mb-3" />
+                  <div className="w-full h-4 bg-surface-variant rounded mb-2" />
+                  <div className="w-2/3 h-4 bg-surface-variant rounded" />
+                </motion.div>
+              ))}
+            </motion.div>
           ) : filteredRoadmaps.length === 0 ? (
             /* Empty State */
             <motion.div

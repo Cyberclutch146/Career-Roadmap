@@ -2,6 +2,7 @@
 
 import { ClipboardCheck, Edit2, Zap, Award, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { useState, useEffect } from 'react'
 import type { RoadmapFormData } from '@/types'
 
 interface StepReviewProps {
@@ -27,6 +28,19 @@ export function StepReview({
   assessmentScore,
   quizScore,
 }: StepReviewProps) {
+  const [loadingPhase, setLoadingPhase] = useState(0)
+  const loadingTexts = ["Analyzing your goals...", "Building curriculum...", "Curating resources..."]
+
+  useEffect(() => {
+    if (!isGenerating) {
+      setLoadingPhase(0)
+      return
+    }
+    const interval = setInterval(() => {
+      setLoadingPhase(p => Math.min(p + 1, 2))
+    }, 3500)
+    return () => clearInterval(interval)
+  }, [isGenerating])
   
   const SummaryRow = ({ label, value, step }: { label: string, value: string, step: number }) => (
     <div className="flex items-start justify-between py-2.5 md:py-3 group">
@@ -114,7 +128,7 @@ export function StepReview({
           isLoading={isGenerating}
           className="flex-[2] sm:flex-none sm:w-auto px-6 md:px-8 font-semibold bg-amber-500 text-black hover:bg-amber-400 active:scale-95"
         >
-          {isGenerating ? 'Building...' : (
+          {isGenerating ? loadingTexts[loadingPhase] : (
             <>
               <Zap className="w-4 h-4 mr-1.5" />
               <span className="hidden sm:inline">Generate My Roadmap</span>

@@ -10,13 +10,20 @@ export function MobileNav() {
   const pathname = usePathname()
   const { user } = useStore()
 
-  const links = [
-    { href: '/', icon: Home, label: 'Home' },
-    { href: '/generate', icon: Sparkles, label: 'Generate' },
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/gallery', icon: Compass, label: 'Gallery' },
-    { href: '/profile', icon: User, label: 'Profile' },
-  ]
+  const links = user
+    ? [
+        { href: '/', icon: Home, label: 'Home' },
+        { href: '/generate', icon: Sparkles, label: 'Generate' },
+        { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+        { href: '/gallery', icon: Compass, label: 'Gallery' },
+        { href: '/profile', icon: User, label: 'Profile' },
+      ]
+    : [
+        { href: '/', icon: Home, label: 'Home' },
+        { href: '/generate', icon: Sparkles, label: 'Generate' },
+        { href: '/gallery', icon: Compass, label: 'Gallery' },
+        { href: '/login', icon: User, label: 'Login' },
+      ]
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-xl border-t border-surface-variant/20 shadow-[0_-4px_12px_rgba(0,0,0,0.3)] pb-safe">

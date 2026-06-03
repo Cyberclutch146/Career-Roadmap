@@ -205,12 +205,14 @@ export function ChapterList({
                               const isCompleted = completedLessons.has(lesson.id)
                               const isBookmarked = bookmarkedLessons.has(lesson.id)
                               return (
-                                <div
+                                <motion.div
                                   key={lesson.id}
+                                  whileHover={{ y: -2, scale: 1.01 }}
+                                  whileTap={{ scale: 0.98 }}
                                   className={`flex items-start gap-3 px-4 sm:px-5 py-3.5 transition-all duration-200 group/lesson ${
                                     isCompleted
                                       ? 'bg-amber-500/[0.03]'
-                                      : 'hover:bg-zinc-800/20'
+                                      : 'hover:bg-zinc-800/20 hover:shadow-glow-secondary'
                                   }`}
                                 >
                                   {/* Completion toggle */}
@@ -298,7 +300,7 @@ export function ChapterList({
                                       <Bookmark className="w-4 h-4" />
                                     )}
                                   </button>
-                                </div>
+                                </motion.div>
                               )
                             })}
                           </div>

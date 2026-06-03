@@ -2,22 +2,14 @@
 
 import Link from 'next/link'
 import { Github, Twitter } from 'lucide-react'
+import { Logo } from '@/components/Logo'
 
 export function Footer() {
   const footerLinks = {
     product: [
-      { href: '#features', label: 'Features' },
-      { href: '#how-it-works', label: 'How It Works' },
+      { href: '/#features', label: 'Features' },
+      { href: '/#how-it-works', label: 'How It Works' },
       { href: '/gallery', label: 'Gallery' },
-    ],
-    company: [
-      { href: '#about', label: 'About' },
-      { href: '#blog', label: 'Blog' },
-      { href: '#careers', label: 'Careers' },
-    ],
-    legal: [
-      { href: '#privacy', label: 'Privacy' },
-      { href: '#terms', label: 'Terms' },
     ],
   }
 
@@ -27,9 +19,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between gap-6">
           <div className="md:max-w-xs">
             <Link href="/" className="flex items-center gap-2 mb-2 md:mb-4">
-              <span className="font-headline font-bold text-lg text-on-surface">
-                Roadmap<span className="text-amber-400 font-serif italic">AI</span>
-              </span>
+              <Logo className="text-lg" />
             </Link>
             <p className="font-body text-xs md:text-sm text-on-surface-variant">
               Transform your learning goals into structured, achievable roadmaps.
@@ -41,32 +31,6 @@ export function Footer() {
               <h4 className="font-label font-semibold text-on-surface mb-4 text-xs tracking-widest uppercase">Product</h4>
               <ul className="space-y-2">
                 {footerLinks.product.map((link) => (
-                  <li key={link.href}>
-                    <Link href={link.href} className="font-body text-sm text-on-surface-variant hover:text-on-surface transition-colors">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-label font-semibold text-on-surface mb-4 text-xs tracking-widest uppercase">Company</h4>
-              <ul className="space-y-2">
-                {footerLinks.company.map((link) => (
-                  <li key={link.href}>
-                    <Link href={link.href} className="font-body text-sm text-on-surface-variant hover:text-on-surface transition-colors">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-label font-semibold text-on-surface mb-4 text-xs tracking-widest uppercase">Legal</h4>
-              <ul className="space-y-2">
-                {footerLinks.legal.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="font-body text-sm text-on-surface-variant hover:text-on-surface transition-colors">
                       {link.label}
@@ -87,10 +51,10 @@ export function Footer() {
             &copy; {new Date().getFullYear()} RoadmapAI. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <a href="https://github.com/blaze/career-roadmap" target="_blank" rel="noopener noreferrer" className="text-on-surface-variant hover:text-on-surface transition-colors p-2 rounded-full hover:bg-zinc-900">
+            <a href="https://github.com/Cyberclutch146/Career-Roadmap" target="_blank" rel="noopener noreferrer" className="text-on-surface-variant hover:text-on-surface transition-colors p-2 rounded-full hover:bg-zinc-900" aria-label="GitHub">
               <Github className="w-4 h-4 md:w-5 md:h-5" />
             </a>
-            <a href="https://twitter.com/RoadmapAI" target="_blank" rel="noopener noreferrer" className="text-on-surface-variant hover:text-on-surface transition-colors p-2 rounded-full hover:bg-zinc-900">
+            <a href="https://twitter.com/RoadmapAI" target="_blank" rel="noopener noreferrer" className="text-on-surface-variant hover:text-on-surface transition-colors p-2 rounded-full hover:bg-zinc-900" aria-label="Twitter">
               <Twitter className="w-4 h-4 md:w-5 md:h-5" />
             </a>
           </div>

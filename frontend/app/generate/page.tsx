@@ -342,6 +342,9 @@ export default function GeneratePage() {
               {quizScore === null ? (
                 <>
                   <Button variant="ghost" onClick={() => setShowQuizModal(false)} className="text-xs text-on-surface-variant active:scale-95">Cancel</Button>
+                  {currentQuestionIndex > 0 && (
+                    <Button variant="ghost" onClick={() => setCurrentQuestionIndex(c => c - 1)} className="text-xs text-on-surface-variant active:scale-95">Previous</Button>
+                  )}
                   <Button onClick={handleNextQuestion} disabled={selectedAnswers[currentQuestionIndex] === undefined} className="text-xs px-5 md:px-6 bg-zinc-100 text-black hover:bg-white active:scale-95 flex-1 sm:flex-none">
                     {currentQuestionIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question'}
                   </Button>

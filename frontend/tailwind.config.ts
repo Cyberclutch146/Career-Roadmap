@@ -92,11 +92,11 @@ const config: Config = {
 
         // === Legacy aliases (for gradual migration) ===
         success: {
-          DEFAULT: '#d97706', // Amber 600 equivalent
-          dark: '#b45309',    // Amber 700 equivalent
+          DEFAULT: '#10b981', // Emerald 500 equivalent
+          dark: '#059669',    // Emerald 600 equivalent
         },
         warning: '#f59e0b',
-        'success-dark': '#b45309',
+        'success-dark': '#059669',
       },
       fontFamily: {
         // Stitch design system fonts

@@ -161,6 +161,14 @@ export function AIMentor({ roadmap, onClose }: AIMentorProps) {
     scrollToBottom()
   }, [messages])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   const handleSend = async (message?: string) => {
     const textToSend = message || inputValue.trim()
     if (!textToSend) return
@@ -378,6 +386,8 @@ export function ChatWidget() {
           aria-label="Open AI Mentor"
         >
           <Brain className="w-6 h-6" />
+          {/* Notification Badge */}
+          <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-zinc-950 animate-pulse" />
         </motion.button>
       )}
 

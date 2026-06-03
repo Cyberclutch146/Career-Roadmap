@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { useStore } from '@/store'
 import { api } from '@/lib/api'
 import { shouldSyncWithFirestore } from '@/lib/sync'
@@ -321,13 +322,13 @@ export default function RoadmapPage() {
       
       if (newIsPublic) {
         await navigator.clipboard.writeText(window.location.href)
-        alert("Roadmap is now public! Share link copied to clipboard.")
+        toast.success("Roadmap is now public! Share link copied to clipboard.")
       } else {
-        alert("Roadmap is now private.")
+        toast.success("Roadmap is now private.")
       }
     } catch (err) {
       logger.error("Failed to share roadmap:", err)
-      alert("Failed to update sharing settings.")
+      toast.error("Failed to update sharing settings.")
     } finally {
       setIsSharing(false)
     }
@@ -643,7 +644,7 @@ export default function RoadmapPage() {
     <div className="p-5">
       <Link href="/generate" className="flex items-center gap-2 text-on-surface-variant hover:text-zinc-300 mb-6 text-sm transition-colors">
         <ArrowLeft className="w-4 h-4" />
-        Back to Generator
+        Create New Roadmap
       </Link>
 
       <div className="mb-6">
@@ -743,7 +744,7 @@ export default function RoadmapPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b]">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <div className="pt-16 flex">
